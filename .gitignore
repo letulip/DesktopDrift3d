@@ -5,7 +5,16 @@ Logs/
 obj/
 bin/
 Build/
-artifacts/
 *.csproj.user
 .DS_Store
 node_modules/
+# SPEC-00 A1
+unity/Library/
+unity/Temp/
+unity/Logs/
+unity/UserSettings/
+unity/Build/
+core-tests/bin
+core-tests/obj
+artifacts/*
+!artifacts/.gitkeep
