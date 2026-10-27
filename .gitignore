@@ -25,5 +25,6 @@ unity/.vsconfig
 # Unity CLI temp files (unity build / --create-profile)
 unity/.utmp/
 unity/Assets/**/UnityCliTemp-*
-# Pipeline capture scratch (scripts/capture.sh copies PNGs to artifacts/)
-unity/Captures/
+# Pipeline capture scratch under Assets/ (scripts/capture.sh moves PNGs to artifacts/capture/)
+unity/Assets/Captures/
+unity/Assets/Captures.meta
