@@ -1,0 +1,13 @@
+# Волна 1 (SPEC-00) – вопросы владельцу одним списком (27.10.2026)
+
+Формат: вопрос · что принято по умолчанию · что изменится от ответа.
+
+0. **Действие, не вопрос:** один раз открыть Unity 6000.3.27f1 в GUI (Hub → проект `DesktopDrift3d/unity`, либо `unity open unity` из обычного терминала), принять Unity Software Terms, закрыть. · Пока не сделано, `unity open unity` висит в модальном окне (100% CPU, лог обрывается после лицензии), `unity status` GUI-редактор не видит. · После этого заработает GUI-путь (`unity open`/`close`, снимок `source=screen`); все headless-пути работают уже сейчас.
+1. Android package id `com.letulip.desktopdrift`, companyName `letulip`, productName «Desktop Drift» – оставить? · Плейсхолдеры, по одной константе в `unity/Assets/Editor/Setup/ProjectSetup.cs`. · Другие значения – правка трёх констант и один прогон `unity run unity -- -executeMethod DesktopDrift.Editor.ProjectSetup.Apply`; id нужно зафиксировать до первой загрузки в Play Console (SPEC-09).
+2. Подключать официальный Unity MCP глобально – в Claude Code (`claude mcp add --scope user …`) и/или Claude Desktop (`claude_desktop_config.json`)? · Только проектный `.mcp.json` (Claude Code спросит разрешение при первом использовании в репозитории). · «Да» – команды из `docs/tooling/unity-mcp.md` выполняет владелец сам; агенты получат инструменты редактора без `unity command`.
+3. Ставить навык CLI (`unity skill install claude-code` → `~/.claude/skills/unity-cli`) и плагин Unity (`unity setup claude`)? · Не ставить; текст навыка сохранён в `docs/tooling/unity-cli-skill.md` и цитируется в брифах. · «Да» – меняется `~/.claude`, навык грузится в каждой сессии (≈640 строк контекста на обращение).
+4. `scripts/build.sh mac` (StandaloneOSX) – нужен ли для настольных проверок? · Реализован как помеченный долг, не запускался. · «Нужен» – один прогон и запись времени/размера в отчёт; «не нужен» – убрать в SPEC-09.
+5. Dev-APK без подписи (debug keystore) для проверок на Poco X6 / Motorola G8 Plus начиная с SPEC-02 – подходит? · Да; подпись и AAB – SPEC-09. · Если подписанный APK нужен раньше – keystore и флаги `--android-keystore-*` в `build.sh`.
+6. `--allow-dirty-build` в `build.sh` (сборка из незакоммиченного дерева) – допустимо для dev-сборок? · Включено; релизный путь SPEC-09 флаг убирает. · «Нет» – флаг убрать, сборка потребует чистого дерева.
+7. Версия Unity CLI – держать 1.0.0-beta.13 до конца 1.0? · Зафиксирована; `unity self-update` только решением архитектора с полным прогоном гейтов. · «Обновлять» – при каждом обновлении повтор шести скриптов (флаги уже расходятся со спекой: `--report-format both`, `-quit`).
+8. Ориентация – оба landscape (Left + Right, автоповорот) или одна? · Оба. · Одна – одна строка в `ProjectSetup`.
