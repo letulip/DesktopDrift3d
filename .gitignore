@@ -22,3 +22,8 @@ unity/*.csproj
 unity/*.sln
 unity/*.slnx
 unity/.vsconfig
+# Unity CLI temp files (unity build / --create-profile)
+unity/.utmp/
+unity/Assets/**/UnityCliTemp-*
+# Pipeline capture scratch (scripts/capture.sh copies PNGs to artifacts/)
+unity/Captures/
