@@ -18,3 +18,7 @@ core-tests/bin
 core-tests/obj
 artifacts/*
 !artifacts/.gitkeep
+unity/*.csproj
+unity/*.sln
+unity/*.slnx
+unity/.vsconfig
