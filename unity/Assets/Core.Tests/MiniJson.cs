@@ -1,6 +1,7 @@
 // Test-only helper: a minimal JSON reader. It exists because System.Text.Json is unavailable
 // inside Unity's test assembly. Objects -> Dictionary<string, object?>, arrays -> List<object?>,
 // numbers -> double, strings -> string, true/false -> bool, null -> null.
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Globalization;
