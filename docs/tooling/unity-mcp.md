@@ -1,31 +1,51 @@
 # Unity MCP и CLI (проект уровня репозитория)
 
-Статус: конфиг и скрипт написаны; живая проверка НЕ выполнена (см. «Находки»).
+Статус: проверено вживую (резидентный headless-редактор 6000.3.27f1, Pipeline 0.9.1-exp.1).
 
 ## Что настроено
 - `.mcp.json` в корне репо: сервер `unity-editor-mcp` = `unity mcp --project-path "$PWD/unity"` (через `sh -c`, подгружает `~/.unity/env`).
 - Claude Code подхватывает файл при запуске в корне репо; проектные MCP-серверы пользователь одобряет при первом использовании.
-- `tools/mcp-smoke.mjs` – дымовой тест MCP (Node, без зависимостей): initialize, tools/list, один tools/call. Дефолт инструмента (`script_eval`, код `return UnityEngine.Application.unityVersion;`) НЕ сверен с живым списком – при первом запуске поправить `--tool`/`--args` и константы.
+- `tools/mcp-smoke.mjs` – дымовой тест MCP (Node, без зависимостей): initialize, tools/list, один tools/call. Дефолт – инструмент `eval` (`return UnityEngine.Application.unityVersion;`); `--tool/--args` переопределяют.
 - `docs/tooling/unity-cli-skill.md` – навык CLI (`unity skill show`) для цитирования в брифах.
 
 ## Открыть / закрыть редактор
+Перед каждым вызовом: `source ~/.unity/env; export UNITY_NO_BANNER=1 UNITY_NON_INTERACTIVE=1 UNITY_NO_PAGER=1`.
+
+(а) GUI – только после того как владелец один раз откроет Unity в GUI и примет Software Terms:
 ```
 unity open unity
-unity status --until-ready --project-path "$PWD/unity" --timeout 600 --format json
+unity status --until-ready --project-path "$PWD/unity" --timeout 600
 unity close unity --timeout 60
 ```
-Перед каждым вызовом: `source ~/.unity/env; export UNITY_NO_BANNER=1 UNITY_NON_INTERACTIVE=1 UNITY_NO_PAGER=1`.
+(б) Резидентный headless-редактор (без GUI, диалога условий нет):
+```
+nohup "/Applications/Unity/Hub/Editor/6000.3.27f1/Unity.app/Contents/MacOS/Unity" -batchmode -projectPath "$PWD/unity" -logFile artifacts/headless-editor.log >/dev/null 2>&1 & disown
+unity status --project-path "$PWD/unity"     # готовность (редактор в списке, state ready, порт 7800)
+unity pipeline list                          # Server Reachable true
+unity close unity --timeout 60               # остановка (или --force)
+```
+Не запускать `unity run/test/build` при живом редакторе – столкновение.
 
 ## Проверка
 ```
-unity command --project-path "$PWD/unity"                      # список команд
-unity command --project-path "$PWD/unity" --query eval --detail full   # схема
-node tools/mcp-smoke.mjs                                         # MCP: MCP_TOOLS=n, MCP_CALL_OK, MCP_EXIT=0
+unity status --project-path "$PWD/unity" --format json
+unity command --project-path "$PWD/unity" script eval -- --code "return UnityEngine.Application.unityVersion;"   # 6000.3.27f1
+node tools/mcp-smoke.mjs 2>&1 | grep -v "^\[unity mcp\]"
+scripts/compile.sh 2>&1 | tail -4        # живая ветка: unity recompile, COMPILE_WARNINGS=0
 ```
-Точный синтаксис `script eval` не проверен (редактор не загрузился).
+Вывод MCP: `MCP_SERVER=unity-mcp 1.0.0-beta.13 protocol=2025-06-18`, `MCP_TOOLS=166`, `MCP_CALL_OK eval`, `MCP_EXIT=0`. Инструмент MCP называется `eval`, не `script_eval`.
 
 ## Имена команд Pipeline 0.9.1
-Команды сгруппированы (`editor.playmode start`, `script eval`, `capture game_view`, `editor set_auto_tick`); старые плоские имена (`editor_play`, `eval`, `capture_game_view`, `set_autotick`) – устаревшие алиасы.
+| Команда | Пример |
+|---|---|
+| `script eval` | `script eval -- --code "return 1+1;"` |
+| `scene open` | `scene open -- --path Assets/Scenes/SampleScene.unity` |
+| `editor set_auto_tick` | `editor set_auto_tick` |
+| `editor.playmode start\|stop` | `editor.playmode start` |
+| `editor status` | `editor status` |
+| `capture game_view` | `capture game_view -- --source camera --width 1920 --height 1080 --save_path Captures/x.png` |
+
+Все – через `unity command --project-path "$PWD/unity" <имя> …`. Старые плоские имена (`eval`, `editor_play`, `capture_game_view`, `set_autotick`) – устаревшие алиасы.
 
 ## Только по решению владельца (не применено)
 Глобальная запись для Claude Code (`unity mcp configure claude-code --dry-run`):
@@ -52,6 +72,9 @@ Would write to: /Users/letulip/Library/Application Support/Claude/claude_desktop
 - `unity setup claude` – ставит плагин Unity с навыками в Claude Code (глобально).
 
 ## Находки
-- `unity open unity` (20:58 WITA) запустил редактор 6000.3.27f1, но за 600 с `unity status --until-ready` не увидел инстансов: процесс (PID 43582) крутился на ~99% CPU, Editor.log остановился на лицензировании (Licensing Background thread has ended), проект не загрузился. `unity close` вернул Closed=false, method=none; процесс завис, убить его без одобрения не удалось.
-- `unity open` пишет «"unity" was not found in the Hub project registry, opening as a file path» – безвредно.
-- `unity open` блокирует вызов дольше 120 с.
+- Зависание GUI-запуска: `unity open unity` стоял в модальном окне «Unity Software Terms» (стек `SoftwareTermsWindow::EnsureTheUserHasAcceptedSoftwareTerms`), которое принять может только владелец; процесс крутился на ~99% CPU, проект не грузился, `unity status --until-ready` не видел инстансов. Диагностика: `sample <pid>`. Закрыто: `unity close unity --force`. Batchmode окно не показывает.
+- `unity status` видит и batch-редактор (state ready, порт 7800).
+- После `editor.playmode start` сервер Pipeline недоступен ~3 с (domain reload) – ждать и повторять.
+- `capture game_view --save_path` всегда разрешается внутри `Assets/`, даже для абсолютного пути.
+- `unity open` пишет «"unity" was not found in the Hub project registry, opening as a file path» – безвредно; блокирует вызов дольше 120 с.
+- `COMPILE_WARNINGS` в `scripts/compile.sh` берётся из поля `warnings` JSON, а не подсчётом строк.

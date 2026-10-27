@@ -13,7 +13,7 @@ rc=0
 if unity status --project-path "$PROJECT" --format json 2>/dev/null | grep -q '"count": [1-9]'; then
   echo "compile: live editor -> unity recompile"
   unity recompile --project-path "$PROJECT" --json 2>&1 | tee artifacts/compile-recompile.json | tail -20 || rc=$?
-  echo "COMPILE_WARNINGS=$(grep -c 'warning' artifacts/compile-recompile.json || true)"
+  W=$(grep -o '"warnings": *[0-9]*' artifacts/compile-recompile.json | head -1 | tr -dc '0-9'); echo "COMPILE_WARNINGS=${W:-0}"
 else
   echo "compile: headless -> unity run (log: artifacts/compile.log)"
   unity run unity --timeout 600 --no-tail -l artifacts/compile.log >/dev/null 2>&1 || rc=$?

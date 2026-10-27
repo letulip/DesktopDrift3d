@@ -5,7 +5,7 @@ import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
-const DEFAULT_TOOL = 'script_eval';
+const DEFAULT_TOOL = 'eval';
 const DEFAULT_ARGS = '{"code":"return UnityEngine.Application.unityVersion;"}';
 
 const argv = process.argv.slice(2);
