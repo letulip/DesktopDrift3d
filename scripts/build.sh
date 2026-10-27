@@ -3,7 +3,8 @@
 # Usage: scripts/build.sh android|mac
 #   android – Build Profile "Android" (Assets/Settings/Build Profiles/Android.asset, created once with
 #             `unity build unity --create-profile Android`), unsigned APK for device checks; AAB signing is SPEC-09.
-#   mac     – DEBT: temporary stand-in on StandaloneOSX for desk checks only, never a release target.
+#   mac     – StandaloneOSX desk-check build (Mono, universal binary) for playing at the desk and desktop captures;
+#             never a release target (D-02 native-first Android).
 set -euo pipefail
 cd "$(dirname "$0")/.."
 source ~/.unity/env
@@ -11,6 +12,8 @@ export UNITY_NO_BANNER=1 UNITY_NON_INTERACTIVE=1 UNITY_NO_PAGER=1
 target="${1:-android}"
 mkdir -p artifacts/build
 start=$SECONDS
+# Provenance for --allow-dirty-build: the commit this build came from and how many files were uncommitted before it ran.
+sha=$(git rev-parse --short HEAD 2>/dev/null || echo n/a); dirty=$(git status --porcelain 2>/dev/null | wc -l | tr -d " ")
 rc=0
 case "$target" in
   android)
@@ -22,7 +25,7 @@ case "$target" in
   mac)
     out="$PWD/artifacts/build/mac/DesktopDrift.app"
     log="$PWD/artifacts/build-mac.log"
-    echo "DEBT: mac build is a temporary stand-in (D-01 native-first Android), not a release target"
+    echo "mac: desk-check build (Mono StandaloneOSX), not a release target (D-02 native-first Android)"
     unity build unity --target StandaloneOSX --output-path "$out" --allow-dirty-build \
       --no-tail --timeout 2400 -l "$log" --format json > artifacts/build/mac-result.json 2> artifacts/build/mac-progress.log || rc=$?
     ;;
@@ -37,6 +40,8 @@ size="n/a"; if [ -e "$out" ]; then size=$(du -sh "$out" | cut -f1); fi
   echo "- size: $size"
   echo "- time: ${elapsed}s"
   echo "- exit: $rc"
+  echo "- git: $sha (uncommitted files before the build: $dirty)"
+  echo "- provenance: $(sed -n 's/.*"provenance": "\([^"]*\)".*/\1/p' "artifacts/build/$target-result.json" 2>/dev/null | head -1)"
   echo "- unity: $(sed -n 's/^m_EditorVersion: //p' unity/ProjectSettings/ProjectVersion.txt)"
   echo "- cli: $(unity version 2>/dev/null | awk '$1=="version"{print $2}')"
   echo "- stripping: managedStrippingLevel$(grep '^  managedStrippingLevel:' unity/ProjectSettings/ProjectSettings.asset | sed 's/^  managedStrippingLevel://') (per-platform map; {} = unset, Unity default), stripEngineCode$(grep '^  stripEngineCode:' unity/ProjectSettings/ProjectSettings.asset | sed 's/^  stripEngineCode://')"
@@ -45,6 +50,7 @@ size="n/a"; if [ -e "$out" ]; then size=$(du -sh "$out" | cut -f1); fi
 } > artifacts/build/report.md
 cat artifacts/build/report.md
 grep -n "error CS\|BuildFailedException\|Build completed with a result of\|licen[cs]e" "$log" 2>/dev/null | head -12 || true
+echo "BUILD_GIT=$sha BUILD_DIRTY=$dirty"
 echo "BUILD_SIZE=$size BUILD_TIME=${elapsed}s"
 echo "BUILD_EXIT=$rc"
 exit "$rc"

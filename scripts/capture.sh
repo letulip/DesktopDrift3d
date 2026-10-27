@@ -68,7 +68,7 @@ run() {
   [ "$ok" = 1 ] || { echo "ERROR: play mode not reached"; return 1; }
 
   f0="$(frame)"
-  cmd capture game_view -- --source camera --width "$W" --height "$H" --save_path "Captures/$ts.png"
+  cmd capture game_view -- --source "${CAPTURE_SOURCE:-camera}" --width "$W" --height "$H" --save_path "Captures/$ts.png"
   f1="$(frame)"
   cmd editor.playmode stop >/dev/null 2>&1 || true
 

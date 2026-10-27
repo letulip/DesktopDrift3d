@@ -34,9 +34,11 @@ namespace DesktopDrift.Editor
                 AndroidSdkVersions.AndroidApiLevelAuto, v => PlayerSettings.Android.targetSdkVersion = v);
             Debug.Log($"ProjectSetup: android.targetSdkVersion resolves to {(int)PlayerSettings.Android.targetSdkVersion} (0 = Auto = highest installed SDK)");
 
+            // D-19: portrait is the working hypothesis (2D manifest.json: "orientation": "portrait"); the final call is the
+            // SPEC-02 PoC gate, so one build must show both: autorotation to Portrait and both Landscapes, no upside-down.
             Set("defaultInterfaceOrientation", PlayerSettings.defaultInterfaceOrientation,
                 UIOrientation.AutoRotation, v => PlayerSettings.defaultInterfaceOrientation = v);
-            Set("allowedAutorotateToPortrait", PlayerSettings.allowedAutorotateToPortrait, false,
+            Set("allowedAutorotateToPortrait", PlayerSettings.allowedAutorotateToPortrait, true,
                 v => PlayerSettings.allowedAutorotateToPortrait = v);
             Set("allowedAutorotateToPortraitUpsideDown", PlayerSettings.allowedAutorotateToPortraitUpsideDown, false,
                 v => PlayerSettings.allowedAutorotateToPortraitUpsideDown = v);
@@ -72,6 +74,9 @@ namespace DesktopDrift.Editor
                 "ProjectVersion.txt does not contain m_EditorVersion: " + ExpectedEditorVersion);
             Debug.Log($"ProjectSetup: ProjectVersion ok ({ExpectedEditorVersion})");
 
+            // PlayerSettings.* setters alone did not flush ProjectSettings.asset in batchmode (2026-10-28): the file was only
+            // written while activeInputHandler changed above. Mark the singleton dirty so SaveAssets always writes it.
+            EditorUtility.SetDirty(so.targetObject);
             AssetDatabase.SaveAssets();
             Debug.Log("PROJECT_SETUP_OK");
         }

@@ -12,7 +12,15 @@ rc=0
 # no editor open: status prints {"success": false, ... "count": 0, "instances": []}
 if unity status --project-path "$PROJECT" --format json 2>/dev/null | grep -q '"count": [1-9]'; then
   echo "compile: live editor -> unity recompile"
-  unity recompile --project-path "$PROJECT" --json 2>&1 | tee artifacts/compile-recompile.json | tail -20 || rc=$?
+  # Right after `unity open` the editor reports ready while its first script compilation is still running;
+  # `unity recompile` then exits non-zero without any CS error (seen 2026-10-28) -> retry up to 6 x 5 s.
+  for attempt in 1 2 3 4 5 6; do
+    rc=0
+    unity recompile --project-path "$PROJECT" --json > artifacts/compile-recompile.json 2>&1 || rc=$?
+    if [ "$rc" -eq 0 ] || grep -q '"errors": *[1-9]\|error CS' artifacts/compile-recompile.json; then break; fi
+    echo "compile: recompile not settled (exit $rc, attempt $attempt) -> retry in 5 s"; sleep 5
+  done
+  tail -20 artifacts/compile-recompile.json
   W=$(grep -o '"warnings": *[0-9]*' artifacts/compile-recompile.json | head -1 | tr -dc '0-9'); echo "COMPILE_WARNINGS=${W:-0}"
 else
   echo "compile: headless -> unity run (log: artifacts/compile.log)"
