@@ -38,18 +38,22 @@
 6. **Перед каждым коммитом:** `scripts/test.sh` зелёный (после SPEC-00 – плюс
    `scripts/unity-tests.sh` для Unity-слоя); новая чистая логика – с тестом в том же коммите.
 
-## Команды (появляются в SPEC-00; до него – пусто)
+## Команды (контур SPEC-00)
 
 ```bash
-scripts/test.sh          # dotnet test по Core + Core.Tests, секунды
-scripts/trace.sh         # трасса паритета из JS → tools/parity-trace.json
-scripts/compile.sh       # Unity batchmode, компиляция, лог как канал ошибок
-scripts/unity-tests.sh   # Unity EditMode-тесты из CLI
-scripts/build.sh android # AAB/APK из CLI с отчётом размера и времени
-scripts/capture.sh       # кадр из play mode в artifacts/
+scripts/test.sh          # dotnet test по Core + Core.Tests, секунды (TEST_EXIT)
+scripts/trace.sh         # трасса паритета из JS → tools/parity-trace.json (TRACE_EXIT)
+scripts/compile.sh       # живой редактор → unity recompile, иначе unity run + лог (COMPILE_EXIT)
+scripts/unity-tests.sh   # Unity EditMode-тесты через unity test, NUnit+JUnit в artifacts/ (UNITY_TESTS_EXIT)
+scripts/build.sh android # APK через unity build --profile Android + artifacts/build/report.md (BUILD_EXIT)
+scripts/capture.sh       # кадр из play mode через Pipeline → artifacts/capture/*.png (CAPTURE_EXIT)
+node tools/mcp-smoke.mjs # одна операция через официальный MCP редактора (MCP_EXIT)
 ```
 
-Скрипты – тонкие обёртки над официальным **Unity CLI** (`~/.unity/bin/unity`; в скриптах
+Скрипты – тонкие обёртки над официальным **Unity CLI** 1.0.0-beta.13 (`~/.unity/bin/unity`; в скриптах
 `source ~/.unity/env`): `unity test`, `unity build`, `unity run`, `unity recompile`, `unity command`,
-`unity mcp`. Первая диагностика – `unity doctor`. Большие логи Unity не читать целиком:
-`grep -n "error\|Exception" … | head -40`.
+`unity mcp`. Первая диагностика – `unity doctor`, затем `unity status --project-path "$PWD/unity"`: один
+редактор на проект, `unity run`/`test`/`build` при открытом редакторе не запускать. Карта скрипт ↔ команда ↔
+запасной путь – [docs/tooling/README.md](docs/tooling/README.md); редактор (GUI после принятия Software
+Terms владельцем, иначе headless-резидент) и MCP – [docs/tooling/unity-mcp.md](docs/tooling/unity-mcp.md).
+Большие логи Unity не читать целиком: `grep -n "error CS\|Exception" … | head -40`.
