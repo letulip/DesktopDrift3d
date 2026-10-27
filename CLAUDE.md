@@ -1,0 +1,55 @@
+# DesktopDrift3d – обязательный контекст сессии
+
+Держи bootstrap коротким. Сначала [docs/CURRENT.md](docs/CURRENT.md) (где проект сейчас),
+потом **одна** спека из `docs/specs/`, которую тебе назвали. Не обходи `docs/` целиком.
+
+## Что это
+
+Порт живой 2D-игры Desktop Drift (`/Users/letulip/Projects/Claude/DesktopDrift`, только чтение)
+на Unity 6, low-poly 3D, 1.0 native-first (AAB Google Play), платная, без рекламы.
+Карта пакета – [README.md](README.md); архитектура – [docs/03-architecture.md](docs/03-architecture.md);
+процесс и роли – [docs/02-process.md](docs/02-process.md); решения – [docs/01-decisions.md](docs/01-decisions.md).
+
+## Неразрушаемые инварианты
+
+- **Паритет с 2D – гейт, а не пожелание.** `stepCar`, коллизии, скоринг, экономика, ачивки,
+  миграции сейва переносятся дословно; порядок операций в физике не менять; трасса паритета
+  (`tools/parity-trace.mjs` ↔ NUnit) сходится с допуском 1e-6 на кадр.
+- **Core не знает про Unity.** В `unity/Assets/Core/` нет ссылок на `UnityEngine`
+  (`noEngineReferences: true`); всё там тестируется `dotnet test` за секунды.
+- **Единицы.** 1 игровая единица = 1 мм; Core считает в игровых единицах и `double`, как JS;
+  переводит в метры только слой представления (`UnitsToMeters = 0.001`).
+- **Детерминизм.** Физика в `FixedUpdate` при 60 Гц с `dt = 1/60`; рендер интерполирует.
+  Никакого `Random` и `DateTime.Now` в Core.
+- **Данные не перепечатываются.** Таблицы (машины, предметы, трассы, магазин, ачивки, палитры)
+  экспортируются из JS-модулей скриптом в JSON и импортируются в ScriptableObject.
+- **Строки интерфейса – те же, что в 2D-игре.** Менять вординг может только владелец.
+
+## Законы (нарушение = откат)
+
+1. **Никогда не пушить и не коммитить в `main`.** Ветка этапа `feat/spec-NN-<slug>`, PR
+   открывает и мержит владелец. Перед каждым коммитом – `git branch --show-current`.
+2. **Код, комментарии, строки – по-английски.** Документы пакета – по-русски.
+3. **Минимальный дифф, ровно по спеке.** Расширение объёма – только через вопрос архитектору.
+4. **Токен-дисциплина** ([02-process.md](docs/02-process.md) §3–§5): модель и усилие выбраны
+   на шаг, агенты последовательно и тонкие, бюджет ходов – стоп-условие, гейты в родителе.
+5. **Роли не смешивать:** Builder реализует спеку, Reviewer делает отдельное ревью, архитектор
+   задаёт и принимает гейты, владелец подписывает фил и внешние шаги.
+6. **Перед каждым коммитом:** `scripts/test.sh` зелёный (после SPEC-00 – плюс
+   `scripts/unity-tests.sh` для Unity-слоя); новая чистая логика – с тестом в том же коммите.
+
+## Команды (появляются в SPEC-00; до него – пусто)
+
+```bash
+scripts/test.sh          # dotnet test по Core + Core.Tests, секунды
+scripts/trace.sh         # трасса паритета из JS → tools/parity-trace.json
+scripts/compile.sh       # Unity batchmode, компиляция, лог как канал ошибок
+scripts/unity-tests.sh   # Unity EditMode-тесты из CLI
+scripts/build.sh android # AAB/APK из CLI с отчётом размера и времени
+scripts/capture.sh       # кадр из play mode в artifacts/
+```
+
+Скрипты – тонкие обёртки над официальным **Unity CLI** (`~/.unity/bin/unity`; в скриптах
+`source ~/.unity/env`): `unity test`, `unity build`, `unity run`, `unity recompile`, `unity command`,
+`unity mcp`. Первая диагностика – `unity doctor`. Большие логи Unity не читать целиком:
+`grep -n "error\|Exception" … | head -40`.

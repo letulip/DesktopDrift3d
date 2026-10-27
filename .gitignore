@@ -1,0 +1,11 @@
+# Unity / dotnet
+Library/
+Temp/
+Logs/
+obj/
+bin/
+Build/
+artifacts/
+*.csproj.user
+.DS_Store
+node_modules/
