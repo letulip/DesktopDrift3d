@@ -45,7 +45,7 @@ scripts/test.sh          # dotnet test по Core + Core.Tests, секунды (T
 scripts/trace.sh         # трасса паритета из JS → tools/parity-trace.json (TRACE_EXIT)
 scripts/compile.sh       # живой редактор → unity recompile, иначе unity run + лог (COMPILE_EXIT)
 scripts/unity-tests.sh   # Unity EditMode-тесты через unity test, NUnit+JUnit в artifacts/ (UNITY_TESTS_EXIT)
-scripts/build.sh android # APK через unity build --profile Android + artifacts/build/report.md (BUILD_EXIT)
+scripts/build.sh android # APK через unity build --profile Android + artifacts/build/report.md (BUILD_EXIT); mac – настольная сборка
 scripts/capture.sh       # кадр из play mode через Pipeline → artifacts/capture/*.png (CAPTURE_EXIT)
 node tools/mcp-smoke.mjs # одна операция через официальный MCP редактора (MCP_EXIT)
 ```
@@ -54,6 +54,5 @@ node tools/mcp-smoke.mjs # одна операция через официаль
 `source ~/.unity/env`): `unity test`, `unity build`, `unity run`, `unity recompile`, `unity command`,
 `unity mcp`. Первая диагностика – `unity doctor`, затем `unity status --project-path "$PWD/unity"`: один
 редактор на проект, `unity run`/`test`/`build` при открытом редакторе не запускать. Карта скрипт ↔ команда ↔
-запасной путь – [docs/tooling/README.md](docs/tooling/README.md); редактор (GUI после принятия Software
-Terms владельцем, иначе headless-резидент) и MCP – [docs/tooling/unity-mcp.md](docs/tooling/unity-mcp.md).
+запасной путь – [docs/tooling/README.md](docs/tooling/README.md); редактор (GUI или headless-резидент) и MCP – [docs/tooling/unity-mcp.md](docs/tooling/unity-mcp.md).
 Большие логи Unity не читать целиком: `grep -n "error CS\|Exception" … | head -40`.

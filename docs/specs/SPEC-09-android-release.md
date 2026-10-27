@@ -18,7 +18,7 @@
 
 | № | Шаг | Диспетчеризация | Выход |
 |---|---|---|---|
-| 1 | Настройки сборки релиза | ⟨Builder · general-purpose · sonnet · high · ≤50⟩ | package name, версия из `version.json`, IL2CPP ARM64, target/min API, landscape, 16 KB, стриппинг, иконка |
+| 1 | Настройки сборки релиза | ⟨Builder · general-purpose · sonnet · high · ≤50⟩ | package name, версия из `version.json`, IL2CPP ARM64, target/min API, ориентация по D-19, 16 KB, стриппинг, иконка |
 | 2 | Проверка аккаунта Play | владелец (по инструкции агента) | дата создания аккаунта; вывод: гейт закрытого теста да/нет |
 | 3 | Keystore и подпись | ⟨Builder · general-purpose · sonnet · medium · ≤30⟩ + владелец | `scripts/make-keystore.sh` (запускает владелец, пароль у него), `build.sh aab` читает `DD_KEYSTORE_*` из окружения |
 | 4 | Подписанный AAB и отчёт | ⟨Gate-runner · general-purpose · sonnet · medium · ≤40⟩ | `artifacts/build/android/DesktopDrift.aab`, размер, `bundletool validate` (если доступен) |
@@ -34,8 +34,8 @@
 (код растёт на каждую сборку скриптом). Package name – владелец (предложение `com.letulip.desktopdrift`,
 менять потом нельзя). `targetSdkVersion` = требование Play на дату (на 2026 – API 35+; проверить
 страницу Play при сборке), `minSdk 26` (O-05), только ARM64 (меньше размер; x86 не нужен), `Managed
-Stripping High` + `link.xml` для Newtonsoft, `Strip Engine Code`, сжатие LZ4, landscape (обе ориентации
-landscape), иконки адаптивные (из `icons/` 2D-игры), splash своя (Unity-сплэш выключен на Unity 6 Personal).
+Stripping High` + `link.xml` для Newtonsoft, `Strip Engine Code`, сжатие LZ4, ориентация по D-19 (решение гейта SPEC-02),
+иконки адаптивные (из `icons/` 2D-игры), splash своя (Unity-сплэш выключен на Unity 6 Personal).
 16 KB page size – флаг Unity 6 включён по умолчанию, проверить в отчёте сборки.
 
 ### 2 · Аккаунт Play (владелец)

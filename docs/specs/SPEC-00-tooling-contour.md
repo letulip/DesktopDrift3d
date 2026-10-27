@@ -96,7 +96,7 @@
 вызывается `unity run unity -l artifacts/setup.log -- -executeMethod DesktopDrift.Editor.ProjectSetup.Apply -quit`
 (аргументы после `--` уходят редактору): URP-ассет в Graphics/Quality, `ScriptingBackend=IL2CPP`,
 `TargetArchitectures=ARM64`, `minSdk=26`, `targetSdk` = максимальный установленный (android-37),
-ориентация landscape, Input System «new only», Linear, `ProjectVersion.txt` = 6000.3.27f1. Идемпотентно.
+ориентация – автоповорот Portrait + LandscapeLeft/Right до решения на гейте SPEC-02 (D-19), Input System «new only», Linear, `ProjectVersion.txt` = 6000.3.27f1. Идемпотентно.
 
 ### B2 · asmdef и компиляция
 
@@ -224,5 +224,15 @@ vy 4.0e-13; compile.sh 0 ошибок, 5–6 с (холодный импорт 5
 6. Окружение: только рантайм .NET 10 → csproj `net8.0` + `RollForward=Major`; `config.js` создаёт `Path2D` при
    загрузке → стаб в трассе; URP-ассеты шаблона пересериализуются редактором при первом открытии/сборке
    (закоммичены); Android-сборка оставляет `unity/.utmp/` (в .gitignore); лицензия Android SDK не спрашивалась.
-7. Хвосты: `build.sh mac` не запускался (долг); GUI-путь снимка не проверен; плейсхолдеры productName/companyName/
-   bundle id и глобальные конфиги – вопросы владельцу (`docs/handoff/wave-1-questions.md`).
+7. Хвосты закрыты 28.10 ответами владельца (D-19, D-20): `build.sh mac` проверен (65 с, 114 МБ, universal Mono, долг
+   снят; отчёт сборки получил коммит и грязь дерева, CLI пишет `*.provenance.json`); плейсхолдеры остаются до SPEC-09;
+   глобальные конфиги не применяются; ориентация – автоповорот Portrait + оба Landscape до гейта SPEC-02. GUI-путь –
+   п. 9.
+8. `ProjectSetup`: сеттеры `PlayerSettings.*` сами не записали `ProjectSettings.asset` в batchmode (28.10, запуск 1:
+   в логе `allowedAutorotateToPortrait False -> True`, файл без изменений, `AssetDatabase.SaveAssets()` вызывался);
+   с явным `EditorUtility.SetDirty` синглтона PlayerSettings перед `SaveAssets` – записано, третий запуск без диффа.
+   В B2 запись проходила (файл, видимо, был dirty после первого импорта) – идемпотентность тогда это скрыла.
+9. GUI-путь проверен 28.10 после принятия Software Terms: `unity open` → ready за 6 с; живой `compile.sh` 0 ошибок (сразу
+   после открытия `unity recompile` даёт код 6 без ошибок CS – редактор ещё компилирует; в скрипт добавлен повтор до
+   6×5 с); `capture.sh` из GUI: камера 0.518 и экран (`CAPTURE_SOURCE=screen`) 0.522, 1920×1080; без фокуса окна
+   `frameCount` в GUI не растёт (2→2) – покадровые проверки на headless-резиденте; `unity close` graceful.

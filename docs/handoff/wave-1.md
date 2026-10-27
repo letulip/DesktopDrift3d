@@ -14,12 +14,11 @@
 - B6 d1f892a `scripts/capture.sh` (Pipeline: `scene open` → `editor set_auto_tick` → `editor.playmode start` → `capture game_view --source camera` → `stop`; PNG в `artifacts/capture/`, яркость через ffmpeg; без редактора сам поднимает headless и закрывает)
 - B7 cc3a558 `docs/tooling/README.md` (карта скрипт ↔ команда ↔ запасной путь), раздел «Команды» в `CLAUDE.md`
 - гейты архитектора 11d2200, 438111a и следующий за B7: пересериализация URP-ассетов редактором, `.gitignore` для `.utmp/`, `UnityCliTemp-*`, `Assets/Captures/`
+- 28.10 67ec166 ответы владельца: `ProjectSetup` – автоповорот Portrait (D-19) + `EditorUtility.SetDirty` PlayerSettings (без него сеттеры не попадали в `ProjectSettings.asset`); `build.sh` – коммит и грязь дерева в отчёте, mac без пометки долга; `capture.sh` – `CAPTURE_SOURCE`; `compile.sh` – повтор `unity recompile` до 6×5 с; ссылки на D-19 в SPEC-00/02/06/09; D-19/D-20, ответы на вопросы, CURRENT, `docs/tooling`
 
 ## Открыто
-- Владелец: один раз открыть Unity 6000.3.27f1 в GUI и принять Software Terms – без этого `unity open unity` висит в модальном окне (SPEC-00 «Находки гейта» №1); headless-путь работает уже сейчас
-- Плейсхолдеры productName «Desktop Drift», companyName «letulip», Android id `com.letulip.desktopdrift` – решение владельца до SPEC-09 (`wave-1-questions.md` №1)
-- Глобальные конфиги (MCP для Claude Code/Desktop, `unity skill install`, `unity setup claude`) не применены, показаны в `docs/tooling/unity-mcp.md` (вопросы №2–3)
-- `scripts/build.sh mac` – долг: реализован, не запускался (вопрос №4)
+- Ответы владельца на вопросы волны получены 28.10 и записаны: D-19 (ориентация – гипотеза портрет, решение на гейте SPEC-02; `ProjectSetup` разрешает Portrait + оба Landscape) и D-20 (№0–7: Software Terms приняты, плейсхолдеры до SPEC-09, глобальные конфиги не применяются, mac-сборка проверена, dev-APK без подписи, `--allow-dirty-build` с provenance, CLI обновляется на границе волн). Открытым остаётся только сам PR
+- Unity CLI beta.14 вышла 28.10 (`unity terms accept/status`, коды `*_BLOCKED_BY_DIALOG_SOFTWARE_TERMS`) – обновление шагом 0 Волны 2 по D-20 №7
 - Пустая сборка `DesktopDrift.Game` даёт предупреждение «will not be compiled» до SPEC-02; поэтому живой путь `compile.sh` без `--strict`
 - GUI-путь снимка (`source=screen`) не проверен – GUI-редактора нет; принят headless `source=camera`
 
@@ -37,6 +36,7 @@
 ## Гейты
 - test.sh: 5/5 зелёные, 1 с тёплый (10 с холодный) · trace.sh: 0 с, два запуска побайтно равны (sha256 9c4f4660…3604) · паритет: max |Δ| x 2.7e-12, y 4.5e-13, angle 6.7e-16, vx 6.3e-13, vy 4.0e-13 (худший кадр 750, допуск 1e-6)
 - compile.sh: 0 ошибок, 0 предупреждений CS, 5–6 с тёплый headless (первый холодный импорт 54 с), живой `unity recompile` 0 с · unity-tests.sh: 5/5, 6–8 с · build.sh android: APK 33 МБ (34 546 514 Б), холодная 222 с, инкрементальная 19–21 с, только arm64, `Unity.Pipeline` в плеере нет · capture.sh: 1920×1080, яркость 0.518, кадры идут, 5 с (11 с с подъёмом headless-редактора) · `unity status` видит проект (headless-редактор ready) · MCP: 166 инструментов, вызов `eval` прошёл из сессии архитектора · ProjectSetup идемпотентен (второй запуск без диффа)
+- 28.10 (после ответов владельца): build.sh mac 114 МБ, 65 с, exit 0 (universal x86_64+arm64, Mono) · ProjectSetup: автоповорот Portrait применён, третий запуск без диффа · GUI-путь после принятия Software Terms: `unity open` → ready за 6 с; живой `compile.sh` 0 ошибок (первый вызов сразу после открытия – код 6 без ошибок CS, редактор ещё компилировал → в скрипт добавлен повтор); `capture.sh` из GUI: камера 1920×1080/0.518, экран (`CAPTURE_SOURCE=screen`) 1920×1080/0.522; без фокуса окна `frameCount` в GUI не растёт (2→2) – покадровые проверки на headless-резиденте; `unity close` graceful · test.sh 5/5 за 2 с · unity-tests.sh 5/5 за 7 с
 
 ## Бюджет
 - агентов: 12 (A2–A5, B1–B7; B5 в два захода из-за зависшего GUI-редактора) · ходов всего: ≈77 из 455 по таблице спеки · сверх бюджета: никто; A1 и все гейты – архитектор

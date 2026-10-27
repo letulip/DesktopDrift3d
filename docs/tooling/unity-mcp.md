@@ -1,6 +1,7 @@
 # Unity MCP и CLI (проект уровня репозитория)
 
-Статус: проверено вживую (резидентный headless-редактор 6000.3.27f1, Pipeline 0.9.1-exp.1).
+Статус: проверено вживую на headless-резиденте (27.10) и на GUI-редакторе (28.10, после принятия владельцем Software
+Terms) – 6000.3.27f1, Pipeline 0.9.1-exp.1.
 
 ## Что настроено
 - `.mcp.json` в корне репо: сервер `unity-editor-mcp` = `unity mcp --project-path "$PWD/unity"` (через `sh -c`, подгружает `~/.unity/env`).
@@ -11,7 +12,7 @@
 ## Открыть / закрыть редактор
 Перед каждым вызовом: `source ~/.unity/env; export UNITY_NO_BANNER=1 UNITY_NON_INTERACTIVE=1 UNITY_NO_PAGER=1`.
 
-(а) GUI – только после того как владелец один раз откроет Unity в GUI и примет Software Terms:
+(а) GUI (Software Terms приняты владельцем 28.10; до этого `unity open` висел в их модальном окне):
 ```
 unity open unity
 unity status --until-ready --project-path "$PWD/unity" --timeout 600
@@ -47,7 +48,11 @@ scripts/compile.sh 2>&1 | tail -4        # живая ветка: unity recompil
 
 Все – через `unity command --project-path "$PWD/unity" <имя> …`. Старые плоские имена (`eval`, `editor_play`, `capture_game_view`, `set_autotick`) – устаревшие алиасы.
 
-## Только по решению владельца (не применено)
+## Глобальные записи – разрешены владельцем 28.10, не применены решением архитектора (D-20 №2–3)
+Причины: проектный `.mcp.json` покрывает все сессии Claude Code в репозитории и его worktree; глобальная запись
+привязана к пути одного проекта и поднимала бы сервер в каждой сессии любого проекта; Claude Desktop получил бы 166
+схем инструментов в каждый чат. Команды – на случай, если Unity понадобится из обычного чата.
+
 Глобальная запись для Claude Code (`unity mcp configure claude-code --dry-run`):
 ```
 Running: claude mcp add --scope user --transport stdio unity-editor-mcp unity mcp -- --project-path /Users/letulip/Projects/Claude/DesktopDrift3d/unity
@@ -69,7 +74,8 @@ Would write to: /Users/letulip/Library/Application Support/Claude/claude_desktop
 }
 ```
 - `unity skill install claude-code` – пишет навык в `~/.claude/skills/unity-cli` (глобально).
-- `unity setup claude` – ставит плагин Unity с навыками в Claude Code (глобально).
+- `unity setup claude` = `claude plugin marketplace add Unity-Technologies/unity-agent-plugin --scope user` +
+  `claude plugin install unity@unity-agent-plugin --scope user` – бета-плагин в user-scope, во всех сессиях Claude Code на маке.
 
 ## Находки
 - Зависание GUI-запуска: `unity open unity` стоял в модальном окне «Unity Software Terms» (стек `SoftwareTermsWindow::EnsureTheUserHasAcceptedSoftwareTerms`), которое принять может только владелец; процесс крутился на ~99% CPU, проект не грузился, `unity status --until-ready` не видел инстансов. Диагностика: `sample <pid>`. Закрыто: `unity close unity --force`. Batchmode окно не показывает.
@@ -78,3 +84,8 @@ Would write to: /Users/letulip/Library/Application Support/Claude/claude_desktop
 - `capture game_view --save_path` всегда разрешается внутри `Assets/`, даже для абсолютного пути.
 - `unity open` пишет «"unity" was not found in the Hub project registry, opening as a file path» – безвредно; блокирует вызов дольше 120 с.
 - `COMPILE_WARNINGS` в `scripts/compile.sh` берётся из поля `warnings` JSON, а не подсчётом строк.
+- GUI-путь (28.10): `unity open unity` → `unity status --until-ready` ready за 6 с; `unity recompile` сразу после этого
+  возвращает код 6 без ошибок CS (первая компиляция ещё идёт), через ~20 с – `status: up_to_date`; `compile.sh` повторяет
+  до 6×5 с. `capture game_view --source screen` в GUI работает (1920×1080). В GUI без фокуса окна play mode почти не тикает
+  (`frameCount` 2→2 между двумя чтениями, `editor set_auto_tick` не спасает) – снимки корректны, покадровые проверки делать
+  на headless-резиденте. `unity close unity` закрывает GUI graceful.
