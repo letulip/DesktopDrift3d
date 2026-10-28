@@ -60,6 +60,17 @@ namespace DesktopDrift.Editor
                 ("carsJson", Json("cars.json")), ("registryJson", Json("car-registry.json")), ("configJson", Json("config.json")),
                 ("tracksJson", Json("tracks.json")), ("shopJson", Json("shop.json")));
 
+            const string presetPath = "Assets/Content/Camera/Default.asset";
+            var preset = AssetDatabase.LoadAssetAtPath<CameraPreset>(presetPath);
+            if (preset == null)
+            {
+                if (!AssetDatabase.IsValidFolder("Assets/Content/Camera")) AssetDatabase.CreateFolder("Assets/Content", "Camera");
+                preset = ScriptableObject.CreateInstance<CameraPreset>();
+                AssetDatabase.CreateAsset(preset, presetPath);
+            }
+            var rig = camGo.AddComponent<CameraRig>();
+            SetRefs(rig, ("preset", preset), ("cam", cam), ("carView", carView), ("loop", race));
+
             Directory.CreateDirectory(Path.GetDirectoryName(ScenePath)!);
             if (!EditorSceneManager.SaveScene(scene, ScenePath)) throw new Exception("SaveScene failed: " + ScenePath);
             EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(ScenePath, true) };
