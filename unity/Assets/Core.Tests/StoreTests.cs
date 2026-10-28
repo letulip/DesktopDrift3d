@@ -238,6 +238,7 @@ namespace DesktopDrift.Core.Tests
         public void Ledger_AddTiresRecordsASignedEntryWithReasonAndResultingBalance()
         {
             SaveState s = Fresh();
+            s.NowMs = () => 1700000000000; // JS: Date.now() > 0 (Core has no clock – injected here, see SaveState.NowMs)
             int before = s.Ledger().Count;
             s.AddTires(7, "Test reward");
             Dictionary<string, object?> last = Last(s);
