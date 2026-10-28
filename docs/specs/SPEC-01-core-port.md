@@ -177,4 +177,9 @@ SPEC-00 (контур), SPEC-02 (потребитель `RaceRules`), SPEC-03 (`
    `engine.json` даёт 9 констант замыкания `game-engine.js` (включая `MULT_RESET_GRACE 1.2`, `ZONE_STALL 3`).
 5. Шаг 2: JS `Math.round` ≠ C# `Math.Round` (банковское) – введён `CoreMath.JsRound = floor(x+0.5)`;
    `grep Math.Round` в Core запрещён гейтом.
+6. Шаг 4b: строгость `ParseSvgPath` из п. 2 ОТКАЧЕНА – `cafe-marble.svg` несёт две команды `C` в `track_path`,
+   живая игра молча берёт их числа как вершины; порт дословный. Эталоны: `linkedom` 0.18.14 без обходов,
+   паритет `TrackBuilder.FromSvg` ↔ JS 12/12 (6 трасс + реверс) при 1e-6, `toFixed(3)` ⇒ `Math.Round(…, 3,
+   AwayFromZero)` без расхождений; три proxy-линии с незапечённым `transform` пропускаются на обеих сторонах
+   (вопрос №2 владельцу). `XmlDocument.GetElementById` требует DTD – обход по `GetElementsByTagName("*")`.
 
