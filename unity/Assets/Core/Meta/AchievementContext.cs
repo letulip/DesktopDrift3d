@@ -20,7 +20,7 @@ namespace DesktopDrift.Core
         public List<string> OwnedCars = new List<string>();                          // ctx.ownedCars
         public List<string> Cleared = new List<string>();                            // ctx.cleared
         public Dictionary<string, double> Records = new Dictionary<string, double>(); // ctx.records (FLATTENED: instance id -> bestPPS)
-        public Dictionary<string, List<double>> Caps = new Dictionary<string, List<double>>(); // ctx.caps (track id -> collected cap indices)
+        public Dictionary<string, List<object?>> Caps = new Dictionary<string, List<object?>>(); // ctx.caps (track id -> collected cap keys; only .length is read)
         public LifetimeStats Lifetime = new LifetimeStats();                         // ctx.lifetime
         public ContentDescriptor Content = new ContentDescriptor();                  // ctx.content
     }

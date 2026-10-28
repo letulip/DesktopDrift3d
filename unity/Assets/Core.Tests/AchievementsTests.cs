@@ -51,7 +51,7 @@ namespace DesktopDrift.Core.Tests
 
         private static AchievementContext Ctx(RunStats? run = null, double wallet = 0,
             string[]? owned = null, string[]? ownedCars = null, IEnumerable<string>? cleared = null,
-            Dictionary<string, double>? records = null, Dictionary<string, List<double>>? caps = null,
+            Dictionary<string, double>? records = null, Dictionary<string, List<object?>>? caps = null,
             double runs = 0, double driftSecs = 0)
         {
             return new AchievementContext
@@ -61,7 +61,7 @@ namespace DesktopDrift.Core.Tests
                 OwnedCars = ownedCars != null ? ownedCars.ToList() : new List<string>(),
                 Cleared = cleared != null ? cleared.ToList() : new List<string>(),
                 Records = records ?? new Dictionary<string, double>(),
-                Caps = caps ?? new Dictionary<string, List<double>>(),
+                Caps = caps ?? new Dictionary<string, List<object?>>(),
                 Lifetime = new AchievementContext.LifetimeStats { Runs = runs, DriftSecs = driftSecs },
                 Run = run,
             };
@@ -289,8 +289,8 @@ namespace DesktopDrift.Core.Tests
         [Test]
         public void SodaPop_AnyCapCollected()
         {
-            Assert.That(Firing(Ctx(caps: new Dictionary<string, List<double>>())), Does.Not.Contain("soda-pop"));
-            Assert.That(Firing(Ctx(caps: new Dictionary<string, List<double>> { { "green-study", new List<double> { 0 } } })), Does.Contain("soda-pop"));
+            Assert.That(Firing(Ctx(caps: new Dictionary<string, List<object?>>())), Does.Not.Contain("soda-pop"));
+            Assert.That(Firing(Ctx(caps: new Dictionary<string, List<object?>> { { "green-study", new List<object?> { 0 } } })), Does.Contain("soda-pop"));
         }
 
         // big-spender / fashionista / well-rounded on the purchase-eval (run:null)
@@ -360,14 +360,14 @@ namespace DesktopDrift.Core.Tests
         [Test]
         public void ColaCollector_CapOnEveryForwardTrack()
         {
-            Assert.That(Firing(Ctx(caps: new Dictionary<string, List<double>>
+            Assert.That(Firing(Ctx(caps: new Dictionary<string, List<object?>>
             {
-                { "green-study", new List<double> { 0 } }, { "steel-kitchen", new List<double> { 0 } },
+                { "green-study", new List<object?> { 0 } }, { "steel-kitchen", new List<object?> { 0 } },
             })), Does.Not.Contain("cola-collector"));
-            Assert.That(Firing(Ctx(caps: new Dictionary<string, List<double>>
+            Assert.That(Firing(Ctx(caps: new Dictionary<string, List<object?>>
             {
-                { "green-study", new List<double> { 0 } }, { "steel-kitchen", new List<double> { 0 } },
-                { "workbench", new List<double> { 0 } },
+                { "green-study", new List<object?> { 0 } }, { "steel-kitchen", new List<object?> { 0 } },
+                { "workbench", new List<object?> { 0 } },
             })), Does.Contain("cola-collector"));
         }
 

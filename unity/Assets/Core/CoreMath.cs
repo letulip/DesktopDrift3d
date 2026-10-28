@@ -35,10 +35,12 @@ namespace DesktopDrift.Core
             return Math.Sqrt(sum) * max;
         }
 
-        // JS Math.round: half rounds toward +∞ (C# Math.Round is banker's rounding – never use it for parity)
+        // JS Math.round: half rounds toward +∞ (C# Math.Round is banker's rounding – never use it for parity).
+        // Not floor(x + 0.5): that addition rounds 0.49999999999999994 up to 1 and odd integers >= 2^52 up by one.
         public static double JsRound(double x)
         {
-            return Math.Floor(x + 0.5);
+            double f = Math.Floor(x);
+            return (x - f) >= 0.5 ? f + 1 : f;
         }
     }
 }

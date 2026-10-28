@@ -201,5 +201,49 @@ namespace DesktopDrift.Core.Tests
             Assert.AreEqual(1, Of(r.Stop(), RaceEvent.EventKind.GameplayStop).Count, "paired stop");
             Assert.AreEqual(0, Of(r.Stop(), RaceEvent.EventKind.GameplayStop).Count, "exactly once");
         }
+
+        // И1: game-engine.js:596 – the finish calls stop(); the rAF is cancelled, so no later frame runs.
+        [Test]
+        public void Step_AfterFinished_ChangesNothingAndPaysNothing()
+        {
+            TrackData track = OvalTrack.Build();
+            track.Id = "oval-test";
+            SaveState save = SaveSchema.Load(null).State;
+            RaceRules r = Racing(new RaceOptions { Laps = 1 }, track, save);
+            r.State.NextCp = 0; r.State.Score = 500; r.State.LapTime = 10;
+            double c = Math.Cos(track.StartAngle), s = Math.Sin(track.StartAngle);
+            Place(r, track.StartPos.X - c * 40, track.StartPos.Y - s * 40, track.StartAngle);
+            r.Step(0, Dt);
+            Place(r, track.StartPos.X + c * 40, track.StartPos.Y + s * 40, track.StartAngle, 300, 0);
+            Assert.AreEqual(1, Of(r.Step(0, Dt), RaceEvent.EventKind.Finished).Count);
+            int wallet = save.Wallet(), ledger = save.Ledger().Count, lapNum = r.State.LapNum;
+            double x = r.State.Car.X;
+            r.State.NextCp = 0;   // even with the finish line armed again
+            for (int f = 0; f < 120; f++) Assert.IsEmpty(r.Step(1, Dt), "no events after the finish");
+            Assert.AreEqual(wallet, save.Wallet(), "wallet");
+            Assert.AreEqual(ledger, save.Ledger().Count, "ledger");
+            Assert.AreEqual(lapNum, r.State.LapNum, "lapNum");
+            Assert.AreEqual(x, r.State.Car.X, "car frozen");
+        }
+
+        // И2: game-engine.js:99-101 – a cap counts as collected under c.capId ?? i, the old "x,y" key or the index i.
+        [TestCase("capId")]
+        [TestCase("coord")]
+        [TestCase("index")]
+        public void Caps_RestoredByCapIdCoordinateOrIndex(string format)
+        {
+            TrackData track = TrackBuilderParityTests.Build("green-study");
+            int cola = track.Collectibles.FindIndex(k => k.Kind == "cola");
+            int tire = track.Collectibles.FindIndex(k => k.Kind == "tire");
+            Collectible cap = track.Collectibles[cola], tt = track.Collectibles[tire];
+            object Key(Collectible k, int i) => format == "capId" ? k.CapId
+                : format == "coord" ? TrackUtil.JsNumber(k.X) + "," + TrackUtil.JsNumber(k.Y) : (object)(double)i;
+            SaveState save = SaveSchema.Load(null).State;
+            save.CapCollect("green-study", Key(cap, cola));
+            save.CapCollect("green-study", Key(tt, tire));
+            RaceRules r = Make(new RaceOptions { InitItems = true }, track, save);
+            for (int i = 0; i < r.State.Caps.Count; i++)
+                Assert.AreEqual(i == cola || i == tire, r.State.Caps[i].Collected, format + ": caps[" + i + "]");
+        }
     }
 }

@@ -301,7 +301,7 @@ namespace DesktopDrift.Core
         }
 
         // JS template-literal number formatting (`${t.x}`), for the legacy "x,y" coordinate keys.
-        private static string JsNumber(double v)
+        internal static string JsNumber(double v)
         {
             if (v == Math.Floor(v) && Math.Abs(v) < 1e15) return ((long)v).ToString(CultureInfo.InvariantCulture);
             return v.ToString("R", CultureInfo.InvariantCulture);

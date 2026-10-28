@@ -88,13 +88,17 @@ namespace DesktopDrift.Core
             S.Car.X = _t.StartPos.X; S.Car.Y = _t.StartPos.Y; S.Car.Angle = _t.StartAngle;
             S.Car.Vx = 0; S.Car.Vy = 0;
 
-            // S.caps: restore previously collected CAPS (tires respawn every race). SaveState stores the
-            // collected entries as numeric indices only, so of the JS multi-format lookup (capId,
-            // `${x},${y}`, i) only the index form exists here.
-            var prevCollected = new HashSet<int>(_save.CollectedCaps(S.Instance));
+            // S.caps: restore previously collected CAPS (tires respawn every race). Multi-format lookup
+            // (lines 99-101) so no save format silently loses collected state: c.capId ?? i, the old
+            // `${c.x},${c.y}` coordinate key, the oldest numeric index i. The store keeps the raw entries
+            // (strings and numbers), Set.has = SameValueZero = object.Equals on boxed double / string.
+            List<object?> prevCollected = _save.CollectedCaps(S.Instance);
             for (int i = 0; i < _t.Collectibles.Count; i++)
             {
-                bool wasCollected = prevCollected.Contains(i);
+                Collectible c = _t.Collectibles[i];
+                bool wasCollected = prevCollected.Contains(CapKey(c, i))
+                    || prevCollected.Contains(TrackUtil.JsNumber(c.X) + "," + TrackUtil.JsNumber(c.Y))
+                    || prevCollected.Contains((double)i);
                 S.Caps.Add(new RaceState.CapState { TrackId = S.Instance, Sweep = 0, PrevAng = null, Collected = wasCollected, Pop = 0 });
             }
 
@@ -110,6 +114,12 @@ namespace DesktopDrift.Core
             _finishSin = Math.Sin(_t.StartAngle);
             _c0 = _t.Checkpoints[0];
             S.PrevFinishDot = null;
+        }
+
+        // JS `c.capId ?? i`: TrackBuilder always sets capId; an empty CapId stands for an absent one.
+        private static object CapKey(Collectible c, int i)
+        {
+            return c.CapId.Length > 0 ? (object)c.CapId : (double)i;
         }
 
         // ─── Helpers (lines 108–156) ─────────────────────────────────────────────
@@ -251,7 +261,7 @@ namespace DesktopDrift.Core
                     RaceEvent e = Emit(RaceEvent.EventKind.CapCollected); // sfx.cap()
                     e.Index = i;
                     e.Number = CapTireValue;
-                    _save.CapCollect(S.Instance, i);    // JS: c.capId ?? i – SaveState keys caps by index
+                    _save.CapCollect(S.Instance, CapKey(c, i));   // capCollect(INSTANCE, c.capId ?? i)
                 }
             }
         }
@@ -311,14 +321,7 @@ namespace DesktopDrift.Core
             foreach (Cone c in S.Cones) if (c.Knocked) conesHit++;
             int tireTotal = 0;
             foreach (Collectible c in _t.Collectibles) if (c.Kind == "tire") tireTotal++;
-            var caps = new Dictionary<string, List<double>>();
-            if (st.TryGetValue("caps", out object? co) && co is Dictionary<string, object?> capsObj)
-                foreach (KeyValuePair<string, object?> kv in capsObj)
-                {
-                    var l = new List<double>();
-                    if (kv.Value is List<object?> arr) foreach (object? o in arr) if (o is double x) l.Add(x);
-                    caps[kv.Key] = l;
-                }
+            Dictionary<string, List<object?>> caps = _save.CapsMap();
             var ctx = new AchievementContext
             {
                 Run = new RunStats
@@ -365,6 +368,8 @@ namespace DesktopDrift.Core
         {
             _ev = new List<RaceEvent>();
             RaceState S = State;
+            // Line 596: the finish calls stop() and cancels the rAF – no frame ever runs after it.
+            if (S.RaceFinished) return _ev;
             CarState car = S.Car;
             if (dt > MaxDt) dt = MaxDt;
 

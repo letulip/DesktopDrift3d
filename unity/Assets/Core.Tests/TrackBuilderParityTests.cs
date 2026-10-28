@@ -9,6 +9,9 @@ namespace DesktopDrift.Core.Tests
 {
     // Gate: TrackBuilder.FromSvg rebuilds each track from the 2D game's SVG and matches tools/tracks-ref/<id>[.rev].json
     // (produced by tools/export-tracks.mjs from the 2D game's own makeTrack) within 1e-6.
+    // The 2D repository (DESKTOPDRIFT_DIR, default /Users/letulip/Projects/Claude/DesktopDrift) is REQUIRED: without it
+    // every test here FAILS. Only DD3D_SKIP_2D_PARITY=1 in the environment turns that into an explicit Ignore
+    // (a machine without the 2D checkout, e.g. CI) – the track parity is then NOT checked.
     [TestFixture]
     public class TrackBuilderParityTests
     {
@@ -18,7 +21,11 @@ namespace DesktopDrift.Core.Tests
         {
             string dd = Environment.GetEnvironmentVariable("DESKTOPDRIFT_DIR") ?? "/Users/letulip/Projects/Claude/DesktopDrift";
             if (!Directory.Exists(dd))
-                Assert.Ignore("!!! DesktopDrift 2D source directory not found: '" + dd + "' (set DESKTOPDRIFT_DIR) – TRACK PARITY NOT CHECKED !!!");
+            {
+                string msg = "DesktopDrift 2D source directory not found: '" + dd + "' (set DESKTOPDRIFT_DIR) – TRACK PARITY NOT CHECKED";
+                if (Environment.GetEnvironmentVariable("DD3D_SKIP_2D_PARITY") == "1") Assert.Ignore(msg + " (DD3D_SKIP_2D_PARITY=1)");
+                Assert.Fail(msg + ". Set DD3D_SKIP_2D_PARITY=1 to skip explicitly.");
+            }
             return dd;
         }
 

@@ -90,7 +90,7 @@ namespace DesktopDrift.Core
 
         private static bool CapCollected(AchievementContext x, string trackId)
         {
-            return x.Caps.TryGetValue(trackId, out List<double>? a) && a != null && a.Count > 0;
+            return x.Caps.TryGetValue(trackId, out List<object?>? a) && a != null && a.Count > 0;
         }
 
         // Wraps a boolean check: true -> CheckResult.True, otherwise nothing.

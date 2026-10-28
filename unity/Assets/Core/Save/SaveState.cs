@@ -135,27 +135,38 @@ namespace DesktopDrift.Core
         }
 
         // ── caps ────────────────────────────────────────────────────────────────
-        // A copy of the collected cap indices for a track (empty if none yet).
-        public List<int> CollectedCaps(string trackId)
+        // store.js collectedCaps: the raw collected entries for a track (empty if none yet) – a copy.
+        // Entries are whatever capCollect stored: capId strings ("x,y" for caps, "t<k>" for tires), or
+        // numeric indices (double) from the oldest saves.
+        public List<object?> CollectedCaps(string trackId)
         {
             Dictionary<string, object?> caps = DictIn(Stats(), "caps");
-            var r = new List<int>();
-            if (caps.TryGetValue(trackId, out object? v) && v is List<object?> arr)
-                foreach (object? o in arr) r.Add((int)Num(o));
-            return r;
+            return caps.TryGetValue(trackId, out object? v) && v is List<object?> arr ? new List<object?>(arr) : new List<object?>();
         }
 
-        // No-op if already recorded.
-        public void CapCollect(string trackId, int idx)
+        // store.js capCollect: appends the key (`!arr.includes(idx)` – SameValueZero, here object.Equals on a
+        // boxed double or a string). Integers are stored as double, like every JSON number. No-op if present.
+        public void CapCollect(string trackId, object key)
         {
+            object boxed = key is int k ? (double)k : key;
             Dictionary<string, object?> caps = DictIn(Stats(), "caps");
             List<object?> arr = ListIn(caps, trackId);
-            object boxed = (double)idx;
             if (!arr.Contains(boxed))
             {
                 arr.Add(boxed);
                 Save();
             }
+        }
+
+        // ctx.caps for the achievement checks: stats.caps as it is (track id -> raw collected entries);
+        // achievements.js only reads `.length` of each list.
+        public Dictionary<string, List<object?>> CapsMap()
+        {
+            var r = new Dictionary<string, List<object?>>();
+            if (Stats().TryGetValue("caps", out object? c) && c is Dictionary<string, object?> caps)
+                foreach (KeyValuePair<string, object?> kv in caps)
+                    if (kv.Value is List<object?> arr) r[kv.Key] = new List<object?>(arr);
+            return r;
         }
 
         // ── Tire-coin economy ───────────────────────────────────────────────────

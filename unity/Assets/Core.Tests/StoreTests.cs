@@ -123,7 +123,7 @@ namespace DesktopDrift.Core.Tests
         {
             SaveState s = Fresh();
             s.CapCollect("green-study", 0);
-            Assert.That(s.CollectedCaps("green-study"), Is.EqualTo(new[] { 0 }));
+            Assert.That(s.CollectedCaps("green-study"), Is.EqualTo(new object[] { 0.0 }));
         }
 
         [Test]
@@ -133,7 +133,7 @@ namespace DesktopDrift.Core.Tests
             s.CapCollect("green-study", 0);
             int rev = s.Revision;
             s.CapCollect("green-study", 0);
-            Assert.That(s.CollectedCaps("green-study"), Is.EqualTo(new[] { 0 }));
+            Assert.That(s.CollectedCaps("green-study"), Is.EqualTo(new object[] { 0.0 }));
             Assert.That(s.Revision, Is.EqualTo(rev)); // nothing to persist
         }
 
@@ -143,7 +143,21 @@ namespace DesktopDrift.Core.Tests
             SaveState s = Fresh();
             s.CapCollect("green-study", 0);
             s.CapCollect("green-study", 2);
-            Assert.That(s.CollectedCaps("green-study"), Is.EqualTo(new[] { 0, 2 }));
+            Assert.That(s.CollectedCaps("green-study"), Is.EqualTo(new object[] { 0.0, 2.0 }));
+        }
+
+        [Test]
+        public void CapCollect_StoresTheCapIdStringLikeTheJs()
+        {
+            // game-engine.js:201 capCollect(INSTANCE, c.capId ?? i) – the cola cap's capId is its "x,y" key.
+            SaveState s = Fresh();
+            s.CapCollect("green-study", "-852,15");
+            int rev = s.Revision;
+            s.CapCollect("green-study", "-852,15");
+            Assert.That(s.Revision, Is.EqualTo(rev), "already recorded");
+            Assert.That(s.CollectedCaps("green-study"), Is.EqualTo(new object[] { "-852,15" }));
+            Assert.That(Json.Serialize(s.Stats()["caps"]), Is.EqualTo("{\"green-study\":[\"-852,15\"]}"));
+            Assert.That(s.CapsMap()["green-study"].Count, Is.EqualTo(1), "achievements count string entries");
         }
 
         [Test]

@@ -20,7 +20,7 @@ namespace DesktopDrift.Core
                 OwnedCars = Strings(s.OwnedCars()),
                 Cleared = st.TryGetValue("cleared", out object? cl) && cl is List<object?> cll ? Strings(cll) : new List<string>(),
                 Records = Achievements.FlattenRecords(s.Records()),
-                Caps = CapsOf(st),
+                Caps = s.CapsMap(),
                 Lifetime = new AchievementContext.LifetimeStats { Runs = Num(st, "runs"), DriftSecs = Num(st, "driftSecs") },
                 Content = content,
             };
@@ -55,19 +55,6 @@ namespace DesktopDrift.Core
         private static double Num(Dictionary<string, object?> d, string key)
         {
             return d.TryGetValue(key, out object? v) && v is double x ? x : 0;
-        }
-
-        private static Dictionary<string, List<double>> CapsOf(Dictionary<string, object?> st)
-        {
-            var r = new Dictionary<string, List<double>>();
-            if (st.TryGetValue("caps", out object? c) && c is Dictionary<string, object?> caps)
-                foreach (KeyValuePair<string, object?> kv in caps)
-                {
-                    var l = new List<double>();
-                    if (kv.Value is List<object?> arr) foreach (object? o in arr) if (o is double x) l.Add(x);
-                    r[kv.Key] = l;
-                }
-            return r;
         }
     }
 }
