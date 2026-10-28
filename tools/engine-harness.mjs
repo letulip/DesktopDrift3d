@@ -5,6 +5,9 @@
 //
 //   node tools/engine-harness.mjs oval          # sandbox oval, laps 2, frame cap 3600
 //   node tools/engine-harness.mjs green-study   # registered track, its own laps, frame cap 14400
+//   node tools/engine-harness.mjs green-study-rev       # reversed, seeded record + first clear done
+//   node tools/engine-harness.mjs green-study-zen-cap   # zen, car parked at a cola cap, full lock, 900 frames
+//   node tools/engine-harness.mjs oval-sandbox          # laps 0 (infinite), exactly 1200 frames
 //
 // One track per process: store.js caches the save at module level, so each race starts from the
 // same seeded localStorage.
@@ -16,9 +19,21 @@ import { DOMParser, parseHTML } from 'linkedom';
 
 const DD = process.env.DESKTOPDRIFT_DIR ?? '/Users/letulip/Projects/Claude/DesktopDrift';
 const TRACK = process.argv[2];
+// Run table. `save` is merged into the seeded save; `fixed` runs exactly `cap` frames (no stop on
+// finish); `donut` teleports the car next to the first cola cap at GO and holds `key` (full lock)
+// for the whole run instead of the autopilot. `reversed` mounts reverseTrack(T) like js/screens/game.js.
 const RUNS = {
   oval: { module: 'js/track-oval.js', opts: { laps: 2, stock: true, initItems: false }, cap: 60 * 60 },
   'green-study': { module: 'js/track-green-study.js', opts: { initItems: true }, cap: 240 * 60 },
+  'green-study-rev': { module: 'js/track-green-study.js', opts: { initItems: true, reversed: true }, cap: 240 * 60,
+    save: { wallet: 100,
+      records: { 'green-study:rev': { timeattack: { bestPPS: 50, bestPPSTotal: 3000, bestPPSTime: 60 } } },
+      stats: { cleared: ['green-study:rev'] } } },
+  'green-study-zen-cap': { module: 'js/track-green-study.js', opts: { initItems: true, zen: true }, cap: 900, fixed: true,
+    // ArrowLeft turns counter-clockwise on screen (angle decreases): heading -PI/2 from cap+(140,100)
+    // puts the steady drift circle (r ~115, its centre creeping ~25 units per loop) over the cap ring.
+    donut: { dx: 140, dy: 100, angle: -Math.PI / 2, key: 'ArrowLeft' } },
+  'oval-sandbox': { module: 'js/track-oval.js', opts: { laps: 0, stock: true, initItems: false }, cap: 1200, fixed: true },
 };
 if (!RUNS[TRACK]) throw new Error(`usage: engine-harness.mjs ${Object.keys(RUNS).join('|')}`);
 const RUN = RUNS[TRACK];
@@ -72,7 +87,7 @@ const canvasProto = (window.HTMLCanvasElement ?? globalThis.HTMLCanvasElement)?.
 if (canvasProto) Object.defineProperty(canvasProto, 'getContext', { value: () => sink, configurable: true, writable: true });
 
 // localStorage: the Map stub of DesktopDrift/tests/helpers.js, seeded with sound + haptics off.
-const SAVE_SEED = { version: 4, settings: { units: 'kmh', haptics: false, soundEnabled: false, volume: 1.0 } };
+const SAVE_SEED = { version: 4, settings: { units: 'kmh', haptics: false, soundEnabled: false, volume: 1.0 }, ...RUN.save };
 const { installLocalStorage } = await import(pathToFileURL(join(DD, 'tests/helpers.js')).href);
 installLocalStorage({ 'desktop-drift': JSON.stringify(SAVE_SEED) });
 window.localStorage = globalThis.localStorage;
@@ -106,13 +121,15 @@ const imp = (rel) => import(pathToFileURL(join(DD, rel)).href);
 const { startGame } = await imp('js/game-engine.js');
 const { car, S, keys, pointers } = await imp('js/state.js');
 const { resolveSteer } = await imp('js/input.js');
-const { nearestCenter } = await imp('js/track-util.js');
+const { nearestCenter, reverseTrack, instanceId } = await imp('js/track-util.js');
 const store = await imp('js/store.js');
-const T = await imp(RUN.module);
+const ZEN = !!RUN.opts.zen, REV = !!RUN.opts.reversed;
+const mod = await imp(RUN.module);
+const T = REV ? reverseTrack(mod) : mod;
 
 const commit = execFileSync('git', ['-C', DD, 'rev-parse', 'HEAD']).toString().trim();
 const walletStart = store.wallet();
-const opts = { ...RUN.opts, zen: false, reversed: false, onExit: () => {}, onRestart: () => {} };
+const opts = { ...RUN.opts, zen: ZEN, reversed: REV, onExit: () => {}, onRestart: () => {} };
 const rafBefore = rafId;
 startGame(T, opts);
 let engineFrame = null;                       // the engine's frame(): the last rAF startGame queued
@@ -133,16 +150,32 @@ let nearIdx = 0;
 let frame = 0;
 const W = window.innerWidth;
 
-while (frame < RUN.cap && !finished()) {
-  // Autopilot: steer toward the centerline point LOOKAHEAD indices past the nearest one.
-  const nc = nearestCenter(car.x, car.y, T.center, nearIdx);
-  nearIdx = nc.idx;
-  const tgt = T.center[(nearIdx + LOOKAHEAD) % T.center.length];
-  const hx = Math.cos(car.angle), hy = Math.sin(car.angle);
-  const tx = tgt.x - car.x, ty = tgt.y - car.y;
-  const err = Math.atan2(hx * ty - hy * tx, hx * tx + hy * ty);
-  keys['ArrowLeft'] = err < -DEAD_BAND;
-  keys['ArrowRight'] = err > DEAD_BAND;
+const D = RUN.donut;
+const donutIdx = D ? (T.collectibles ?? []).findIndex((c) => c.kind === 'cola') : -1;
+if (D && donutIdx < 0) throw new Error('donut run: the track has no cola cap');
+let donutFrame = null;                        // frames already stepped when the car was teleported
+
+while (frame < RUN.cap && (RUN.fixed || !finished())) {
+  if (D) {
+    // Donut: at the first frame after GO, park the car beside the cap; full lock for the whole run.
+    if (donutFrame === null && S.startCd <= 0) {
+      const c = T.collectibles[donutIdx];
+      car.x = c.x + D.dx; car.y = c.y + D.dy; car.angle = D.angle; car.vx = 0; car.vy = 0;
+      donutFrame = frame;
+    }
+    keys['ArrowLeft'] = D.key === 'ArrowLeft';
+    keys['ArrowRight'] = D.key === 'ArrowRight';
+  } else {
+    // Autopilot: steer toward the centerline point LOOKAHEAD indices past the nearest one.
+    const nc = nearestCenter(car.x, car.y, T.center, nearIdx);
+    nearIdx = nc.idx;
+    const tgt = T.center[(nearIdx + LOOKAHEAD) % T.center.length];
+    const hx = Math.cos(car.angle), hy = Math.sin(car.angle);
+    const tx = tgt.x - car.x, ty = tgt.y - car.y;
+    const err = Math.atan2(hx * ty - hy * tx, hx * tx + hy * ty);
+    keys['ArrowLeft'] = err < -DEAD_BAND;
+    keys['ArrowRight'] = err > DEAD_BAND;
+  }
   const steer = resolveSteer(pointers, keys, W);
 
   simNow += FRAME_MS;
@@ -154,7 +187,7 @@ while (frame < RUN.cap && !finished()) {
   const caps = capIdx.map((i) => [S.caps[i].sweep, S.caps[i].collected]);
   frames.push([steer, car.x, car.y, car.angle, car.vx, car.vy, ...S_FIELDS.map((k) => S[k]),
     T.cones.filter((c) => c.knocked).length, store.wallet(), caps]);
-  if (S.flashMsg !== prevFlash || S.flashT > prevFlashT) events.push([frame, S.flashMsg]);
+  if (S.flashMsg !== prevFlash || S.flashT > prevFlashT) events.push([frame, S.flashMsg, S.flashColor]);
   prevFlash = S.flashMsg; prevFlashT = S.flashT;
 }
 
@@ -166,7 +199,7 @@ const final = {
   score: Math.round(S.score),
   lapScores: S.lapScores.map((l) => ({ ...l })),
   bestLap: S.bestLap,
-  record: T.id ? (store.records()[T.id] ?? null) : null,
+  record: T.id ? (store.records()[instanceId(T.id, REV)] ?? null) : null,
   walletStart,
   walletEnd: store.wallet(),
   walletDelta: store.wallet() - walletStart,
@@ -174,13 +207,20 @@ const final = {
   achievements: [...store.achUnlocked()].sort(),
   conesKnocked: T.cones.filter((c) => c.knocked).length,
   capsCollected: capIdx.filter((i) => S.caps[i].collected).length,
+  // traceVersion 2: the save's stats slice, the achievement map (id -> {unlocked, progress}) and the
+  // whole final save as the store holds it (JSON string), so the replay can diff the full tree.
+  stats: JSON.parse(JSON.stringify(store.stats())),
+  achievementsMap: JSON.parse(JSON.stringify(store.achievements())),
+  save: JSON.stringify(store.snapshot()),
 };
 
 const J = JSON.stringify;
 const out =
   '{\n' +
+  '"traceVersion": 2,\n' +
   `"source": ${J({ commit, track: TRACK, module: RUN.module, laps: T.laps ?? RUN.opts.laps, seed: SEED, rng: 'LCG 1664525/1013904223 mod 2^32' })},\n` +
-  `"opts": ${J({ laps: RUN.opts.laps ?? null, stock: !!RUN.opts.stock, initItems: !!RUN.opts.initItems, zen: false, reversed: false })},\n` +
+  `"opts": ${J({ laps: RUN.opts.laps ?? null, stock: !!RUN.opts.stock, initItems: !!RUN.opts.initItems, zen: ZEN, reversed: REV })},\n` +
+  (D ? `"donut": ${J({ ...D, capIndex: donutIdx, teleportAfterFrame: donutFrame })},\n` : '') +
   `"saveSeed": ${J(SAVE_SEED)},\n` +
   `"clock": ${J({ frameMs: FRAME_MS, dateBase: DATE_BASE, tz: 'UTC' })},\n` +
   `"dt": ${J(1 / 60)},\n` +
