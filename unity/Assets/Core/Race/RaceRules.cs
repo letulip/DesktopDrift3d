@@ -144,7 +144,7 @@ namespace DesktopDrift.Core
 
         private static string Num(double v)
         {
-            return v.ToString("R", CultureInfo.InvariantCulture);
+            return CoreMath.JsNumberToString(v);   // JS string concatenation of a number
         }
 
         private void Flash(string msg, string color)
@@ -523,7 +523,7 @@ namespace DesktopDrift.Core
                     S.LapScores.Add(new RaceState.LapScore { N = S.LapNum, Pts = (int)CoreMath.JsRound(S.Score - S.LapScoreStart), T = S.LapTime });
                     if (S.TotalLaps == 0 && S.LapScores.Count > 3) S.LapScores.RemoveAt(0);
                     S.LapScoreStart = S.Score;
-                    Flash("LAP " + S.LapTime.ToString("F2", CultureInfo.InvariantCulture) + " s", "#9dff8f");
+                    Flash("LAP " + CoreMath.JsToFixed(S.LapTime, 2) + " s", "#9dff8f");   // S.lapTime.toFixed(2)
                     S.LapTime = 0; S.NextCp = 1;
                     // prevFinishDot stays null until the next approach (reset below)
                 }

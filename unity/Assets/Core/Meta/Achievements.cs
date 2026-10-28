@@ -374,12 +374,12 @@ namespace DesktopDrift.Core
 
         private static string FmtMin(double secs)
         {
-            return Math.Floor(secs / 60).ToString("R", CultureInfo.InvariantCulture) + "m";
+            return CoreMath.JsNumberToString(Math.Floor(secs / 60)) + "m";
         }
 
         private static string FmtCount(double n)
         {
-            return n.ToString("R", CultureInfo.InvariantCulture);
+            return CoreMath.JsNumberToString(n);
         }
 
         private static string Int(int n) { return n.ToString(CultureInfo.InvariantCulture); }

@@ -1,6 +1,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using NUnit.Framework;
 
@@ -158,6 +159,38 @@ namespace DesktopDrift.Core.Tests
             Assert.That(n.Anim, Is.EqualTo("none"));
             Assert.That(n.Colors, Is.EqualTo(new[] { "#39FF14" }));
             Assert.That(n.Speed, Is.EqualTo(1.0));
+        }
+
+        // tools/neon-ref.json: zoneColors() of the REAL DesktopDrift/js/neon.js (tools/js-refs.mjs) for per-zone
+        // rainbow / flow / pulse at four t. Every colour string exactly (the hsl hue is printed like JS `${h}`),
+        // intensity within 1e-12. Also runs in Unity EditMode under Mono – that is the point of it.
+        [Test]
+        public void MatchesJsReference()
+        {
+            var root = (Dictionary<string, object?>)Json.Parse(File.ReadAllText(TestPaths.Locate("tools/neon-ref.json")))!;
+            var cases = (List<object?>)root["cases"]!;
+            Assert.AreEqual(12, cases.Count, "cases");
+            foreach (object? co in cases)
+            {
+                var c = (Dictionary<string, object?>)co!;
+                var n = (Dictionary<string, object?>)c["neon"]!;
+                var cfg = new NeonConfig
+                {
+                    Layout = (string)n["layout"]!, Anim = (string)n["anim"]!, Speed = (double)n["speed"]!,
+                    Colors = ((List<object?>)n["colors"]!).Select(x => (string)x!).ToList(),
+                };
+                double t = (double)c["t"]!;
+                var zones = (List<object?>)c["zones"]!;
+                List<ZoneColor> got = Neon.ZoneColors(cfg, t);
+                Assert.AreEqual(zones.Count, got.Count, cfg.Anim + " t=" + t);
+                for (int i = 0; i < zones.Count; i++)
+                {
+                    var z = (List<object?>)zones[i]!;
+                    string at = cfg.Anim + " t=" + t + " zone " + i;
+                    Assert.AreEqual((string)z[0]!, got[i].Color, at + " color");
+                    Assert.That(got[i].Intensity, Is.EqualTo((double)z[1]!).Within(1e-12), at + " intensity");
+                }
+            }
         }
     }
 }

@@ -138,8 +138,8 @@ namespace DesktopDrift.Core
                 // Skip malformed proxy lines whose coords aren't finite (e.g. an un-baked transform).
                 if (double.IsNaN(gp.X) || double.IsInfinity(gp.X) || double.IsNaN(gp.Y) || double.IsInfinity(gp.Y)) continue;
                 double ang = Math.Atan2(-(py2 - py1), px2 - px1);
-                // JS parseFloat(ang.toFixed(3)): decimal rounding, ties away from zero.
-                double ang3 = Math.Round(ang, 3, MidpointRounding.AwayFromZero);
+                // JS parseFloat(ang.toFixed(3)) – exact toFixed on the binary value.
+                double ang3 = CoreMath.JsToFixedNumber(ang, 3);
                 props.Add(Prop.Prepared(CoreMath.JsRound(gp.X), CoreMath.JsRound(gp.Y), ang3, item.Hl, item.R, item.Kind));
             }
 

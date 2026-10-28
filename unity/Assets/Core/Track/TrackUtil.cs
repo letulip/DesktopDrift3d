@@ -303,8 +303,7 @@ namespace DesktopDrift.Core
         // JS template-literal number formatting (`${t.x}`), for the legacy "x,y" coordinate keys.
         internal static string JsNumber(double v)
         {
-            if (v == Math.Floor(v) && Math.Abs(v) < 1e15) return ((long)v).ToString(CultureInfo.InvariantCulture);
-            return v.ToString("R", CultureInfo.InvariantCulture);
+            return CoreMath.JsNumberToString(v);
         }
 
         // Prune a stored tire-collection list down to the tiles that exist on the current track,

@@ -1,4 +1,7 @@
+#nullable enable
 using System;
+using System.Globalization;
+using System.Numerics;
 
 namespace DesktopDrift.Core
 {
@@ -41,6 +44,75 @@ namespace DesktopDrift.Core
         {
             double f = Math.Floor(x);
             return (x - f) >= 0.5 ? f + 1 : f;
+        }
+
+        // ECMAScript Number.prototype.toFixed(f) (ECMA-262 §21.1.3.3), exact: n is the integer for which
+        // n / 10^f − x is closest to zero on the EXACT binary value of x (mantissa · 2^e as BigInteger),
+        // ties → the larger n. Negative x ⇒ "-" + toFixed(−x) (so (−0.0001).toFixed(0) = "-0"); −0 ⇒ "0".
+        // |x| >= 1e21 (JS falls back to ToString) never occurs in the game and throws.
+        public static string JsToFixed(double x, int f)
+        {
+            if (f < 0 || f > 100) throw new ArgumentOutOfRangeException(nameof(f), "toFixed digits must be 0..100");
+            if (double.IsNaN(x)) return "NaN";
+            if (Math.Abs(x) >= 1e21) throw new NotSupportedException("JsToFixed: |x| >= 1e21 uses the JS ToString form");
+            string sign = "";
+            if (x < 0) { sign = "-"; x = -x; }
+            long bits = BitConverter.DoubleToInt64Bits(x);
+            int exp = (int)((bits >> 52) & 0x7FF);
+            long man = bits & 0xFFFFFFFFFFFFFL;
+            if (exp == 0) exp = 1; else man |= 1L << 52;
+            exp -= 1075;                                   // x = man · 2^exp exactly
+            BigInteger num = new BigInteger(man) * BigInteger.Pow(10, f);
+            BigInteger den = BigInteger.One;
+            if (exp >= 0) num <<= exp; else den <<= -exp;
+            BigInteger n = BigInteger.DivRem(num, den, out BigInteger rem);
+            if (rem * 2 >= den) n += 1;                    // closest; a tie takes the larger n
+            string m = n.ToString(CultureInfo.InvariantCulture);
+            if (f != 0)
+            {
+                if (m.Length <= f) m = new string('0', f + 1 - m.Length) + m;
+                int k = m.Length;
+                m = m.Substring(0, k - f) + "." + m.Substring(k - f);
+            }
+            return sign + m;
+        }
+
+        // JS `+x.toFixed(f)` / `parseFloat(x.toFixed(f))`. "-0.000" parses to −0 as in JS on every runtime.
+        public static double JsToFixedNumber(double x, int f)
+        {
+            string s = JsToFixed(x, f);
+            double v = double.Parse(s, NumberStyles.Float, CultureInfo.InvariantCulture);
+            return v == 0 && s[0] == '-' ? -0.0 : v;
+        }
+
+        // ECMAScript Number::toString(x) (ECMA-262 §6.1.6.1.20) – what `${x}`, String(x) and JSON print – without
+        // the runtime's "R" (on Mono / .NET Framework "R" is G15 then G17, not the shortest round-trip):
+        // the shortest digit string 1..17 that parses back to x, laid out by the spec's exponent rules.
+        public static string JsNumberToString(double x)
+        {
+            if (double.IsNaN(x)) return "NaN";
+            if (x == 0) return "0";
+            if (double.IsInfinity(x)) return x > 0 ? "Infinity" : "-Infinity";
+            string sign = x < 0 ? "-" : "";
+            double a = Math.Abs(x);
+            string digits = "";
+            int e10 = 0;
+            for (int p = 1; p <= 17; p++)
+            {
+                string es = a.ToString("E" + (p - 1).ToString(CultureInfo.InvariantCulture), CultureInfo.InvariantCulture);
+                if (p < 17 && double.Parse(es, NumberStyles.Float, CultureInfo.InvariantCulture) != a) continue;
+                int ePos = es.IndexOf('E');
+                digits = es.Substring(0, ePos).Replace(".", "").TrimEnd('0');
+                if (digits.Length == 0) digits = "0";
+                e10 = int.Parse(es.Substring(ePos + 1), NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture);
+                break;
+            }
+            int k = digits.Length, n = e10 + 1;           // x = 0.d1..dk · 10^n
+            if (k <= n && n <= 21) return sign + digits + new string('0', n - k);
+            if (0 < n && n <= 21) return sign + digits.Substring(0, n) + "." + digits.Substring(n);
+            if (-6 < n && n <= 0) return sign + "0." + new string('0', -n) + digits;
+            string ex = (n - 1 >= 0 ? "+" : "-") + Math.Abs(n - 1).ToString(CultureInfo.InvariantCulture);
+            return sign + digits.Substring(0, 1) + (k > 1 ? "." + digits.Substring(1) : "") + "e" + ex;
         }
     }
 }

@@ -34,11 +34,10 @@ namespace DesktopDrift.Core
             return ClampRating((d.Steer / SteerMax * 0.7 + d.LowSpeedTurn / LowturnMax * 0.3) * 10);
         }
 
-        // JS Number.prototype.toFixed(digits) then unary +, approximated as round-half-up on x*10^digits.
+        // JS +x.toFixed(digits) – exact Number.prototype.toFixed.
         private static double ToFixed(double x, int digits)
         {
-            double k = Math.Pow(10, digits);
-            return CoreMath.JsRound(x * k) / k;
+            return CoreMath.JsToFixedNumber(x, digits);
         }
 
         public static DriveProfile DriveForRatings(double handling = 5, double accel = 5, double speed = 5)

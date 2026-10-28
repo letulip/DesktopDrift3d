@@ -94,7 +94,7 @@ namespace DesktopDrift.Core
 
         private static string Num(double x)
         {
-            return x.ToString("R", CultureInfo.InvariantCulture);
+            return CoreMath.JsNumberToString(x);   // `${x}` in the template literal
         }
 
         // neon.js: _rgb
