@@ -84,9 +84,6 @@ namespace DesktopDrift.Editor
             var cones = new GameObject("Cones").AddComponent<Cones>();
             SetRefs(cones, ("loop", race), ("trackView", track));
 
-            var zones = new GameObject("DriftZones").AddComponent<DriftZones>();
-            SetRefs(zones, ("loop", race), ("carView", carView), ("material", ShaderMat("Zone", "DesktopDrift/ZoneRing", m => m.SetColor("_BaseColor", new Color(1f, 1f, 1f, 0.5f)))));
-
             var tuningGo = new GameObject("Tuning");
             var tuningDoc = tuningGo.AddComponent<UIDocument>();
             tuningDoc.panelSettings = PanelSettingsAsset();

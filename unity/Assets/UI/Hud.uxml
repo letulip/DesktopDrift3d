@@ -9,9 +9,6 @@
             </ui:VisualElement>
             <ui:VisualElement name="mini" />
         </ui:VisualElement>
-        <ui:VisualElement name="controls">
-            <ui:Button name="menuBtn" class="btn" text="☰ Menu" tooltip="back to menu" />
-        </ui:VisualElement>
         <ui:VisualElement name="hud-right">
             <ui:VisualElement name="scorePanel" class="panel">
                 <ui:VisualElement class="row"><ui:Label text="score: " /><ui:Label name="score" class="big" text="0" /></ui:VisualElement>
@@ -21,6 +18,9 @@
             </ui:VisualElement>
             <ui:VisualElement name="lapCounter" class="row"><ui:Label name="lapNum" text="1" /><ui:Label text="/" /><ui:Label name="lapTotal" text="-" /></ui:VisualElement>
         </ui:VisualElement>
+    </ui:VisualElement>
+    <ui:VisualElement name="controls">
+        <ui:Button name="menuBtn" class="btn" text="☰ Menu" tooltip="back to menu" />
     </ui:VisualElement>
     <ui:Label name="combo" />
     <ui:Label name="flash" />

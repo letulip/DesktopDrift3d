@@ -17,7 +17,7 @@ namespace DesktopDrift.Game
         [SerializeField] RaceLoop loop = null!;
         [SerializeField] SteerReader input = null!;
 
-        VisualElement? hudRoot;
+        VisualElement? hudRoot, rootEl;
         MiniMap? mini;
         Label lap = null!, last = null!, best = null!, score = null!, lapScores = null!, spd = null!, spdUnit = null!,
             wallet = null!, lapNum = null!, lapTotal = null!, combo = null!, flash = null!, count = null!;
@@ -79,6 +79,7 @@ namespace DesktopDrift.Game
             var hud = root?.Q("hud");
             if (hud == null) return false;
             hudRoot = hud;
+            rootEl = root;
             Bind(root!);
             return true;
         }
@@ -167,6 +168,8 @@ namespace DesktopDrift.Game
         void Update()
         {
             if (!EnsureBound()) return;
+            // Portrait gets the 2D max-width: 640px layout (see Hud.uss).
+            rootEl!.EnableInClassList("narrow", Screen.width < Screen.height);
             if (pendingResult != null) { FillResult(pendingResult); pendingResult = null; }
             if (input != null && input.Pause.WasPressedThisFrame()) TogglePause();
             if (input != null && input.Back.WasPressedThisFrame()) OpenConfirm();
