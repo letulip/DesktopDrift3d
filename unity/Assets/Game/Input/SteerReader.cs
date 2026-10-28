@@ -8,7 +8,7 @@ namespace DesktopDrift.Game
     {
         [SerializeField] InputActionAsset actions;
 
-        InputAction steer;
+        InputAction steerLeft, steerRight;
         readonly List<double> pointers = new List<double>(10);
 
         public InputAction Pause { get; private set; }
@@ -18,7 +18,10 @@ namespace DesktopDrift.Game
         void OnEnable()
         {
             var map = actions.FindActionMap("Race", true);
-            steer = map.FindAction("Steer", true);
+            // Two button actions (not one 1DAxis composite): the 2D resolveSteer sums "any left key" and
+            // "any right key" as -1/+1, so a cross pair such as leftArrow + D cancels to 0 (input.js:7-9).
+            steerLeft = map.FindAction("SteerLeft", true);
+            steerRight = map.FindAction("SteerRight", true);
             Pause = map.FindAction("Pause", true);
             Confirm = map.FindAction("Confirm", true);
             Back = map.FindAction("Back", true);
@@ -44,8 +47,9 @@ namespace DesktopDrift.Game
             }
             var mouse = Mouse.current;
             if (mouse != null && mouse.leftButton.isPressed) pointers.Add(mouse.position.ReadValue().x);
-            float v = steer != null ? steer.ReadValue<float>() : 0f;
-            return SteerInput.Resolve(pointers, v < 0, v > 0, Screen.width);
+            bool keyLeft = steerLeft != null && steerLeft.IsPressed();
+            bool keyRight = steerRight != null && steerRight.IsPressed();
+            return SteerInput.Resolve(pointers, keyLeft, keyRight, Screen.width);
         }
     }
 }
