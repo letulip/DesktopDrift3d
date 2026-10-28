@@ -470,7 +470,7 @@ namespace DesktopDrift.Core.Tests
         private static Dictionary<string, object?> LoadJson(string name)
         {
             string path = TestPaths.Locate("unity/Assets/Content/_json/" + name);
-            return (Dictionary<string, object?>)MiniJson.Parse(File.ReadAllText(path))!;
+            return (Dictionary<string, object?>)Json.Parse(File.ReadAllText(path))!;
         }
 
         private static List<Dictionary<string, object?>> Items(Dictionary<string, object?> doc, string key)

@@ -1,15 +1,16 @@
-// Test-only helper: a minimal JSON reader. It exists because System.Text.Json is unavailable
-// inside Unity's test assembly. Objects -> Dictionary<string, object?>, arrays -> List<object?>,
-// numbers -> double, strings -> string, true/false -> bool, null -> null.
+// Minimal JSON reader/writer over a plain tree: objects -> Dictionary<string, object?>,
+// arrays -> List<object?>, numbers -> double, strings -> string, true/false -> bool, null -> null.
+// It exists because System.Text.Json is unavailable inside Unity's assemblies; the save tree
+// (SaveSchema / SaveState) and the tests share it.
 #nullable enable
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 
-namespace DesktopDrift.Core.Tests
+namespace DesktopDrift.Core
 {
-    internal static class MiniJson
+    public static class Json
     {
         public static object? Parse(string json)
         {
@@ -19,6 +20,89 @@ namespace DesktopDrift.Core.Tests
             r.SkipWs();
             if (!r.AtEnd) throw r.Fail("unexpected trailing content");
             return v;
+        }
+
+        // Compact JSON (no whitespace). Dictionary keys are written in enumeration order. Numbers are
+        // printed like JS: integral values without a decimal part, otherwise "R" round-trip.
+        public static string Serialize(object? value)
+        {
+            var sb = new StringBuilder();
+            Write(sb, value);
+            return sb.ToString();
+        }
+
+        private static void Write(StringBuilder sb, object? v)
+        {
+            if (v == null) { sb.Append("null"); return; }
+            if (v is bool b) { sb.Append(b ? "true" : "false"); return; }
+            if (v is string s) { WriteString(sb, s); return; }
+            if (v is double d) { sb.Append(FormatNumber(d)); return; }
+            if (v is IConvertible)
+            {
+                sb.Append(FormatNumber(Convert.ToDouble(v, CultureInfo.InvariantCulture)));
+                return;
+            }
+            var dict = v as IEnumerable<KeyValuePair<string, object?>>;
+            if (dict != null)
+            {
+                sb.Append('{');
+                bool first = true;
+                foreach (KeyValuePair<string, object?> kv in dict)
+                {
+                    if (!first) sb.Append(',');
+                    first = false;
+                    WriteString(sb, kv.Key);
+                    sb.Append(':');
+                    Write(sb, kv.Value);
+                }
+                sb.Append('}');
+                return;
+            }
+            var list = v as System.Collections.IEnumerable;
+            if (list != null)
+            {
+                sb.Append('[');
+                bool first = true;
+                foreach (object? item in list)
+                {
+                    if (!first) sb.Append(',');
+                    first = false;
+                    Write(sb, item);
+                }
+                sb.Append(']');
+                return;
+            }
+            throw new ArgumentException("Json: cannot serialize " + v.GetType().Name);
+        }
+
+        private static string FormatNumber(double d)
+        {
+            if (double.IsNaN(d) || double.IsInfinity(d)) return "null"; // JSON.stringify(NaN) -> null
+            if (d == Math.Floor(d) && Math.Abs(d) < 1e15) return ((long)d).ToString(CultureInfo.InvariantCulture); // -0 -> "0"
+            return d.ToString("R", CultureInfo.InvariantCulture);
+        }
+
+        private static void WriteString(StringBuilder sb, string s)
+        {
+            sb.Append('"');
+            foreach (char c in s)
+            {
+                switch (c)
+                {
+                    case '"': sb.Append("\\\""); break;
+                    case '\\': sb.Append("\\\\"); break;
+                    case '\b': sb.Append("\\b"); break;
+                    case '\f': sb.Append("\\f"); break;
+                    case '\n': sb.Append("\\n"); break;
+                    case '\r': sb.Append("\\r"); break;
+                    case '\t': sb.Append("\\t"); break;
+                    default:
+                        if (c < 0x20) sb.Append("\\u").Append(((int)c).ToString("x4", CultureInfo.InvariantCulture));
+                        else sb.Append(c);
+                        break;
+                }
+            }
+            sb.Append('"');
         }
 
         private sealed class Reader
@@ -32,7 +116,7 @@ namespace DesktopDrift.Core.Tests
 
             public FormatException Fail(string msg)
             {
-                return new FormatException("MiniJson: " + msg + " at position " + _i);
+                return new FormatException("Json: " + msg + " at position " + _i);
             }
 
             public void SkipWs()

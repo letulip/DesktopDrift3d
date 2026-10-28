@@ -88,7 +88,7 @@ namespace DesktopDrift.Core.Tests
         [Test]
         public void ConstantsMatchExportedJson()
         {
-            var j = (Dictionary<string, object?>)MiniJson.Parse(File.ReadAllText(
+            var j = (Dictionary<string, object?>)Json.Parse(File.ReadAllText(
                 TestPaths.Locate("unity/Assets/Content/_json/scoring.json")))!;
             void Eq(string key, double actual) =>
                 Assert.That(actual, Is.EqualTo((double)j[key]!), key);

@@ -22,9 +22,9 @@ namespace DesktopDrift.Core.Tests
             return dd;
         }
 
-        private static Dictionary<string, object?> Json(string relative)
+        private static Dictionary<string, object?> JsonDoc(string relative)
         {
-            return (Dictionary<string, object?>)MiniJson.Parse(File.ReadAllText(TestPaths.Locate(relative)))!;
+            return (Dictionary<string, object?>)Json.Parse(File.ReadAllText(TestPaths.Locate(relative)))!;
         }
 
         private static double D(object? o) { return (double)o!; }
@@ -37,7 +37,7 @@ namespace DesktopDrift.Core.Tests
         {
             string dd = DesktopDriftDir();
             Dictionary<string, object?>? row = null;
-            foreach (object? t in A(Json("unity/Assets/Content/_json/tracks.json")["TRACKS"]))
+            foreach (object? t in A(JsonDoc("unity/Assets/Content/_json/tracks.json")["TRACKS"]))
                 if (S(O(t)["id"]) == id) row = O(t);
             Assert.That(row, Is.Not.Null, "track '" + id + "' missing in _json/tracks.json");
 
@@ -50,14 +50,14 @@ namespace DesktopDrift.Core.Tests
             };
 
             var items = new Dictionary<string, ItemDef>();
-            foreach (KeyValuePair<string, object?> kv in Json("unity/Assets/Content/_json/items.json"))
+            foreach (KeyValuePair<string, object?> kv in JsonDoc("unity/Assets/Content/_json/items.json"))
             {
                 if (!kv.Key.StartsWith("ITEM_", StringComparison.Ordinal)) continue;
                 var o = O(kv.Value);
                 items[kv.Key] = new ItemDef { Hl = D(o["hl"]), R = D(o["r"]), Kind = S(o["kind"]) };
             }
 
-            var col = Json("unity/Assets/Content/_json/collectibles.json");
+            var col = JsonDoc("unity/Assets/Content/_json/collectibles.json");
             Collectible Proto(string key)
             {
                 var o = O(col[key]);
@@ -98,7 +98,7 @@ namespace DesktopDrift.Core.Tests
 
         private static void AssertMatches(string id, TrackData T, string refRelative)
         {
-            var r = Json(refRelative);
+            var r = JsonDoc(refRelative);
             Points(id, "center", A(r["center"]), T.Center);
             Points(id, "outer", A(r["outer"]), T.Outer);
             Points(id, "inner", A(r["inner"]), T.Inner);

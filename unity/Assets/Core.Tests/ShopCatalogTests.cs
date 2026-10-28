@@ -13,7 +13,7 @@ namespace DesktopDrift.Core.Tests
     {
         private static List<ShopItem> LoadCatalog()
         {
-            var root = (Dictionary<string, object?>)MiniJson.Parse(File.ReadAllText(
+            var root = (Dictionary<string, object?>)Json.Parse(File.ReadAllText(
                 TestPaths.Locate("unity/Assets/Content/_json/shop.json")))!;
             var list = new List<ShopItem>();
             foreach (object? o in (List<object?>)root["CATALOG"]!)
