@@ -1,7 +1,7 @@
 {
     "name": "DesktopDrift.Editor",
     "rootNamespace": "DesktopDrift.Editor",
-    "references": ["DesktopDrift.Core", "DesktopDrift.Game"],
+    "references": ["DesktopDrift.Core", "DesktopDrift.Game", "Unity.InputSystem"],
     "includePlatforms": ["Editor"],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

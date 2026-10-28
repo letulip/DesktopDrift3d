@@ -6,6 +6,7 @@ using DesktopDrift.Game;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace DesktopDrift.Editor
 {
@@ -53,6 +54,9 @@ namespace DesktopDrift.Editor
 
             var boot = new GameObject("Bootstrap").AddComponent<GameBootstrap>();
             SetRefs(boot, ("trackView", track), ("carView", carView));
+
+            var input = new GameObject("Input").AddComponent<SteerReader>();
+            SetRefs(input, ("actions", AssetDatabase.LoadAssetAtPath<InputActionAsset>("Assets/Settings/DesktopDrift.inputactions")));
 
             Directory.CreateDirectory(Path.GetDirectoryName(ScenePath)!);
             if (!EditorSceneManager.SaveScene(scene, ScenePath)) throw new Exception("SaveScene failed: " + ScenePath);
