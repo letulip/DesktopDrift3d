@@ -5,7 +5,7 @@ namespace DesktopDrift.Game
 {
     public enum RaceMode { TimeAttack, Sandbox, Zen }
 
-    /// <summary>What the menu hands the race scene (SPEC-02 step 3: Time Attack only; Sandbox/Zen are step 4).</summary>
+    /// <summary>What the menu hands the race scene (SPEC-02 step 4: Time Attack, Sandbox, Zen).</summary>
     public static class RaceLaunch
     {
         public static RaceMode Mode = RaceMode.TimeAttack;
@@ -13,14 +13,31 @@ namespace DesktopDrift.Game
         public static int? Laps = null;
         public static bool AutoStart = true;
 
-        // The oval has TrackData.Laps = 0, so the lap count comes from RaceOptions.Laps.
+        // The oval has TrackData.Laps = 0, so the lap count comes from RaceOptions.Laps
+        // (a real track's own Laps overrides it in RaceRules.Start). Mirrors the 2D engine traces.
         public static RaceOptions BuildOptions(ContentDescriptor content, int carCount)
         {
-            return new RaceOptions
+            var o = new RaceOptions { Reversed = false, CarCount = carCount, Content = content };
+            switch (Mode)
             {
-                Laps = Laps ?? 3, Zen = false, Reversed = false, InitItems = true, Stock = false,
-                CarCount = carCount, Content = content,
-            };
+                case RaceMode.Sandbox:
+                    o.Laps = 0; o.Zen = false; o.InitItems = false; o.Stock = true;
+                    break;
+                case RaceMode.Zen:
+                    o.Laps = Laps ?? 3; o.Zen = true; o.InitItems = true; o.Stock = false;
+                    break;
+                default:
+                    o.Laps = Laps ?? 3; o.Zen = false; o.InitItems = true; o.Stock = false;
+                    break;
+            }
+            return o;
         }
+
+        public static string ModeTitle(RaceMode m) => m switch
+        {
+            RaceMode.Sandbox => "Sandbox",
+            RaceMode.Zen => "Zen Drift",
+            _ => "Time Attack",
+        };
     }
 }
