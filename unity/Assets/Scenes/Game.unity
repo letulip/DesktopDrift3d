@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &33239203
+--- !u!1 &425113731
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,35 +127,36 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 33239205}
-  - component: {fileID: 33239204}
+  - component: {fileID: 425113733}
+  - component: {fileID: 425113732}
   m_Layer: 0
-  m_Name: Car
+  m_Name: Cones
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &33239204
+--- !u!114 &425113732
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 33239203}
+  m_GameObject: {fileID: 425113731}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 960f52ef37ca84062a2d5ec53913abe9, type: 3}
+  m_Script: {fileID: 11500000, guid: 25c06822e242f449dba5c6d0db2df81a, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: DesktopDrift.Game::DesktopDrift.Game.CarView
-  material: {fileID: 2100000, guid: 653c5495c64324b9fa39e210bc559e5d, type: 2}
---- !u!4 &33239205
+  m_EditorClassIdentifier: DesktopDrift.Game::DesktopDrift.Game.Cones
+  loop: {fileID: 814762882}
+  trackView: {fileID: 483401105}
+--- !u!4 &425113733
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 33239203}
+  m_GameObject: {fileID: 425113731}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -164,7 +165,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &401144219
+--- !u!1 &472803879
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -172,8 +173,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 401144221}
-  - component: {fileID: 401144220}
+  - component: {fileID: 472803881}
+  - component: {fileID: 472803880}
   m_Layer: 0
   m_Name: SkidMarks
   m_TagString: Untagged
@@ -181,28 +182,28 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &401144220
+--- !u!114 &472803880
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 401144219}
+  m_GameObject: {fileID: 472803879}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: df3cb7513a94e404da2f1006634269d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: DesktopDrift.Game::DesktopDrift.Game.SkidMarks
-  loop: {fileID: 1521866132}
+  loop: {fileID: 814762882}
   material: {fileID: 2100000, guid: 93d1f04edd2cb4c98bd422c49f6f9be3, type: 2}
   maxSegmentsPerWheel: 750
---- !u!4 &401144221
+--- !u!4 &472803881
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 401144219}
+  m_GameObject: {fileID: 472803879}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -211,7 +212,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &546436959
+--- !u!1 &483401104
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -219,62 +220,38 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 546436962}
-  - component: {fileID: 546436961}
-  - component: {fileID: 546436960}
+  - component: {fileID: 483401106}
+  - component: {fileID: 483401105}
   m_Layer: 0
-  m_Name: Tuning
+  m_Name: Track
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &546436960
+--- !u!114 &483401105
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 546436959}
+  m_GameObject: {fileID: 483401104}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 73b0394340d4d4a8ead687ff41d8a0dc, type: 3}
+  m_Script: {fileID: 11500000, guid: 7399fd57b66824d8889d041b2883e0bd, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: DesktopDrift.Game::DesktopDrift.Game.TuningOverlay
-  doc: {fileID: 546436961}
-  rig: {fileID: 627207114}
-  loop: {fileID: 1521866132}
-  preset: {fileID: 11400000, guid: 72ba9b05a8950445382455489bd42061, type: 2}
---- !u!114 &546436961
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 546436959}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
-  m_PanelSettings: {fileID: 11400000, guid: ad84dd9cfb26d44879b6cfdb5291dfae, type: 2}
-  m_ParentUI: {fileID: 0}
-  sourceAsset: {fileID: 0}
-  m_SortingOrder: 100
-  m_Position: 0
-  m_WorldSpaceSizeMode: 1
-  m_WorldSpaceWidth: 1920
-  m_WorldSpaceHeight: 1080
-  m_PivotReferenceSize: 0
-  m_Pivot: 0
-  m_WorldSpaceCollider: {fileID: 0}
---- !u!4 &546436962
+  m_EditorClassIdentifier: DesktopDrift.Game::DesktopDrift.Game.TrackView
+  tableMaterial: {fileID: 2100000, guid: e12e2429aa0dc4546be6d54eb8aa413d, type: 2}
+  ribbonMaterial: {fileID: 2100000, guid: c861d9706bfa34a288a8175c0df75012, type: 2}
+  coneMaterial: {fileID: 2100000, guid: 29ec35a3e533a43759cd2c487826051f, type: 2}
+  propMaterial: {fileID: 2100000, guid: 7e6107ebd92a44eaabe6dbbec80193d1, type: 2}
+--- !u!4 &483401106
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 546436959}
+  m_GameObject: {fileID: 483401104}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -283,7 +260,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &627207113
+--- !u!1 &557450896
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -291,9 +268,54 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 627207116}
-  - component: {fileID: 627207115}
-  - component: {fileID: 627207114}
+  - component: {fileID: 557450898}
+  - component: {fileID: 557450897}
+  m_Layer: 0
+  m_Name: Input
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &557450897
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 557450896}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d0c11aa07b6340d0a2e0cb8fe0fc975, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesktopDrift.Game::DesktopDrift.Game.SteerReader
+  actions: {fileID: -944628639613478452, guid: 972cfa2b605c54a2f8c6b2063c99cd11, type: 3}
+--- !u!4 &557450898
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 557450896}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &774799816
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 774799819}
+  - component: {fileID: 774799818}
+  - component: {fileID: 774799817}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -301,29 +323,29 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &627207114
+--- !u!114 &774799817
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 627207113}
+  m_GameObject: {fileID: 774799816}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dfeacbf03324f482ab5401885495db58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: DesktopDrift.Game::DesktopDrift.Game.CameraRig
   preset: {fileID: 11400000, guid: 72ba9b05a8950445382455489bd42061, type: 2}
-  cam: {fileID: 627207115}
-  carView: {fileID: 33239204}
-  loop: {fileID: 1521866132}
---- !u!20 &627207115
+  cam: {fileID: 774799818}
+  carView: {fileID: 1933590158}
+  loop: {fileID: 814762882}
+--- !u!20 &774799818
 Camera:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 627207113}
+  m_GameObject: {fileID: 774799816}
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
@@ -368,13 +390,13 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!4 &627207116
+--- !u!4 &774799819
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 627207113}
+  m_GameObject: {fileID: 774799816}
   serializedVersion: 2
   m_LocalRotation: {x: 0.190496, y: 0.8071724, z: -0.35948426, w: 0.4277325}
   m_LocalPosition: {x: 1.0167596, y: 0.5, z: 0.16845368}
@@ -383,7 +405,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &788468012
+--- !u!1 &814762881
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -391,101 +413,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 788468014}
-  - component: {fileID: 788468013}
-  m_Layer: 0
-  m_Name: Input
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &788468013
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 788468012}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d0c11aa07b6340d0a2e0cb8fe0fc975, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: DesktopDrift.Game::DesktopDrift.Game.SteerReader
-  actions: {fileID: -944628639613478452, guid: 972cfa2b605c54a2f8c6b2063c99cd11, type: 3}
---- !u!4 &788468014
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 788468012}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1368339750
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1368339752}
-  - component: {fileID: 1368339751}
-  m_Layer: 0
-  m_Name: Track
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1368339751
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1368339750}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7399fd57b66824d8889d041b2883e0bd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: DesktopDrift.Game::DesktopDrift.Game.TrackView
-  tableMaterial: {fileID: 2100000, guid: e12e2429aa0dc4546be6d54eb8aa413d, type: 2}
-  ribbonMaterial: {fileID: 2100000, guid: c861d9706bfa34a288a8175c0df75012, type: 2}
-  coneMaterial: {fileID: 2100000, guid: 29ec35a3e533a43759cd2c487826051f, type: 2}
-  propMaterial: {fileID: 2100000, guid: 7e6107ebd92a44eaabe6dbbec80193d1, type: 2}
---- !u!4 &1368339752
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1368339750}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1521866131
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1521866133}
-  - component: {fileID: 1521866132}
+  - component: {fileID: 814762883}
+  - component: {fileID: 814762882}
   m_Layer: 0
   m_Name: Race
   m_TagString: Untagged
@@ -493,13 +422,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1521866132
+--- !u!114 &814762882
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1521866131}
+  m_GameObject: {fileID: 814762881}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 37697601854594d1db3f9795171f3f6b, type: 3}
@@ -510,18 +439,18 @@ MonoBehaviour:
   configJson: {fileID: 4900000, guid: b50d305f88a5649f0b85178a758d126a, type: 3}
   tracksJson: {fileID: 4900000, guid: 550b68be10c87450d9ae292f0f09cabc, type: 3}
   shopJson: {fileID: 4900000, guid: 5007b2136ab204953a9b71fdfddeb9d1, type: 3}
-  trackView: {fileID: 1368339751}
-  carView: {fileID: 33239204}
-  steerReader: {fileID: 788468013}
+  trackView: {fileID: 483401105}
+  carView: {fileID: 1933590158}
+  steerReader: {fileID: 557450897}
   Running: 0
   StepCount: 0
---- !u!4 &1521866133
+--- !u!4 &814762883
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1521866131}
+  m_GameObject: {fileID: 814762881}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -530,7 +459,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1942124600
+--- !u!1 &903830590
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -538,8 +467,126 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1942124602}
-  - component: {fileID: 1942124601}
+  - component: {fileID: 903830593}
+  - component: {fileID: 903830592}
+  - component: {fileID: 903830591}
+  m_Layer: 0
+  m_Name: Tuning
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &903830591
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 903830590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73b0394340d4d4a8ead687ff41d8a0dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesktopDrift.Game::DesktopDrift.Game.TuningOverlay
+  doc: {fileID: 903830592}
+  rig: {fileID: 774799817}
+  loop: {fileID: 814762882}
+  preset: {fileID: 11400000, guid: 72ba9b05a8950445382455489bd42061, type: 2}
+--- !u!114 &903830592
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 903830590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
+  m_PanelSettings: {fileID: 11400000, guid: ad84dd9cfb26d44879b6cfdb5291dfae, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 0}
+  m_SortingOrder: 100
+  m_Position: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
+--- !u!4 &903830593
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 903830590}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &957183166
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 957183168}
+  - component: {fileID: 957183167}
+  m_Layer: 0
+  m_Name: Tires
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &957183167
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 957183166}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bae32a6abb78460684818bf7f0f3007, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesktopDrift.Game::DesktopDrift.Game.Tires
+  loop: {fileID: 814762882}
+  material: {fileID: 2100000, guid: 9b2e56a45b2a248a4b187b65477ee319, type: 2}
+--- !u!4 &957183168
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 957183166}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1599151131
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1599151133}
+  - component: {fileID: 1599151132}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -547,13 +594,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!108 &1942124601
+--- !u!108 &1599151132
 Light:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1942124600}
+  m_GameObject: {fileID: 1599151131}
   m_Enabled: 1
   serializedVersion: 12
   m_Type: 1
@@ -612,15 +659,153 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
---- !u!4 &1942124602
+--- !u!4 &1599151133
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1942124600}
+  m_GameObject: {fileID: 1599151131}
   serializedVersion: 2
   m_LocalRotation: {x: 0.40821794, y: -0.23456973, z: 0.10938166, w: 0.8754261}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1933590157
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1933590159}
+  - component: {fileID: 1933590158}
+  m_Layer: 0
+  m_Name: Car
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1933590158
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1933590157}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 960f52ef37ca84062a2d5ec53913abe9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesktopDrift.Game::DesktopDrift.Game.CarView
+  material: {fileID: 2100000, guid: 653c5495c64324b9fa39e210bc559e5d, type: 2}
+--- !u!4 &1933590159
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1933590157}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1987901667
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1987901669}
+  - component: {fileID: 1987901668}
+  m_Layer: 0
+  m_Name: Caps
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1987901668
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1987901667}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d071f3cbfd2854dcaa48bc2c3c4c5c4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesktopDrift.Game::DesktopDrift.Game.ColaCaps
+  loop: {fileID: 814762882}
+  material: {fileID: 2100000, guid: c39f63daa06974f848acf432276c10ce, type: 2}
+--- !u!4 &1987901669
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1987901667}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2025568183
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2025568185}
+  - component: {fileID: 2025568184}
+  m_Layer: 0
+  m_Name: DriftZones
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2025568184
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2025568183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2d96d4587f7e4594845f2fe16db0a90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesktopDrift.Game::DesktopDrift.Game.DriftZones
+  loop: {fileID: 814762882}
+  carView: {fileID: 1933590158}
+  material: {fileID: 2100000, guid: 0ef9f67af1ec84b08a6da83a74d7683e, type: 2}
+--- !u!4 &2025568185
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2025568183}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -631,11 +816,15 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 1942124602}
-  - {fileID: 627207116}
-  - {fileID: 1368339752}
-  - {fileID: 33239205}
-  - {fileID: 788468014}
-  - {fileID: 1521866133}
-  - {fileID: 401144221}
-  - {fileID: 546436962}
+  - {fileID: 1599151133}
+  - {fileID: 774799819}
+  - {fileID: 483401106}
+  - {fileID: 1933590159}
+  - {fileID: 557450898}
+  - {fileID: 814762883}
+  - {fileID: 472803881}
+  - {fileID: 957183168}
+  - {fileID: 1987901669}
+  - {fileID: 425113733}
+  - {fileID: 2025568185}
+  - {fileID: 903830593}

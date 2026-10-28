@@ -75,6 +75,18 @@ namespace DesktopDrift.Editor
             var skids = new GameObject("SkidMarks").AddComponent<SkidMarks>();
             SetRefs(skids, ("loop", race), ("material", SkidMat()));
 
+            var tires = new GameObject("Tires").AddComponent<Tires>();
+            SetRefs(tires, ("loop", race), ("material", Mat("Tire", new Color32(0x2a, 0x2a, 0x2c, 255))));
+
+            var caps = new GameObject("Caps").AddComponent<ColaCaps>();
+            SetRefs(caps, ("loop", race), ("material", CapMat()));
+
+            var cones = new GameObject("Cones").AddComponent<Cones>();
+            SetRefs(cones, ("loop", race), ("trackView", track));
+
+            var zones = new GameObject("DriftZones").AddComponent<DriftZones>();
+            SetRefs(zones, ("loop", race), ("carView", carView), ("material", ShaderMat("Zone", "DesktopDrift/ZoneRing", m => m.SetColor("_BaseColor", new Color(1f, 1f, 1f, 0.5f)))));
+
             var tuningGo = new GameObject("Tuning");
             var tuningDoc = tuningGo.AddComponent<UIDocument>();
             tuningDoc.panelSettings = PanelSettingsAsset();
@@ -144,6 +156,29 @@ namespace DesktopDrift.Editor
                 AssetDatabase.CreateAsset(m, path);
             }
             m.SetColor("_Color", Color.white);
+            m.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+            EditorUtility.SetDirty(m);
+            return m;
+        }
+
+        static Material CapMat() => ShaderMat("Cap", "DesktopDrift/CapRadialFill", m =>
+        {
+            m.SetColor("_BaseColor", new Color32(0xff, 0x99, 0x99, 153));
+            m.SetColor("_FillColor", new Color32(0xff, 0x3b, 0x3b, 242));
+            m.SetFloat("_Sweep", 0f);
+        });
+
+        static Material ShaderMat(string name, string shaderName, Action<Material> setup)
+        {
+            string path = $"{MaterialsDir}/{name}.mat";
+            var m = AssetDatabase.LoadAssetAtPath<Material>(path);
+            if (m == null)
+            {
+                var shader = Shader.Find(shaderName) ?? throw new Exception("Missing shader " + shaderName);
+                m = new Material(shader);
+                AssetDatabase.CreateAsset(m, path);
+            }
+            setup(m);
             m.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
             EditorUtility.SetDirty(m);
             return m;
