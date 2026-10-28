@@ -78,7 +78,9 @@ namespace DesktopDrift.Game
                 var go = Views[i];
                 if (go == null) continue;
                 var cap = caps[i];
-                float sweep = cap.Collected ? 1f : (float)Cola.CapProgress(cap.Sweep);
+                // 2D render.js:521 draws the fill over the full collection sweep (CapLoops = 2 turns):
+                // progress = min(1, |sweep| / (2π·CAP_LOOPS)); Cola.CapProgress is the one-turn rule helper.
+                float sweep = cap.Collected ? 1f : (float)System.Math.Min(1.0, System.Math.Abs(cap.Sweep) / (2.0 * System.Math.PI * RaceRules.CapLoops));
                 float s = _baseScale[i] * (cap.Collected ? 1f + (float)cap.Pop : 1f);
                 var rend = go.GetComponent<MeshRenderer>();
                 rend.GetPropertyBlock(_block);
