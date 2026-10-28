@@ -94,6 +94,15 @@ namespace DesktopDrift.Editor
             var tuning = tuningGo.AddComponent<TuningOverlay>();
             SetRefs(tuning, ("doc", tuningDoc), ("rig", rig), ("loop", race), ("preset", preset));
 
+            var hudGo = new GameObject("Hud");
+            var hudDoc = hudGo.AddComponent<UIDocument>();
+            hudDoc.panelSettings = PanelSettingsAsset();
+            hudDoc.visualTreeAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/UI/Hud.uxml")
+                ?? throw new Exception("Missing Assets/UI/Hud.uxml");
+            hudDoc.sortingOrder = 10; // below the tuning overlay (100)
+            var hud = hudGo.AddComponent<HudController>();
+            SetRefs(hud, ("doc", hudDoc), ("loop", race), ("input", input));
+
             Directory.CreateDirectory(Path.GetDirectoryName(ScenePath)!);
             if (!EditorSceneManager.SaveScene(scene, ScenePath)) throw new Exception("SaveScene failed: " + ScenePath);
             EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(ScenePath, true) };

@@ -111,6 +111,14 @@ namespace DesktopDrift.Game
             StartRace(Options ?? RaceLaunch.BuildOptions(Content, Catalog.Cars.Count));
         }
 
+        /// <summary>Leave the race without restarting (2D stop(true) on exit): pairs GameplayStop, ends the loop.</summary>
+        public void StopRace()
+        {
+            if (Rules != null) Dispatch(Rules.Stop());
+            Running = false;
+            Paused = false;
+        }
+
         public void StepOnce(int steer)
         {
             List<RaceEvent> ev = Rules!.Step(steer, FixedDt);
