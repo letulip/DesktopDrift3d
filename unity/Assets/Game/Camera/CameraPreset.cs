@@ -1,3 +1,4 @@
+using DesktopDrift.Core;
 using UnityEngine;
 
 namespace DesktopDrift.Game
@@ -11,6 +12,8 @@ namespace DesktopDrift.Game
         public float c1ScreenOffset = 0.10f;
         public float mobileDistanceScale = 1f / 0.65f;
         public float fov = 60f;
-        // C2 parameters are added in step 6.
+
+        [Header("C2 (chase, heading follows velocity)")]
+        public CameraParams c2 = new CameraParams();
     }
 }

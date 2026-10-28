@@ -72,6 +72,10 @@ namespace DesktopDrift.Game
                     ContentJson.Build(tracksJson!.text, shopJson!.text, carsJson.text),
                     SaveSchema.Load(null).State);
             }
+#if UNITY_EDITOR
+            // Dev hook for scripts/capture.sh: scripted steering from the oval trace (the editor inherits the env).
+            if (Environment.GetEnvironmentVariable("DD_STEER") == "trace") SteerSource = new TraceSteerSource(this);
+#endif
         }
 
         void Start()

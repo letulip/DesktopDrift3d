@@ -40,5 +40,25 @@ namespace DesktopDrift.Game.Tests
             CameraRig.C1Pose(Car, 60f, 0.9f, 0.1f, 60f, out var pos, out _);
             Assert.Greater(pos.y, Car.y);
         }
+
+        [Test]
+        public void PresetKeepsSerializableC2Defaults()
+        {
+            var p = ScriptableObject.CreateInstance<CameraPreset>();
+            var q = ScriptableObject.CreateInstance<CameraPreset>();
+            try
+            {
+                Assert.IsNotNull(p.c2);
+                Assert.AreEqual(574.0, p.c2.Distance);
+                p.c2.Distance = 600;
+                JsonUtility.FromJsonOverwrite(JsonUtility.ToJson(p), q);
+                Assert.AreEqual(600.0, q.c2.Distance, "c2 serializes inside the preset");
+            }
+            finally
+            {
+                Object.DestroyImmediate(p);
+                Object.DestroyImmediate(q);
+            }
+        }
     }
 }
