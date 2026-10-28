@@ -10,6 +10,7 @@
 "nose": 24.599999999999998,
 "steerPattern": {"pattern":[0,1,1,0,-1,-1,0,1,-1,0],"block":20},
 "frameCount": 600,
+"summary": {"wallContactFrames":{"rect":358,"round":514}},
 "start": {"x":1500,"y":0,"angle":0},
 "runs": [
 {"table": {"w":3400,"h":2900,"shape":"rect"},

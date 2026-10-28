@@ -81,6 +81,7 @@ if (SCENARIO !== null) {
   if (SCENARIO === 'wall') {
     const start = { x: 1500, y: 0, angle: 0 };
     const runs = [];
+    const wallContactFrames = {};   // summary: frames with wallHit > 0, per table shape
     for (const shape of ['rect', 'round']) {
       const TABLE = { w: 3400, h: 2900, shape };
       const car = { x: start.x, y: start.y, vx: 0, vy: 0, angle: start.angle };
@@ -91,10 +92,11 @@ if (SCENARIO !== null) {
         const { hx, hy, nose, bodyPts } = capsule(car);
         const wallHit = resolveWall(car, TABLE, CR, hx, hy, nose, bodyPts);
         fr.push([car.x, car.y, car.angle, car.vx, car.vy, wallHit]);
+        if (wallHit > 0) wallContactFrames[shape] = (wallContactFrames[shape] ?? 0) + 1;
       }
       runs.push(`{"table": ${J(TABLE)},\n"frames": ${framesJson(fr)}}`);
     }
-    out = head(`"start": ${J(start)},\n"runs": [\n` + runs.join(',\n') + '\n]\n}\n');
+    out = head(`"summary": ${J({ wallContactFrames })},\n"start": ${J(start)},\n"runs": [\n` + runs.join(',\n') + '\n]\n}\n');
   } else if (SCENARIO === 'props') {
     const propsIn = [
       { x: 400, y: 0, ang: 0, hl: 75, r: 15, kind: 'knife' },
@@ -111,13 +113,18 @@ if (SCENARIO !== null) {
     const car = { x: 0, y: 0, vx: 0, vy: 0, angle: 0 };
     const sm = { steerSmooth: 0, physT: 0 };
     const fr = [];
+    const touched = new Set();   // summary: props that produced a positive crash at least once
     for (let i = 0; i < SFRAMES; i++) {
       stepCar(car, sm, steerAt(i), drive, k, dt);
       const { bodyPts } = capsule(car);
+      // Shadow pass (does not touch the recorded car): the same props one at a time on a copy – the
+      // sequential loop of resolveProps – to see which prop gave a positive crash.
+      const shadow = { ...car };
+      props.forEach((o, n) => { if (resolveProps(shadow, [o], CR, bodyPts) > 0) touched.add(n); });
       const crash = resolveProps(car, props, CR, bodyPts);
       fr.push([car.x, car.y, car.angle, car.vx, car.vy, crash]);
     }
-    out = head(`"anchor": "driven-path y + offset (props placed one by one)",\n"props": ${J(propsIn)},\n"frames": ${framesJson(fr)}\n}\n`);
+    out = head(`"summary": ${J({ propsTouched: touched.size })},\n"anchor": "driven-path y + offset (props placed one by one)",\n"props": ${J(propsIn)},\n"frames": ${framesJson(fr)}\n}\n`);
   } else {
     const cones = [];
     for (let i = 0; i < 6; i++) {
@@ -155,7 +162,7 @@ if (SCENARIO !== null) {
       fr.push([[car.x, car.y, car.angle, car.vx, car.vy], penalty,
         cones.map((c) => [c.x, c.y, c.vx, c.vy, c.ang, c.spin, c.knocked])]);
     }
-    out = head(`"anchor": "free-run y + offset",\n"coneR": ${J(CONE_R)},\n"fAdj": ${J(fAdj)},\n"random": 0.5,\n"cones": ${J(conesIn)},\n"frames": ${framesJson(fr)}\n}\n`);
+    out = head(`"summary": ${J({ conesKnocked: cones.filter((c) => c.knocked).length })},\n"anchor": "free-run y + offset",\n"coneR": ${J(CONE_R)},\n"fAdj": ${J(fAdj)},\n"random": 0.5,\n"cones": ${J(conesIn)},\n"frames": ${framesJson(fr)}\n}\n`);
   }
   const p = join(dirname(fileURLToPath(import.meta.url)), `parity-${SCENARIO}.json`);
   writeFileSync(p, out);

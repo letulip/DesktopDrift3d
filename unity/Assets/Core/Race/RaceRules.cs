@@ -108,6 +108,9 @@ namespace DesktopDrift.Core
             Dictionary<string, object?> g = _save.Garage();
             double carIndex = g.TryGetValue("carIndex", out object? ci) && ci is double cd ? cd : 0;
             S.CarModel = (int)Math.Max(0, Math.Min(carIndex, _opts.CarCount - 1));
+            // Line 347: `const look = opts.stock ? {} : carLook(S.carModel)` – the paint itself is render-only,
+            // but carLook lazily creates garage.cars[carModel] in the save (a side effect kept here).
+            if (!_opts.Stock) _save.CarLook(S.CarModel);
 
             // Finish line
             _finishCos = Math.Cos(_t.StartAngle);

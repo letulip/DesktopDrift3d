@@ -1,7 +1,8 @@
-// SPEC-01 step 8 gate: replays tools/engine-trace-{oval,green-study}.json – recorded from the REAL 2D race
-// engine (DesktopDrift/js/game-engine.js startGame + frame()) by tools/engine-harness.mjs – through
-// RaceRules frame by frame. Doubles within 1e-6, integers / bools / strings exactly, flash events at the
-// same frames, and the final save (wallet, ledger, records, achievements) equal.
+// SPEC-01 step 8 gate: replays tools/engine-trace-{oval,green-study,green-study-rev,green-study-zen-cap,oval-sandbox}.json
+// – recorded from the REAL 2D race engine (DesktopDrift/js/game-engine.js startGame + frame()) by
+// tools/engine-harness.mjs – through RaceRules frame by frame. Doubles within 1e-6, integers / bools / strings
+// exactly, flash events (frame, text, colour) at the same frames, and EVERY key of `final`: the run summary,
+// final.stats, final.achievementsMap and the whole final.save tree against SaveState.Root (structurally).
 #nullable enable
 using System;
 using System.Collections.Generic;
@@ -69,7 +70,13 @@ namespace DesktopDrift.Core.Tests
             Assert.AreEqual(name, src["track"], "source.track");
             Assert.AreEqual("LCG 1664525/1013904223 mod 2^32", src["rng"], "source.rng");
 
-            TrackData track = name == "oval" ? OvalTrack.Build() : TrackBuilderParityTests.Build(name);
+            var o = O(root["opts"]);
+            // The SPA: the module's track (oval = js/track-oval.js, the rest via makeTrack), reversed with
+            // reverseTrack(mod) when opts.reversed – exactly what the harness hands startGame.
+            string module = (string)src["module"]!;
+            TrackData track = module == "js/track-oval.js" ? OvalTrack.Build()
+                : TrackBuilderParityTests.Build(module.Substring("js/track-".Length, module.Length - "js/track-".Length - ".js".Length));
+            if ((bool)o["reversed"]!) track = TrackUtil.ReverseTrack(track);
             var car = Car();
             var clock = O(root["clock"]);
             double frameMs = N(clock["frameMs"]), dateBase = N(clock["dateBase"]);
@@ -85,7 +92,6 @@ namespace DesktopDrift.Core.Tests
             // new Date().getHours() with TZ=UTC
             Func<int> hour = () => (int)(((long)Math.Floor((dateBase + simNow) / 3600000.0)) % 24);
 
-            var o = O(root["opts"]);
             var opts = new RaceOptions
             {
                 Laps = o["laps"] is double l ? (int?)(int)l : null,
@@ -126,8 +132,22 @@ namespace DesktopDrift.Core.Tests
                 if (!ok) fail = name + " frame " + frame + " (frames[" + (frame - 1) + "]) field '" + field + "': JS=" + Str(js) + " C#=" + Str(cs);
             }
 
+            // Donut run: after `teleportAfterFrame` stepped frames the harness parks the car beside cola cap
+            // `capIndex` (x = c.x + dx, y = c.y + dy, angle, v = 0); the recorded steer is the held key.
+            int teleportAt = -1;
+            double donutDx = 0, donutDy = 0, donutAngle = 0;
+            int donutCap = -1;
+            if (root.TryGetValue("donut", out object? dn) && dn != null)
+            {
+                var d = O(dn);
+                teleportAt = (int)N(d["teleportAfterFrame"]);
+                donutCap = (int)N(d["capIndex"]);
+                donutDx = N(d["dx"]); donutDy = N(d["dy"]); donutAngle = N(d["angle"]);
+                Assert.AreEqual("cola", track.Collectibles[donutCap].Kind, "donut cap kind");
+            }
+
             var frames = A(root["frames"]);
-            var flashes = new List<(int, string)>();
+            var flashes = new List<(int, string, string)>();
             string prevFlash = S.FlashMsg;
             double prevFlashT = S.FlashT;
             int finishedAt = -1;
@@ -135,6 +155,11 @@ namespace DesktopDrift.Core.Tests
             {
                 var f = A(frames[i]);
                 int frame = i + 1;
+                if (i == teleportAt)
+                {
+                    Collectible c = track.Collectibles[donutCap];
+                    S.Car.X = c.X + donutDx; S.Car.Y = c.Y + donutDy; S.Car.Angle = donutAngle; S.Car.Vx = 0; S.Car.Vy = 0;
+                }
                 simNow += frameMs;
                 List<RaceEvent> ev = rules.Step((int)N(f[0]), dt);
                 if (ev.Any(e => e.Kind == RaceEvent.EventKind.Finished))
@@ -163,9 +188,10 @@ namespace DesktopDrift.Core.Tests
                 // engine-harness.mjs: an event is recorded when flashMsg changes or flashT was re-armed.
                 if (S.FlashMsg != prevFlash || S.FlashT > prevFlashT)
                 {
-                    flashes.Add((frame, S.FlashMsg));
+                    flashes.Add((frame, S.FlashMsg, S.FlashColor));
                     RaceEvent? last = ev.LastOrDefault(e => e.Kind == RaceEvent.EventKind.Flash);
                     Check(frame, "Flash event", S.FlashMsg, last?.Text);
+                    Check(frame, "Flash event colour", S.FlashColor, last?.Color);
                 }
                 prevFlash = S.FlashMsg; prevFlashT = S.FlashT;
             }
@@ -174,8 +200,8 @@ namespace DesktopDrift.Core.Tests
             var evs = A(root["events"]);
             for (int i = 0; i < Math.Max(evs.Count, flashes.Count); i++)
             {
-                string js = i < evs.Count ? N(A(evs[i])[0]) + " '" + (string)A(evs[i])[1]! + "'" : "<none>";
-                string cs = i < flashes.Count ? flashes[i].Item1 + " '" + flashes[i].Item2 + "'" : "<none>";
+                string js = i < evs.Count ? N(A(evs[i])[0]) + " '" + (string)A(evs[i])[1]! + "' " + (string)A(evs[i])[2]! : "<none>";
+                string cs = i < flashes.Count ? flashes[i].Item1 + " '" + flashes[i].Item2 + "' " + flashes[i].Item3 : "<none>";
                 Assert.AreEqual(js, cs, name + " flash event #" + i + ": JS=" + js + " C#=" + cs);
             }
 
@@ -194,14 +220,15 @@ namespace DesktopDrift.Core.Tests
                 F("lapScores[" + i + "].t", O(ls[i])["t"], S.LapScores[i].T);
             }
             F("bestLap", fin["bestLap"], S.BestLap);
+            string instance = TrackUtil.InstanceId(track.Id ?? "", opts.Reversed);   // records()[instanceId(T.id, REV)]
             if (fin["record"] == null)
             {
-                F("record", null, track.Id.Length > 0 && save.Records().ContainsKey(track.Id) ? "present" : null);
+                F("record", null, instance.Length > 0 && save.Records().ContainsKey(instance) ? "present" : null);
             }
             else
             {
                 var ta = O(O(fin["record"])["timeattack"]);
-                var cta = O(O(save.Records()[track.Id])["timeattack"]);
+                var cta = O(O(save.Records()[instance])["timeattack"]);
                 foreach (string k in new[] { "bestPPS", "bestPPSTotal", "bestPPSTime" }) F("record.timeattack." + k, ta[k], cta[k]);
             }
             F("walletStart", fin["walletStart"], walletStart);
@@ -220,12 +247,86 @@ namespace DesktopDrift.Core.Tests
             F("capsCollected", fin["capsCollected"], S.Caps.Count(c => c.Collected));
             Assert.IsNull(fail, fail);
 
+            // traceVersion 2: the stats slice, the achievement map and the WHOLE final save, structurally.
+            Assert.AreEqual(2.0, root["traceVersion"], "traceVersion");
+            Dictionary<string, object?> csSave = O(Json.Parse(Json.Serialize(save.Root)));
+            var diffs = new List<string>();
+            foreach (KeyValuePair<string, object?> kv in O(fin["stats"]))
+                Tree("final.stats." + kv.Key, kv.Value, O(csSave["stats"]).TryGetValue(kv.Key, out object? cv) ? cv : Missing, diffs);
+            Tree("final.stats", fin["stats"], csSave["stats"], diffs);
+            Tree("final.achievementsMap", fin["achievementsMap"], csSave["achievements"], diffs);
+            // Deliberate, value-checked difference: the save's own schema version. D-17 – the 3D edition starts at
+            // version 1 (shape = the 2D v4 defaults), the JS store stamps its VERSION 4.
+            var jsSave = O(Json.Parse((string)fin["save"]!));
+            Assert.AreEqual(4.0, jsSave["version"], "JS store VERSION");
+            Assert.AreEqual((double)SaveSchema.Version, csSave["version"], "C# SaveSchema.Version (D-17)");
+            jsSave["version"] = csSave["version"];
+            Tree("final.save", jsSave, csSave, diffs);
+            Assert.IsEmpty(diffs, name + ": " + string.Join("\n", diffs.Take(30)));
+
+            // Every key of `final` is compared above; a new harness key fails here until it is compared too.
+            var compared = new HashSet<string>
+            {
+                "frames", "finished", "lapNum", "score", "lapScores", "bestLap", "record", "walletStart", "walletEnd",
+                "walletDelta", "ledger", "achievements", "conesKnocked", "capsCollected", "stats", "achievementsMap", "save",
+            };
+            var deliberatelySkipped = new Dictionary<string, string>();   // key -> reason; none
+            foreach (string k in fin.Keys)
+                Assert.IsTrue(compared.Contains(k) || deliberatelySkipped.ContainsKey(k), name + ": final." + k + " is not compared");
+
             TestContext.WriteLine(name + ": all " + frames.Count + " frames match, " + flashes.Count + " flash events, ledger " + cled.Count);
             return new Outcome
             {
                 Summary = string.Join("|", S.Car.X.ToString("R", CultureInfo.InvariantCulture), S.Car.Y.ToString("R", CultureInfo.InvariantCulture),
                     S.Score.ToString("R", CultureInfo.InvariantCulture), S.LapNum, save.Wallet(), Json.Serialize(save.Root), flashes.Count),
             };
+        }
+
+        private static readonly object Missing = new object();
+
+        // Structural equality of two JSON trees: dictionaries by key (both ways), lists by index, doubles
+        // within 1e-6, strings / bools / null exactly.
+        private static void Tree(string path, object? js, object? cs, List<string> diffs)
+        {
+            if (ReferenceEquals(cs, Missing)) { diffs.Add(path + ": missing in C#"); return; }
+            if (js is Dictionary<string, object?> jd)
+            {
+                if (!(cs is Dictionary<string, object?> cd)) { diffs.Add(path + ": JS object, C# " + Str(cs)); return; }
+                foreach (KeyValuePair<string, object?> kv in jd)
+                    Tree(path + "." + kv.Key, kv.Value, cd.TryGetValue(kv.Key, out object? v) ? v : Missing, diffs);
+                foreach (string k in cd.Keys) if (!jd.ContainsKey(k)) diffs.Add(path + "." + k + ": only in C# (" + Str(cd[k]) + ")");
+                return;
+            }
+            if (js is List<object?> jl)
+            {
+                if (!(cs is List<object?> cl)) { diffs.Add(path + ": JS array, C# " + Str(cs)); return; }
+                if (jl.Count != cl.Count) diffs.Add(path + ".length: JS " + jl.Count + " C# " + cl.Count);
+                for (int i = 0; i < Math.Min(jl.Count, cl.Count); i++) Tree(path + "[" + i + "]", jl[i], cl[i], diffs);
+                return;
+            }
+            bool ok = js == null ? cs == null
+                : js is double jn ? cs is double cn && Math.Abs(jn - cn) <= Tol
+                : js is bool jb ? cs is bool cb && cb == jb
+                : js is string jst && cs is string cst && cst == jst;
+            if (!ok) diffs.Add(path + ": JS " + Str(js) + " C# " + Str(cs));
+        }
+
+        [Test]
+        public void GreenStudyReversed_EngineTrace_ReplaysFrameByFrame()
+        {
+            Replay("green-study-rev");
+        }
+
+        [Test]
+        public void GreenStudyZenCap_EngineTrace_ReplaysFrameByFrame()
+        {
+            Replay("green-study-zen-cap");
+        }
+
+        [Test]
+        public void OvalSandbox_EngineTrace_ReplaysFrameByFrame()
+        {
+            Replay("oval-sandbox");
         }
 
         [Test]

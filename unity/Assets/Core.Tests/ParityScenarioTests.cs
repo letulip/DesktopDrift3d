@@ -127,6 +127,8 @@ namespace DesktopDrift.Core.Tests
             var start = O(ctx.Root["start"]);
             var runs = A(ctx.Root["runs"]);
             Assert.AreEqual(2, runs.Count, "runs");
+            var contact = O(O(ctx.Root["summary"])["wallContactFrames"]);
+            var seen = new HashSet<string>();
             foreach (var r in runs)
             {
                 var run = O(r);
@@ -136,17 +138,25 @@ namespace DesktopDrift.Core.Tests
                 Assert.AreEqual(ctx.Frames, frames.Count, "frames");
                 var car = new CarState { X = N(start["x"]), Y = N(start["y"]), Angle = N(start["angle"]) };
                 var sm = new StepMotion();
+                int contactFrames = 0;
                 for (int i = 0; i < frames.Count; i++)
                 {
                     CarPhysics.StepCar(car, sm, ctx.SteerAt(i), ctx.P, ctx.K, ctx.Dt);
                     var body = Capsule(car, ctx.Nose, out double hx, out double hy);
                     double wallHit = Collision.ResolveWall(car, table, ctx.Cr, hx, hy, ctx.Nose, body);
+                    if (wallHit > 0) contactFrames++;
                     var f = A(frames[i]);
                     string at = (string)t["shape"]! + " frame " + i;
                     CheckCar(ctx, car, f, at);
                     ctx.Check(wallHit, f[5], at + " wallHit");
                 }
+                // The coverage the trace declares (summary.wallContactFrames), from the C# run itself.
+                string shape = (string)t["shape"]!;
+                seen.Add(shape);
+                Assert.Greater(contactFrames, 0, shape + ": the wall must be touched");
+                Assert.AreEqual((int)N(contact[shape]), contactFrames, shape + " wall-contact frames");
             }
+            Assert.That(seen, Is.EquivalentTo(new[] { "rect", "round" }), "both table shapes ran");
             ctx.Report("wall");
         }
 
@@ -166,17 +176,27 @@ namespace DesktopDrift.Core.Tests
             var car = new CarState();
             var sm = new StepMotion();
             int crashes = 0;
+            var touched = new HashSet<int>();
             for (int i = 0; i < frames.Count; i++)
             {
                 CarPhysics.StepCar(car, sm, ctx.SteerAt(i), ctx.P, ctx.K, ctx.Dt);
                 var body = Capsule(car, ctx.Nose, out _, out _);
+                // Shadow pass, as in tools/parity-trace.mjs: the props one at a time on a copy of the car
+                // (the sequential loop of resolveProps) to see which prop gave a positive crash.
+                var shadow = new CarState { X = car.X, Y = car.Y, Angle = car.Angle, Vx = car.Vx, Vy = car.Vy };
+                for (int n = 0; n < props.Count; n++)
+                    if (Collision.ResolveProps(shadow, new List<Prop> { props[n] }, ctx.Cr, body) > 0) touched.Add(n);
                 double crash = Collision.ResolveProps(car, props, ctx.Cr, body);
+                ctx.Check(shadow.X, car.X, "frame " + i + " shadow x");
+                ctx.Check(shadow.Vy, car.Vy, "frame " + i + " shadow vy");
                 if (crash > 0) crashes++;
                 var f = A(frames[i]);
                 CheckCar(ctx, car, f, "frame " + i);
                 ctx.Check(crash, f[5], "frame " + i + " crash");
             }
             Assert.Greater(crashes, 0, "the scenario must contain prop impacts");
+            Assert.AreEqual((int)N(O(ctx.Root["summary"])["propsTouched"]), touched.Count, "props touched (summary.propsTouched)");
+            Assert.AreEqual(4, touched.Count, "every prop is hit");
             ctx.Report("props");
         }
 
@@ -253,6 +273,9 @@ namespace DesktopDrift.Core.Tests
                 }
             }
             Assert.AreEqual(600, penalty, "all six cones must be knocked");
+            int knocked = 0;
+            foreach (Cone c in cones) if (c.Knocked) knocked++;
+            Assert.AreEqual((int)N(O(ctx.Root["summary"])["conesKnocked"]), knocked, "cones knocked (summary.conesKnocked)");
             ctx.Report("cones");
         }
     }

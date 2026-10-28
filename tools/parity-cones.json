@@ -10,6 +10,7 @@
 "nose": 24.599999999999998,
 "steerPattern": {"pattern":[0,1,1,0,-1,-1,0,1,-1,0],"block":20},
 "frameCount": 600,
+"summary": {"conesKnocked":6},
 "anchor": "free-run y + offset",
 "coneR": 9,
 "fAdj": 2,

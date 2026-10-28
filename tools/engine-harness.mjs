@@ -7,7 +7,7 @@
 //   node tools/engine-harness.mjs green-study   # registered track, its own laps, frame cap 14400
 //   node tools/engine-harness.mjs green-study-rev       # reversed, seeded record + first clear done
 //   node tools/engine-harness.mjs green-study-zen-cap   # zen, car parked at a cola cap, full lock, 900 frames
-//   node tools/engine-harness.mjs oval-sandbox          # laps 0 (infinite), exactly 1200 frames
+//   node tools/engine-harness.mjs oval-sandbox          # laps 0 (infinite), exactly 5200 frames (> 4 laps: lapScores shift)
 //
 // One track per process: store.js caches the save at module level, so each race starts from the
 // same seeded localStorage.
@@ -33,7 +33,7 @@ const RUNS = {
     // ArrowLeft turns counter-clockwise on screen (angle decreases): heading -PI/2 from cap+(140,100)
     // puts the steady drift circle (r ~115, its centre creeping ~25 units per loop) over the cap ring.
     donut: { dx: 140, dy: 100, angle: -Math.PI / 2, key: 'ArrowLeft' } },
-  'oval-sandbox': { module: 'js/track-oval.js', opts: { laps: 0, stock: true, initItems: false }, cap: 1200, fixed: true },
+  'oval-sandbox': { module: 'js/track-oval.js', opts: { laps: 0, stock: true, initItems: false }, cap: 5200, fixed: true },
 };
 if (!RUNS[TRACK]) throw new Error(`usage: engine-harness.mjs ${Object.keys(RUNS).join('|')}`);
 const RUN = RUNS[TRACK];

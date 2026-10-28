@@ -10,6 +10,7 @@
 "nose": 24.599999999999998,
 "steerPattern": {"pattern":[0,1,1,0,-1,-1,0,1,-1,0],"block":20},
 "frameCount": 600,
+"summary": {"propsTouched":4},
 "anchor": "driven-path y + offset (props placed one by one)",
 "props": [{"x":400,"y":359.0188220450959,"ang":0,"hl":75,"r":15,"kind":"knife","yOffset":0},{"x":900,"y":375.36773306027663,"ang":1.3,"hl":0,"r":164,"kind":"plate","yOffset":60},{"x":1300,"y":37.0454350530768,"ang":0.4,"hl":88,"r":117,"kind":"board","yOffset":-80},{"x":1700,"y":242.0643051593872,"ang":2,"hl":170,"r":20,"kind":"fork","yOffset":20}],
 "frames": [

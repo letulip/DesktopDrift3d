@@ -245,5 +245,113 @@ namespace DesktopDrift.Core.Tests
             for (int i = 0; i < r.State.Caps.Count; i++)
                 Assert.AreEqual(i == cola || i == tire, r.State.Caps[i].Collected, format + ": caps[" + i + "]");
         }
+
+        // ─── И8: branches no engine trace reaches ───────────────────────────────
+
+        private static List<string> Reasons(SaveState save) =>
+            save.Ledger().Select(e => (string)((Dictionary<string, object?>)e!)["reason"]!).ToList();
+
+        // Cross the finish line of a 1-lap race from a placed state: one step behind the line, one past it.
+        private static RaceResult FinishFrom(RaceRules r, TrackData track)
+        {
+            double c = Math.Cos(track.StartAngle), s = Math.Sin(track.StartAngle);
+            r.State.NextCp = 0;
+            Place(r, track.StartPos.X - c * 40, track.StartPos.Y - s * 40, track.StartAngle);
+            r.Step(0, Dt);
+            Place(r, track.StartPos.X + c * 40, track.StartPos.Y + s * 40, track.StartAngle);
+            return Of(r.Step(0, Dt), RaceEvent.EventKind.Finished).Single().Result!;
+        }
+
+        // game-engine.js:463-479 – ZONE_STALL seconds of drifting without ZONE_ADV centerline indices of progress
+        // freezes the combo: "NO PROGRESS!" instead of points. Driving there takes a 3 s donut on the spot, so the
+        // state is constructed directly: the zone timer just below the stall, the car sliding sideways on the line.
+        [Test]
+        public void DriftZoneStall_FlashesNoProgress_AndFreezesTheCombo()
+        {
+            SaveState save = SaveSchema.Load(null).State;
+            RaceRules r = Racing(save: save);
+            TrackData t = r.Track;
+            Vec2 p = t.Center[40];
+            Vec2 q = t.Center[41];
+            double ang = Math.Atan2(q.Y - p.Y, q.X - p.X);
+            Place(r, p.X, p.Y, ang, -Math.Sin(ang) * 500, Math.Cos(ang) * 500);   // pure side-slip
+            r.State.NearIdx = 40;
+            r.State.DriftZoneRef = 40;
+            r.State.DriftZoneTimer = RaceRules.ZoneStall - Dt / 2;
+            r.State.ComboPoints = 30;
+            r.State.MultBuild = 1.5;
+            List<RaceEvent> ev = r.Step(0, Dt);
+            Assert.IsTrue(r.State.DriftZoned, "zoned");
+            RaceEvent flash = Of(ev, RaceEvent.EventKind.Flash).Single();
+            Assert.AreEqual("NO PROGRESS!", flash.Text);
+            Assert.AreEqual("#ffa040", flash.Color);
+            Assert.AreEqual(30, r.State.ComboPoints, "no points while zoned");
+            Assert.AreEqual(1.5, r.State.MultBuild, "no multiplier build while zoned");
+            Assert.IsEmpty(Reasons(save), "no ledger line");
+        }
+
+        // game-engine.js:553-558 – a finish whose rounded PPS is 1 pays the Participation Trophy and marks it.
+        [Test]
+        public void Finish_OnePps_PaysParticipationTrophy()
+        {
+            TrackData track = OvalTrack.Build();
+            track.Id = "oval-test";
+            SaveState save = SaveSchema.Load(null).State;
+            RaceRules r = Racing(new RaceOptions { Laps = 1 }, track, save);
+            r.State.Score = 10;
+            r.State.LapTime = 10;   // pps = 10 / (10 + 2 dt) ≈ 0.997 → Math.round = 1
+            RaceResult res = FinishFrom(r, track);
+            Assert.IsTrue(Economy.IsOnePps(res.Pps), "rounded pps is 1");
+            Assert.AreEqual(Economy.OnePpsBonus, res.Tires.Trophy, "trophy payout");
+            Assert.IsTrue(save.HasTrophy("oval-test"), "stats.trophies");
+            List<string> reasons = Reasons(save);
+            Assert.AreEqual(new[] { "Race — first clear", "Race — finish bonus", "Race — Participation Trophy", "Race — Perpetual Motion" },
+                reasons.Take(4).ToArray(), "ledger");
+        }
+
+        // game-engine.js:560-565 – finishing with comboUnbroken still true pays Perpetual Motion; a broken combo does not.
+        [TestCase(true)]
+        [TestCase(false)]
+        public void Finish_UnbrokenDrift_PaysPerpetualMotion(bool unbroken)
+        {
+            TrackData track = OvalTrack.Build();
+            track.Id = "oval-test";
+            SaveState save = SaveSchema.Load(null).State;
+            RaceRules r = Racing(new RaceOptions { Laps = 1 }, track, save);
+            r.State.Score = 1234;
+            r.State.LapTime = 10;
+            r.State.ComboUnbroken = unbroken;
+            RaceResult res = FinishFrom(r, track);
+            Assert.IsFalse(Economy.IsOnePps(res.Pps));
+            Assert.AreEqual(unbroken ? Economy.UnbrokenBonus : 0, res.Tires.Unbroken, "unbroken payout");
+            Assert.AreEqual(unbroken, save.HasPerpetual("oval-test"), "stats.perpetuals");
+            var expected = new List<string> { "Race — first clear", "Race — finish bonus" };
+            if (unbroken) expected.Add("Race — Perpetual Motion");
+            Assert.AreEqual(expected, Reasons(save).Where(x => !x.StartsWith("Achievement: ", StringComparison.Ordinal)).ToList(), "ledger");
+        }
+
+        // A race on a ROUND table (config TABLE.shape 'round'): the elliptic wall burns the combo, which also ends
+        // the unbroken streak – the finish then pays no Perpetual Motion.
+        [Test]
+        public void RoundTable_WallCrash_BurnsCombo_ThenNoPerpetualMotion()
+        {
+            TrackData track = OvalTrack.Build(new TableRect { W = OvalTrack.TableW, H = OvalTrack.TableH, Round = true });
+            track.Id = "oval-test";
+            Assert.IsTrue(track.Table.Round, "round table");
+            SaveState save = SaveSchema.Load(null).State;
+            RaceRules r = Racing(new RaceOptions { Laps = 1 }, track, save);
+            double cr = RaceReplayTests.Car().Wid * 0.55;
+            Place(r, OvalTrack.TableW / 2 - cr - 1, 0, 0, 400, 0);   // the ellipse's right vertex, driving out
+            r.State.ComboPoints = 77;
+            List<RaceEvent> ev = r.Step(0, Dt);
+            Assert.AreEqual("WALL!", Of(ev, RaceEvent.EventKind.ComboBurn).Single().Text, "burn reason");
+            Assert.AreEqual("WALL!  combo 77 lost", Of(ev, RaceEvent.EventKind.Flash).First().Text);
+            Assert.That(r.State.Car.X, Is.LessThan(OvalTrack.TableW / 2 - cr + 1e-9), "pushed back inside the ellipse");
+            Assert.IsFalse(r.State.ComboUnbroken);
+            r.State.Score = 1234; r.State.LapTime = 10; r.State.CrashCd = 0;
+            FinishFrom(r, track);
+            Assert.AreEqual(new[] { "Race — first clear", "Race — finish bonus" },
+                Reasons(save).Where(x => !x.StartsWith("Achievement: ", StringComparison.Ordinal)).ToArray(), "ledger");
+        }
     }
 }
