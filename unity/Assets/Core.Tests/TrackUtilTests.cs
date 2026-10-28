@@ -263,12 +263,11 @@ namespace DesktopDrift.Core.Tests
             var cps = TrackUtil.SampleCheckpointsByCorner(center, 4);
             Assert.AreEqual(center[0], cps[0]);
             var idxs = cps.Select(cp => IndexOfPt(center, cp)).ToList();
-            // DEVIATION from the JS (which asserts exactly 4): all curvatures here are equal up to ulp noise, so
-            // the argmax per sector depends on the hypot implementation. V8's Math.hypot yields [0,12,22,35];
-            // CoreMath.Hypot (sqrt(x*x+y*y), identical to JS with a naive hypot) yields [0,7,16,22,35] (the
-            // oversized-gap split adds a 5th). The invariant under test – no duplicate checkpoint – is kept.
-            Assert.IsTrue(idxs.Count >= 4);
-            Assert.AreEqual(idxs.Count, new HashSet<int>(idxs).Count, "all checkpoints must be at different centerline points: " + string.Join(",", idxs));
+            // JS asserts exactly 4 ([0,12,22,35] under V8's Math.hypot). All curvatures on this circle are equal
+            // up to ulp noise, so the per-sector argmax depends on hypot's rounding: CoreMath.Hypot mirrors V8's
+            // algorithm precisely so that this expectation holds here too (a naive sqrt(x*x+y*y) gave [0,7,16,22,35]).
+            Assert.AreEqual(new[] { 0, 12, 22, 35 }, idxs.ToArray(), "checkpoint indices: " + string.Join(",", idxs));
+            Assert.AreEqual(idxs.Count, new HashSet<int>(idxs).Count, "all checkpoints must be at different centerline points");
         }
 
         // test('sampleCheckpointsByCorner: arc-length sectors prevent clustering in Chaikin-dense region')

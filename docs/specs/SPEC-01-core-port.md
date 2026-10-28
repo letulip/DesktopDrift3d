@@ -159,4 +159,22 @@ SPEC-00 (контур), SPEC-02 (потребитель `RaceRules`), SPEC-03 (`
 
 ## Находки гейта
 
-(пусто)
+Волна 2, по ходу (28.10.2026):
+
+1. **`CoreMath.Hypot` переписан по алгоритму V8** (`MathHypot` в `src/builtins/math.tq`: NaN/∞-правила,
+   масштабирование по максимуму, сумма квадратов с компенсацией Кахана, `sqrt·max`). Причина: наивный
+   `sqrt(x²+y²)` расходится с `Math.hypot` на ulp, и на вырожденном тесте `sampleCheckpointsByCorner`
+   (равные кривизны) argmax выбирал другие точки (`[0,7,16,22,35]` вместо JS `[0,12,22,35]`); с V8-алгоритмом
+   ожидание JS выполняется, трасса паритета физики 2.7e-12 → 1.8e-12 (остаток – `pow`/`sin`/`cos` рантаймов).
+   Закон остаётся допуском 1e-6: IL2CPP/clang может свернуть `n·n − c` в FMA, бит-в-бит не обещается.
+2. `ParseSvgPath` строже JS: неизвестная команда (в том числе строчные `m l h v`) → `FormatException`;
+   JS молча портил точки. Для Figma-экспорта (только `M L H V Z`) поведение совпадает.
+3. Шаг 4 разделён: 4a – геометрия (`TrackUtil`, `TireSeed`, `TrackData`, 37 тестов), 4b – эталоны трасс
+   через настоящий DOM (`linkedom`) + `TrackBuilder.FromSvg` в Core (System.Xml) с тестом паритета по 6
+   трассам (перенесено сюда из SPEC-03 §1–2: парсер трасс живёт в Core, SPEC-03 только оборачивает его).
+4. Экспорт данных (шаг 1): `cars.json` хранит `drive` (= `_drive`, с дефолтами `driftDrag`/`rollFriction`) и
+   `driveRaw`; `price`/`ratings` живут в `car-registry.json` (стартовые bismark/panda там отсутствуют);
+   `engine.json` даёт 9 констант замыкания `game-engine.js` (включая `MULT_RESET_GRACE 1.2`, `ZONE_STALL 3`).
+5. Шаг 2: JS `Math.round` ≠ C# `Math.Round` (банковское) – введён `CoreMath.JsRound = floor(x+0.5)`;
+   `grep Math.Round` в Core запрещён гейтом.
+
