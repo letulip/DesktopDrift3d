@@ -21,6 +21,8 @@ namespace DesktopDrift.Game
         CamState prev, cur;
         bool hasC2;
         float steppedAt; // Time.fixedTime of the last step: a fixed step without one means paused/finished
+        CamPhase ph = CamPhase.Normal; // C3: countdown fly-in, post-finish orbit, phone distance
+        float shakeT; // s left of the cone-hit shake
 
         void Awake()
         {
@@ -36,6 +38,7 @@ namespace DesktopDrift.Game
             if (loop == null) return;
             loop.OnReset += HandleReset;
             loop.OnStepped += HandleStepped;
+            loop.OnEvent += HandleEvent;
         }
 
         void OnDisable()
@@ -43,12 +46,20 @@ namespace DesktopDrift.Game
             if (loop == null) return;
             loop.OnReset -= HandleReset;
             loop.OnStepped -= HandleStepped;
+            loop.OnEvent -= HandleEvent;
         }
 
         void HandleReset()
         {
             if (preset == null) return;
-            cur = prev = ChaseCameraMath.Reset(Kin(), preset.c2);
+            ph = new CamPhase
+            {
+                Intro01 = 0,
+                Orbit = false,
+                DistanceScale = Application.isMobilePlatform ? preset.c2.MobileDistanceScale : 1,
+            };
+            shakeT = 0f;
+            cur = prev = ChaseCameraMath.Reset(Kin(), preset.c2, ph);
             hasC2 = true;
             steppedAt = Time.fixedTime;
         }
@@ -56,9 +67,32 @@ namespace DesktopDrift.Game
         void HandleStepped()
         {
             if (!hasC2) return;
+            // Fly-in time on the step grid (deterministic), not Time.time.
+            double intro = preset.c2.IntroSeconds > 0 ? loop.StepCount * RaceLoop.FixedDt / preset.c2.IntroSeconds : 1;
+            ph.Intro01 = intro < 1 ? intro : 1;
+            StepCam();
+        }
+
+        void StepCam()
+        {
             prev = cur;
-            cur = ChaseCameraMath.Step(cur, Kin(), preset.c2, RaceLoop.FixedDt);
+            cur = ChaseCameraMath.Step(cur, Kin(), preset.c2, ph, RaceLoop.FixedDt);
             steppedAt = Time.fixedTime;
+        }
+
+        void HandleEvent(RaceEvent e)
+        {
+            if (preset == null) return;
+            if (e.Kind == RaceEvent.EventKind.Finished) ph.Orbit = true;
+            else if (e.Kind == RaceEvent.EventKind.ConeHit && preset.c2.ShakeAmp > 0) shakeT = (float)preset.c2.ShakeSeconds;
+        }
+
+        void FixedUpdate()
+        {
+            // After the finish the race no longer steps: the rig steps the orbit itself, once per fixed step
+            // (the finishing step itself was already stepped through OnStepped).
+            if (!hasC2 || !ph.Orbit || loop == null || loop.Running || steppedAt == Time.fixedTime) return;
+            StepCam();
         }
 
         CarKinematics Kin()
@@ -78,7 +112,8 @@ namespace DesktopDrift.Game
                 Vector3 pos = Vector3.Lerp(W(prev.PosX, prev.PosY, prev.PosH), W(cur.PosX, cur.PosY, cur.PosH), alpha);
                 Vector3 look = Vector3.Lerp(W(prev.LookX, prev.LookY, prev.LookH), W(cur.LookX, cur.LookY, cur.LookH), alpha);
                 cam.transform.SetPositionAndRotation(pos, Quaternion.LookRotation(look - pos, Vector3.up));
-                cam.fieldOfView = preset.fov;
+                cam.fieldOfView = (float)(prev.Fov + (cur.Fov - prev.Fov) * alpha);
+                Shake();
                 return;
             }
             // C1, and C2 before the first race reset.
@@ -86,6 +121,19 @@ namespace DesktopDrift.Game
             C1Pose(carView.transform.position, preset.c1PitchDeg, d, preset.c1ScreenOffset, preset.fov, out var p, out var rot);
             cam.transform.SetPositionAndRotation(p, rot);
             cam.fieldOfView = preset.fov;
+            Shake();
+        }
+
+        // Cone-hit shake: cosmetic, wall-clock time, camera-local offset that fades out over ShakeSeconds.
+        void Shake()
+        {
+            if (shakeT <= 0f) return;
+            shakeT -= Time.deltaTime;
+            if (shakeT <= 0f || preset.c2.ShakeSeconds <= 0) return;
+            float k = shakeT / (float)preset.c2.ShakeSeconds;
+            float a = (float)preset.c2.ShakeAmp * WorldMapping.UnitsToMeters * k;
+            float t = Time.time;
+            cam.transform.position += cam.transform.rotation * new Vector3(Mathf.Sin(t * 41f) * a, Mathf.Cos(t * 53f) * a * 0.5f, 0f);
         }
 
         static Vector3 W(double x, double y, double h) =>

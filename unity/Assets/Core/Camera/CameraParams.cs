@@ -14,5 +14,17 @@ namespace DesktopDrift.Core
         public double YawLag = 0.35;             // s, exponential time constant
         public double MaxYawRateDeg = 180;       // deg/s
         public double MinSpeedForVelocityYaw = 80; // units/s: below it the heading leans to the car axis
+
+        // SPEC-02 §8 (C3 polish).
+        public double FovMin = 55;               // deg at speed 0
+        public double FovMax = 68;               // deg at MaxSpeed
+        public double DriftOffset = 60;          // units: sideways shift toward the inside of the arc at full slip
+        public double DriftSlipRef = 80;         // units/s: |side velocity| that gives the full DriftOffset
+        public double MobileDistanceScale = 1.0 / 0.65; // Distance and Height on phones (2D ZOOM 0.65); not LookAhead
+        public double IntroSeconds = 3.0;        // s: countdown fly-in from IntroScale to 1 (smoothstep)
+        public double IntroScale = 2.2;          // Distance/Height multiplier at the start of the countdown
+        public double OrbitRateDeg = 18;         // deg/s: orbit around the car after the finish
+        public double ShakeAmp = 4;              // units: cone-hit shake amplitude; 0 = off
+        public double ShakeSeconds = 0.25;       // s: cone-hit shake duration
     }
 }

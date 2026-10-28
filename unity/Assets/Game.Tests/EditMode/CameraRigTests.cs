@@ -42,6 +42,21 @@ namespace DesktopDrift.Game.Tests
         }
 
         [Test]
+        public void PresetHasC3Defaults()
+        {
+            var p = ScriptableObject.CreateInstance<CameraPreset>();
+            try
+            {
+                Assert.AreEqual(55.0, p.c2.FovMin);
+                Assert.AreEqual(1.0 / 0.65, p.c2.MobileDistanceScale, 1e-12);
+            }
+            finally
+            {
+                Object.DestroyImmediate(p);
+            }
+        }
+
+        [Test]
         public void PresetKeepsSerializableC2Defaults()
         {
             var p = ScriptableObject.CreateInstance<CameraPreset>();
