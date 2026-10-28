@@ -52,11 +52,13 @@ namespace DesktopDrift.Editor
             var carView = new GameObject("Car").AddComponent<CarView>();
             SetRefs(carView, ("material", car));
 
-            var boot = new GameObject("Bootstrap").AddComponent<GameBootstrap>();
-            SetRefs(boot, ("trackView", track), ("carView", carView));
-
             var input = new GameObject("Input").AddComponent<SteerReader>();
             SetRefs(input, ("actions", AssetDatabase.LoadAssetAtPath<InputActionAsset>("Assets/Settings/DesktopDrift.inputactions")));
+
+            var race = new GameObject("Race").AddComponent<RaceLoop>();
+            SetRefs(race, ("trackView", track), ("carView", carView), ("steerReader", input),
+                ("carsJson", Json("cars.json")), ("registryJson", Json("car-registry.json")), ("configJson", Json("config.json")),
+                ("tracksJson", Json("tracks.json")), ("shopJson", Json("shop.json")));
 
             Directory.CreateDirectory(Path.GetDirectoryName(ScenePath)!);
             if (!EditorSceneManager.SaveScene(scene, ScenePath)) throw new Exception("SaveScene failed: " + ScenePath);
@@ -64,6 +66,12 @@ namespace DesktopDrift.Editor
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             Debug.Log("GameSceneBuilder: built " + ScenePath);
+        }
+
+        static TextAsset Json(string file)
+        {
+            string path = "Assets/Content/_json/" + file;
+            return AssetDatabase.LoadAssetAtPath<TextAsset>(path) ?? throw new Exception("Missing TextAsset " + path);
         }
 
         static Material Mat(string name, Color color)

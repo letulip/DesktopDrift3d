@@ -1,19 +1,25 @@
 #!/usr/bin/env bash
-# SPEC-00 B3: EditMode tests through `unity test`; NUnit + JUnit reports land in artifacts/.
-# Usage: scripts/unity-tests.sh [<filter>]   e.g. scripts/unity-tests.sh DesktopDrift.Core.Tests.PhysicsTests
+# SPEC-00 B3: EditMode (default) or PlayMode tests through `unity test`; NUnit + JUnit reports land in artifacts/.
+# Usage: [UNITY_TESTS_MODE=EditMode|PlayMode] scripts/unity-tests.sh [<filter>]   e.g. scripts/unity-tests.sh DesktopDrift.Core.Tests.PhysicsTests
 set -euo pipefail
 cd "$(dirname "$0")/.."
 source ~/.unity/env
 export UNITY_NO_BANNER=1 UNITY_NON_INTERACTIVE=1 UNITY_NO_PAGER=1
 mkdir -p artifacts
-NUNIT="$PWD/artifacts/editmode.xml"
-JUNIT="$PWD/artifacts/editmode-junit.xml"
+MODE="${UNITY_TESTS_MODE:-EditMode}"
+case "$MODE" in
+  EditMode) report=editmode ;;
+  PlayMode) report=playmode ;;
+  *) echo "UNITY_TESTS_MODE must be EditMode or PlayMode, got: $MODE" >&2; exit 2 ;;
+esac
+NUNIT="$PWD/artifacts/$report.xml"
+JUNIT="$PWD/artifacts/$report-junit.xml"
 rm -f "$NUNIT" "$JUNIT"
 filter=()
 if [ -n "${1:-}" ]; then filter=(--filter "$1"); fi
 start=$SECONDS
 rc=0
-unity test unity --mode EditMode --output "$NUNIT" --report-format nunit,junit --junit-output "$JUNIT" \
+unity test unity --mode "$MODE" --output "$NUNIT" --report-format nunit,junit --junit-output "$JUNIT" \
   --timeout 900 --json ${filter[@]+"${filter[@]}"} > artifacts/unity-tests.json 2>&1 || rc=$?
 tail -c 1500 artifacts/unity-tests.json; echo
 total=0; failed=0
