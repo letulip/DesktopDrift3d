@@ -72,6 +72,9 @@ namespace DesktopDrift.Editor
             var rig = camGo.AddComponent<CameraRig>();
             SetRefs(rig, ("preset", preset), ("cam", cam), ("carView", carView), ("loop", race));
 
+            var skids = new GameObject("SkidMarks").AddComponent<SkidMarks>();
+            SetRefs(skids, ("loop", race), ("material", SkidMat()));
+
             var tuningGo = new GameObject("Tuning");
             var tuningDoc = tuningGo.AddComponent<UIDocument>();
             tuningDoc.panelSettings = PanelSettingsAsset();
@@ -126,6 +129,22 @@ namespace DesktopDrift.Editor
                 AssetDatabase.CreateAsset(m, path);
             }
             m.SetColor("_BaseColor", color);
+            EditorUtility.SetDirty(m);
+            return m;
+        }
+
+        static Material SkidMat()
+        {
+            string path = $"{MaterialsDir}/SkidMark.mat";
+            var m = AssetDatabase.LoadAssetAtPath<Material>(path);
+            if (m == null)
+            {
+                var shader = Shader.Find("DesktopDrift/SkidMark") ?? throw new Exception("Missing shader DesktopDrift/SkidMark");
+                m = new Material(shader);
+                AssetDatabase.CreateAsset(m, path);
+            }
+            m.SetColor("_Color", Color.white);
+            m.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
             EditorUtility.SetDirty(m);
             return m;
         }
