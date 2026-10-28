@@ -4,6 +4,24 @@
 > как в 2D, камера по решению D-08. Всё, что здесь строится, живёт на серой параметрической трассе
 > (овал из `track-oval.js`) и переезжает на настоящие трассы без правок в SPEC-03.
 
+## Поправки после Волны 2 (28.10.2026, архитектор)
+
+SPEC-01 перенёс в Core больше, чем эта спека предполагала при написании, поэтому часть выходов уже есть:
+- `Core/Track/OvalTrack.cs` существует (SPEC-01 шаг 8a) – шаг 1 его НЕ пишет, а только строит сцену над ним.
+- `Core/Race/{RaceRules,RaceState,RaceOptions,RaceEvent,RaceResult}.cs` существуют и доказаны реплеями пяти следов
+  настоящего движка (`tools/engine-trace-*.json`) – шаг 3 (`RaceLoop`) становится тонким: `FixedUpdate` → `RaceRules.Step`
+  → диспетчер `RaceEvent`; правила НЕ переписывать. Контракты хоста – `03-architecture.md` §12 (dt = 1/60, пауза без
+  `Step`, `hourOfDay`, `NowMs`, `random`, машина по `carIndex`, крышки по `capId`).
+- Сейв есть (`Core/Save/SaveState.cs`), поэтому «заглушка `ICapStore` в памяти» из §3 не нужна: `RaceLoop` берёт
+  `SaveState` из `SaveSchema.Load` (файл – SPEC-07; до него – загрузка пустого сейва, `OnChanged` пишется в лог).
+- Новый пункт в шаге 3 (ревью Волны 2, И3): `Core/Meta/CarCatalog.cs` – `CarDefinition` (id, name, drive, len, wid,
+  vw, vh, flip, price) из `Content/_json/cars.json` (+ ratings/feel из `car-registry.json`), чтобы `RaceLoop`
+  передавал в `RaceRules` машину по `garage.carIndex`, а не руками.
+- `SteerInput` – порт `resolveSteer` из `js/input.js` (10 строк): результат только −1/0/1; геймпад в 1.1 (D-16).
+- Ориентация: D-19 – PoC крутится в Portrait и обоих Landscape, камера и HUD проектируются «портрет первым»;
+  выбор на гейте этого этапа.
+- Бюджет шага 3 снижается до ⟨opus · high · ≤50⟩, шага 1 – до ≤50.
+
 ## Цель
 
 Сцена `Game.unity`: машина-плейсхолдер едет по серому овалу по правилам `RaceRules`, с вводом
