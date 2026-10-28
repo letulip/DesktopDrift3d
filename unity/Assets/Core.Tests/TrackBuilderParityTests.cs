@@ -33,7 +33,7 @@ namespace DesktopDrift.Core.Tests
         private static List<object?> A(object? o) { return (List<object?>)o!; }
 
 
-        private static TrackData Build(string id)
+        internal static TrackData Build(string id)
         {
             string dd = DesktopDriftDir();
             Dictionary<string, object?>? row = null;
