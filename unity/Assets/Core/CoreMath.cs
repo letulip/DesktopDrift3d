@@ -88,6 +88,15 @@ namespace DesktopDrift.Core
         // ECMAScript Number::toString(x) (ECMA-262 §6.1.6.1.20) – what `${x}`, String(x) and JSON print – without
         // the runtime's "R" (on Mono / .NET Framework "R" is G15 then G17, not the shortest round-trip):
         // the shortest digit string 1..17 that parses back to x, laid out by the spec's exponent rules.
+        // Round-trip probe for JsNumberToString. Mono's double.Parse throws OverflowException on strings at the
+        // edge of the double range (e.g. "1.7976931348623157E+308", seen on Unity 6000.3 EditMode) where .NET Core
+        // parses them; an overflow counts as "does not round-trip" so the search continues to 17 digits.
+        private static bool RoundTrips(string es, double a)
+        {
+            try { return double.Parse(es, NumberStyles.Float, CultureInfo.InvariantCulture) == a; }
+            catch (OverflowException) { return false; }
+        }
+
         public static string JsNumberToString(double x)
         {
             if (double.IsNaN(x)) return "NaN";
@@ -100,7 +109,7 @@ namespace DesktopDrift.Core
             for (int p = 1; p <= 17; p++)
             {
                 string es = a.ToString("E" + (p - 1).ToString(CultureInfo.InvariantCulture), CultureInfo.InvariantCulture);
-                if (p < 17 && double.Parse(es, NumberStyles.Float, CultureInfo.InvariantCulture) != a) continue;
+                if (p < 17 && !RoundTrips(es, a)) continue;
                 int ePos = es.IndexOf('E');
                 digits = es.Substring(0, ePos).Replace(".", "").TrimEnd('0');
                 if (digits.Length == 0) digits = "0";
