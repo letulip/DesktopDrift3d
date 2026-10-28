@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &74407527
+--- !u!1 &148584142
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,38 +127,35 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 74407529}
-  - component: {fileID: 74407528}
+  - component: {fileID: 148584144}
+  - component: {fileID: 148584143}
   m_Layer: 0
-  m_Name: Track
+  m_Name: Car
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &74407528
+--- !u!114 &148584143
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 74407527}
+  m_GameObject: {fileID: 148584142}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7399fd57b66824d8889d041b2883e0bd, type: 3}
+  m_Script: {fileID: 11500000, guid: 960f52ef37ca84062a2d5ec53913abe9, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: DesktopDrift.Game::DesktopDrift.Game.TrackView
-  tableMaterial: {fileID: 2100000, guid: e12e2429aa0dc4546be6d54eb8aa413d, type: 2}
-  ribbonMaterial: {fileID: 2100000, guid: c861d9706bfa34a288a8175c0df75012, type: 2}
-  coneMaterial: {fileID: 2100000, guid: 29ec35a3e533a43759cd2c487826051f, type: 2}
-  propMaterial: {fileID: 2100000, guid: 7e6107ebd92a44eaabe6dbbec80193d1, type: 2}
---- !u!4 &74407529
+  m_EditorClassIdentifier: DesktopDrift.Game::DesktopDrift.Game.CarView
+  material: {fileID: 2100000, guid: 653c5495c64324b9fa39e210bc559e5d, type: 2}
+--- !u!4 &148584144
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 74407527}
+  m_GameObject: {fileID: 148584142}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -167,7 +164,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &229710020
+--- !u!1 &210503643
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -175,8 +172,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 229710022}
-  - component: {fileID: 229710021}
+  - component: {fileID: 210503645}
+  - component: {fileID: 210503644}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -184,13 +181,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!108 &229710021
+--- !u!108 &210503644
 Light:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 229710020}
+  m_GameObject: {fileID: 210503643}
   m_Enabled: 1
   serializedVersion: 12
   m_Type: 1
@@ -249,13 +246,13 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
---- !u!4 &229710022
+--- !u!4 &210503645
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 229710020}
+  m_GameObject: {fileID: 210503643}
   serializedVersion: 2
   m_LocalRotation: {x: 0.40821794, y: -0.23456973, z: 0.10938166, w: 0.8754261}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -264,7 +261,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &462837691
+--- !u!1 &281141031
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -272,9 +269,54 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 462837694}
-  - component: {fileID: 462837693}
-  - component: {fileID: 462837692}
+  - component: {fileID: 281141033}
+  - component: {fileID: 281141032}
+  m_Layer: 0
+  m_Name: Input
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &281141032
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 281141031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d0c11aa07b6340d0a2e0cb8fe0fc975, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesktopDrift.Game::DesktopDrift.Game.SteerReader
+  actions: {fileID: -944628639613478452, guid: 972cfa2b605c54a2f8c6b2063c99cd11, type: 3}
+--- !u!4 &281141033
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 281141031}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &304794206
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 304794209}
+  - component: {fileID: 304794208}
+  - component: {fileID: 304794207}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -282,29 +324,29 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &462837692
+--- !u!114 &304794207
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 462837691}
+  m_GameObject: {fileID: 304794206}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dfeacbf03324f482ab5401885495db58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: DesktopDrift.Game::DesktopDrift.Game.CameraRig
   preset: {fileID: 11400000, guid: 72ba9b05a8950445382455489bd42061, type: 2}
-  cam: {fileID: 462837693}
-  carView: {fileID: 490329362}
-  loop: {fileID: 1192959935}
---- !u!20 &462837693
+  cam: {fileID: 304794208}
+  carView: {fileID: 148584143}
+  loop: {fileID: 2102340843}
+--- !u!20 &304794208
 Camera:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 462837691}
+  m_GameObject: {fileID: 304794206}
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
@@ -349,13 +391,13 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!4 &462837694
+--- !u!4 &304794209
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 462837691}
+  m_GameObject: {fileID: 304794206}
   serializedVersion: 2
   m_LocalRotation: {x: 0.190496, y: 0.8071724, z: -0.35948426, w: 0.4277325}
   m_LocalPosition: {x: 1.0167596, y: 0.5, z: 0.16845368}
@@ -364,7 +406,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &490329361
+--- !u!1 &369527816
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -372,35 +414,38 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 490329363}
-  - component: {fileID: 490329362}
+  - component: {fileID: 369527818}
+  - component: {fileID: 369527817}
   m_Layer: 0
-  m_Name: Car
+  m_Name: Track
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &490329362
+--- !u!114 &369527817
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 490329361}
+  m_GameObject: {fileID: 369527816}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 960f52ef37ca84062a2d5ec53913abe9, type: 3}
+  m_Script: {fileID: 11500000, guid: 7399fd57b66824d8889d041b2883e0bd, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: DesktopDrift.Game::DesktopDrift.Game.CarView
-  material: {fileID: 2100000, guid: 653c5495c64324b9fa39e210bc559e5d, type: 2}
---- !u!4 &490329363
+  m_EditorClassIdentifier: DesktopDrift.Game::DesktopDrift.Game.TrackView
+  tableMaterial: {fileID: 2100000, guid: e12e2429aa0dc4546be6d54eb8aa413d, type: 2}
+  ribbonMaterial: {fileID: 2100000, guid: c861d9706bfa34a288a8175c0df75012, type: 2}
+  coneMaterial: {fileID: 2100000, guid: 29ec35a3e533a43759cd2c487826051f, type: 2}
+  propMaterial: {fileID: 2100000, guid: 7e6107ebd92a44eaabe6dbbec80193d1, type: 2}
+--- !u!4 &369527818
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 490329361}
+  m_GameObject: {fileID: 369527816}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -409,7 +454,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1192959934
+--- !u!1 &684114101
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -417,8 +462,80 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1192959936}
-  - component: {fileID: 1192959935}
+  - component: {fileID: 684114104}
+  - component: {fileID: 684114103}
+  - component: {fileID: 684114102}
+  m_Layer: 0
+  m_Name: Tuning
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &684114102
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 684114101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73b0394340d4d4a8ead687ff41d8a0dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DesktopDrift.Game::DesktopDrift.Game.TuningOverlay
+  doc: {fileID: 684114103}
+  rig: {fileID: 304794207}
+  loop: {fileID: 2102340843}
+  preset: {fileID: 11400000, guid: 72ba9b05a8950445382455489bd42061, type: 2}
+--- !u!114 &684114103
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 684114101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
+  m_PanelSettings: {fileID: 11400000, guid: ad84dd9cfb26d44879b6cfdb5291dfae, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 0}
+  m_SortingOrder: 100
+  m_Position: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
+--- !u!4 &684114104
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 684114101}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2102340842
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2102340844}
+  - component: {fileID: 2102340843}
   m_Layer: 0
   m_Name: Race
   m_TagString: Untagged
@@ -426,13 +543,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1192959935
+--- !u!114 &2102340843
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1192959934}
+  m_GameObject: {fileID: 2102340842}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 37697601854594d1db3f9795171f3f6b, type: 3}
@@ -443,63 +560,18 @@ MonoBehaviour:
   configJson: {fileID: 4900000, guid: b50d305f88a5649f0b85178a758d126a, type: 3}
   tracksJson: {fileID: 4900000, guid: 550b68be10c87450d9ae292f0f09cabc, type: 3}
   shopJson: {fileID: 4900000, guid: 5007b2136ab204953a9b71fdfddeb9d1, type: 3}
-  trackView: {fileID: 74407528}
-  carView: {fileID: 490329362}
-  steerReader: {fileID: 1700691441}
+  trackView: {fileID: 369527817}
+  carView: {fileID: 148584143}
+  steerReader: {fileID: 281141032}
   Running: 0
   StepCount: 0
---- !u!4 &1192959936
+--- !u!4 &2102340844
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1192959934}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1700691440
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1700691442}
-  - component: {fileID: 1700691441}
-  m_Layer: 0
-  m_Name: Input
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1700691441
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1700691440}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d0c11aa07b6340d0a2e0cb8fe0fc975, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: DesktopDrift.Game::DesktopDrift.Game.SteerReader
-  actions: {fileID: -944628639613478452, guid: 972cfa2b605c54a2f8c6b2063c99cd11, type: 3}
---- !u!4 &1700691442
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1700691440}
+  m_GameObject: {fileID: 2102340842}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -512,9 +584,10 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 229710022}
-  - {fileID: 462837694}
-  - {fileID: 74407529}
-  - {fileID: 490329363}
-  - {fileID: 1700691442}
-  - {fileID: 1192959936}
+  - {fileID: 210503645}
+  - {fileID: 304794209}
+  - {fileID: 369527818}
+  - {fileID: 148584144}
+  - {fileID: 281141033}
+  - {fileID: 2102340844}
+  - {fileID: 684114104}

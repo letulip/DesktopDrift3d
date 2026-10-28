@@ -7,6 +7,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 
 namespace DesktopDrift.Editor
 {
@@ -71,12 +72,41 @@ namespace DesktopDrift.Editor
             var rig = camGo.AddComponent<CameraRig>();
             SetRefs(rig, ("preset", preset), ("cam", cam), ("carView", carView), ("loop", race));
 
+            var tuningGo = new GameObject("Tuning");
+            var tuningDoc = tuningGo.AddComponent<UIDocument>();
+            tuningDoc.panelSettings = PanelSettingsAsset();
+            tuningDoc.sortingOrder = 100;
+            var tuning = tuningGo.AddComponent<TuningOverlay>();
+            SetRefs(tuning, ("doc", tuningDoc), ("rig", rig), ("loop", race), ("preset", preset));
+
             Directory.CreateDirectory(Path.GetDirectoryName(ScenePath)!);
             if (!EditorSceneManager.SaveScene(scene, ScenePath)) throw new Exception("SaveScene failed: " + ScenePath);
             EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(ScenePath, true) };
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             Debug.Log("GameSceneBuilder: built " + ScenePath);
+        }
+
+        // Shared with the HUD (step 11): portrait-first reference resolution (D-19).
+        static PanelSettings PanelSettingsAsset()
+        {
+            const string path = "Assets/UI/PanelSettings.asset";
+            var ps = AssetDatabase.LoadAssetAtPath<PanelSettings>(path);
+            if (ps == null)
+            {
+                if (!AssetDatabase.IsValidFolder("Assets/UI")) AssetDatabase.CreateFolder("Assets", "UI");
+                ps = ScriptableObject.CreateInstance<PanelSettings>();
+                AssetDatabase.CreateAsset(ps, path);
+            }
+            ps.scaleMode = PanelScaleMode.ScaleWithScreenSize;
+            ps.referenceResolution = new Vector2Int(1080, 1920);
+            ps.screenMatchMode = PanelScreenMatchMode.MatchWidthOrHeight;
+            ps.match = 0.5f;
+            var theme = AssetDatabase.LoadAssetAtPath<ThemeStyleSheet>("Assets/UI/UnityDefaultRuntimeTheme.tss")
+                ?? AssetDatabase.LoadAssetAtPath<ThemeStyleSheet>("Assets/UI Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss");
+            if (theme != null) ps.themeStyleSheet = theme;
+            EditorUtility.SetDirty(ps);
+            return ps;
         }
 
         static TextAsset Json(string file)
