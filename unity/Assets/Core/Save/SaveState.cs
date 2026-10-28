@@ -21,6 +21,11 @@ namespace DesktopDrift.Core
         public int Revision { get; private set; }
         public Action? OnChanged;
 
+        // store.js: _pushLedger stamps `t: Date.now()`. Core has no clock (determinism invariant,
+        // 03-architecture §4): the Unity layer sets NowMs = () => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        // tests leave the default, so ledger timestamps are 0 there.
+        public Func<double> NowMs = () => 0;
+
         public SaveState(Dictionary<string, object?> root)
         {
             Root = root;
@@ -165,7 +170,7 @@ namespace DesktopDrift.Core
             List<object?> ledger = ListIn(Root, "ledger");
             ledger.Add(new Dictionary<string, object?>
             {
-                ["t"] = (double)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                ["t"] = NowMs(),
                 ["amount"] = amount,
                 ["reason"] = reason,
                 ["balance"] = (double)Wallet(),

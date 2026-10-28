@@ -182,4 +182,15 @@ SPEC-00 (контур), SPEC-02 (потребитель `RaceRules`), SPEC-03 (`
    паритет `TrackBuilder.FromSvg` ↔ JS 12/12 (6 трасс + реверс) при 1e-6, `toFixed(3)` ⇒ `Math.Round(…, 3,
    AwayFromZero)` без расхождений; три proxy-линии с незапечённым `transform` пропускаются на обеих сторонах
    (вопрос №2 владельцу). `XmlDocument.GetElementById` требует DTD – обход по `GetElementsByTagName("*")`.
+7. Шаг 5a: `RunStats` – поля-числа/булевы без «undefined»: у заезда без поля `crashes`/`hour` JS даёт false, C# –
+   0; движок всегда заполняет все поля, `run == null` ведёт себя как в JS. Каталог 62 определений и `content`
+   побайтно равны `achievements.json` (тест `CatalogMatchesExportedJson`); лестницы генерируются из таблиц
+   порогов, как в JS. Шаг 5b: `toFixed(2/3)` в `DriveForRatings` эмулируется `JsRound(x·10^d)/10^d`, в
+   `TrackBuilder` – `Math.Round(…, AwayFromZero)`; оба прошли паритет, унификация в `CoreMath.JsToFixed` –
+   пункт ревью шага 9. `hsl(...)` печатает hue через `"R"` (экспонента ниже 1e-5 вне диапазона игры).
+   `CarOwned` живёт в `Economy` (из `store.js:333`), тест `grantCar` не трогает Core (нет singleton-стора).
+8. Шаг 6 (решение архитектора по ходу): неизвестная/будущая версия сейва ведёт себя КАК В 2D – слияние поверх
+   дефолтов и сохранение данных (тест `unknown version preserves data`), а не «бэкап + дефолты» из D-17;
+   D-17 уточнён этим пунктом. JSON-дерево = `Dictionary<string, object?>`/`List<object?>` из `Core/Save/Json.cs`
+   (парсер переехал из `Core.Tests/MiniJson.cs`, добавлен сериализатор) – Newtonsoft слою Game не нужен.
 
