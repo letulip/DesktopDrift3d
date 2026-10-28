@@ -11,5 +11,11 @@ namespace DesktopDrift.Core
         {
             return Math.Sqrt(x * x + y * y);
         }
+
+        // JS Math.round: half rounds toward +∞ (C# Math.Round is banker's rounding – never use it for parity)
+        public static double JsRound(double x)
+        {
+            return Math.Floor(x + 0.5);
+        }
     }
 }
