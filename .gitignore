@@ -5,7 +5,26 @@ Logs/
 obj/
 bin/
 Build/
-artifacts/
 *.csproj.user
 .DS_Store
 node_modules/
+# SPEC-00 A1
+unity/Library/
+unity/Temp/
+unity/Logs/
+unity/UserSettings/
+unity/Build/
+core-tests/bin
+core-tests/obj
+artifacts/*
+!artifacts/.gitkeep
+unity/*.csproj
+unity/*.sln
+unity/*.slnx
+unity/.vsconfig
+# Unity CLI temp files (unity build / --create-profile)
+unity/.utmp/
+unity/Assets/**/UnityCliTemp-*
+# Pipeline capture scratch under Assets/ (scripts/capture.sh moves PNGs to artifacts/capture/)
+unity/Assets/Captures/
+unity/Assets/Captures.meta

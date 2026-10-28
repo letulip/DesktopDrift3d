@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "unity-editor-mcp": {
+      "command": "sh",
+      "args": ["-c", ". \"$HOME/.unity/env\" && exec unity mcp --project-path \"$PWD/unity\""]
+    }
+  }
+}

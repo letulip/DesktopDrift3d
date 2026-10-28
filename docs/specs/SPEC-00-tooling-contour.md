@@ -96,7 +96,7 @@
 вызывается `unity run unity -l artifacts/setup.log -- -executeMethod DesktopDrift.Editor.ProjectSetup.Apply -quit`
 (аргументы после `--` уходят редактору): URP-ассет в Graphics/Quality, `ScriptingBackend=IL2CPP`,
 `TargetArchitectures=ARM64`, `minSdk=26`, `targetSdk` = максимальный установленный (android-37),
-ориентация landscape, Input System «new only», Linear, `ProjectVersion.txt` = 6000.3.27f1. Идемпотентно.
+ориентация – автоповорот Portrait + LandscapeLeft/Right до решения на гейте SPEC-02 (D-19), Input System «new only», Linear, `ProjectVersion.txt` = 6000.3.27f1. Идемпотентно.
 
 ### B2 · asmdef и компиляция
 
@@ -196,4 +196,43 @@ DesktopDrift.Editor.Capture.Frame` – камера сцены в `RenderTexture
 
 ## Находки гейта
 
-(пусто)
+Гейт пройден 27.10.2026 (ветка `feat/spec-00-contour`, карточка `docs/handoff/wave-1.md`). Цифры: test.sh 5/5 за 1 с;
+trace.sh воспроизводим (sha256 9c4f4660…3604); паритет max |Δ| x 2.7e-12 · y 4.5e-13 · angle 6.7e-16 · vx 6.3e-13 ·
+vy 4.0e-13; compile.sh 0 ошибок, 5–6 с (холодный импорт 54 с); unity-tests.sh 5/5 за 6–8 с; build.sh android APK 33 МБ,
+холодная 222 с, инкрементальная 19–21 с; capture.sh 1920×1080, яркость 0.518; MCP 166 инструментов, `eval` прошёл;
+`unity status` видит проект.
+
+1. **GUI-редактор ждёт владельца.** `unity open unity` на этой машине висит (100% CPU, RSS 33 МБ): стек –
+   `SoftwareTermsWindow::EnsureTheUserHasAcceptedSoftwareTerms` → модальное окно Software Terms при первом
+   GUI-запуске; batchmode окно не показывает. Действие владельца: открыть Unity в GUI один раз, принять. Обход:
+   headless-резидент (`Unity -batchmode -projectPath … -logFile …` без `-quit`) – его видят `unity status`,
+   `unity command`, `unity mcp`; закрывается `unity close unity`. Описано в `docs/tooling/unity-mcp.md`.
+2. CLI beta.13 ≠ спека: `unity templates create` – упаковка своего шаблона, проект создаётся `unity projects new`
+   (отказывает, если папка существует → временная папка + rsync `Assets/Packages/ProjectSettings`; регистрирует
+   проект в реестре Hub). `unity run` сам добавляет `-batchmode -quit` и отвергает их после `--`.
+   `unity test --report-format both` → `nunit,junit`. Android – не zero-code цель: Build Profile
+   (`unity build unity --create-profile Android`, затем `--profile Android`).
+3. Диспетчеризация: asmdef перенесены из B2 в B1 (первый импорт должен видеть Core.Tests как тестовую сборку,
+   иначе Safe Mode); B2 = ProjectSetup + compile.sh; B5 в два захода из-за п. 1.
+4. compile.sh живой путь без `--strict`: пустая сборка `DesktopDrift.Game` даёт структурное предупреждение «will not
+   be compiled» до SPEC-02. CS8632 в Core.Tests снят `#nullable enable` (Unity не включает nullable-контекст).
+5. Pipeline 0.9.1-exp.1: имена команд сгруппированы (`script eval`, `scene open`, `editor.playmode start`,
+   `capture game_view`), старые – алиасы; после `editor.playmode start` сервер недоступен ~3 с; `save_path` всегда
+   под `Assets/` (capture.sh переносит PNG в artifacts/ и чистит `Assets/Captures`); runtime Pipeline в плеер не
+   попадает без define-символа (в APK 0 строк `Unity.Pipeline`); headless `source=screen` недоступен – принят
+   `source=camera`.
+6. Окружение: только рантайм .NET 10 → csproj `net8.0` + `RollForward=Major`; `config.js` создаёт `Path2D` при
+   загрузке → стаб в трассе; URP-ассеты шаблона пересериализуются редактором при первом открытии/сборке
+   (закоммичены); Android-сборка оставляет `unity/.utmp/` (в .gitignore); лицензия Android SDK не спрашивалась.
+7. Хвосты закрыты 28.10 ответами владельца (D-19, D-20): `build.sh mac` проверен (65 с, 114 МБ, universal Mono, долг
+   снят; отчёт сборки получил коммит и грязь дерева, CLI пишет `*.provenance.json`); плейсхолдеры остаются до SPEC-09;
+   глобальные конфиги не применяются; ориентация – автоповорот Portrait + оба Landscape до гейта SPEC-02. GUI-путь –
+   п. 9.
+8. `ProjectSetup`: сеттеры `PlayerSettings.*` сами не записали `ProjectSettings.asset` в batchmode (28.10, запуск 1:
+   в логе `allowedAutorotateToPortrait False -> True`, файл без изменений, `AssetDatabase.SaveAssets()` вызывался);
+   с явным `EditorUtility.SetDirty` синглтона PlayerSettings перед `SaveAssets` – записано, третий запуск без диффа.
+   В B2 запись проходила (файл, видимо, был dirty после первого импорта) – идемпотентность тогда это скрыла.
+9. GUI-путь проверен 28.10 после принятия Software Terms: `unity open` → ready за 6 с; живой `compile.sh` 0 ошибок (сразу
+   после открытия `unity recompile` даёт код 6 без ошибок CS – редактор ещё компилирует; в скрипт добавлен повтор до
+   6×5 с); `capture.sh` из GUI: камера 0.518 и экран (`CAPTURE_SOURCE=screen`) 0.522, 1920×1080; без фокуса окна
+   `frameCount` в GUI не растёт (2→2) – покадровые проверки на headless-резиденте; `unity close` graceful.

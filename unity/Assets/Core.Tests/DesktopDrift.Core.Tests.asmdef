@@ -1,0 +1,14 @@
+{
+    "name": "DesktopDrift.Core.Tests",
+    "rootNamespace": "DesktopDrift.Core.Tests",
+    "references": ["DesktopDrift.Core", "UnityEngine.TestRunner", "UnityEditor.TestRunner"],
+    "includePlatforms": ["Editor"],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": ["nunit.framework.dll"],
+    "autoReferenced": false,
+    "defineConstraints": ["UNITY_INCLUDE_TESTS"],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
