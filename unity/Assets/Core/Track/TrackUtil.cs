@@ -36,17 +36,11 @@ namespace DesktopDrift.Core
 
         // Parse SVG path d: supports M, L, H, V, Z (absolute coordinates only).
         // Deduplicates the closing vertex (see the JS comment): drop the last point if dist(first, last) < 0.5.
-        // JS silently skips the numbers of lowercase commands and ignores letters outside its token set
-        // (C, A, ... – their numbers get attached to the previous command); here any letter other than
-        // M L H V Z (and z, which behaves exactly like Z in JS) throws FormatException.
+        // Like JS: the numbers of lowercase commands are skipped and letters outside the token set
+        // (C, A, ... – cafe-marble's track_path has two C's) are ignored: their numbers attach to the
+        // previous command. (Step 4a threw FormatException here; removed in 4b for track parity.)
         public static List<Vec2> ParseSvgPath(string d)
         {
-            foreach (char ch in d)
-            {
-                bool letter = (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z');
-                if (letter && "MLHVZz".IndexOf(ch) < 0)
-                    throw new FormatException("Unsupported SVG path command '" + ch + "' (only absolute M, L, H, V, Z are supported)");
-            }
             var pts = new List<Vec2>();
             var tokens = new List<string>();
             foreach (Match m in SvgToken.Matches(d)) tokens.Add(m.Value);
