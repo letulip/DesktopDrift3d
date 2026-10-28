@@ -50,6 +50,12 @@ namespace DesktopDrift.Core
             return CoreMath.JsRound(Num(pps)) == 1;
         }
 
+        // store.js:333 carOwned
+        public static bool CarOwned(string id, IReadOnlyList<string> ownedCars)
+        {
+            return !CarGatingEnabled || System.Linq.Enumerable.Contains(FreeCars, id) || System.Linq.Enumerable.Contains(ownedCars, id);
+        }
+
         public static bool CanAfford(double balance, double price)
         {
             return Num(balance) >= price;
