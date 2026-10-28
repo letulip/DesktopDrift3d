@@ -12,13 +12,13 @@
 # The fallback boots an editor (about 1 min); source=screen is unavailable
 # headless, so capture uses source=camera.
 #
-# Env: CAPTURE_SCENE (default Assets/Scenes/SampleScene.unity), CAPTURE_W/CAPTURE_H (1920/1080).
+# Env: CAPTURE_SCENE (default Assets/Scenes/Game.unity), CAPTURE_W/CAPTURE_H (1920/1080).
 # Last line is always CAPTURE_EXIT=<code>.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PROJECT="$ROOT/unity"
-SCENE="${CAPTURE_SCENE:-Assets/Scenes/SampleScene.unity}"
+SCENE="${CAPTURE_SCENE:-Assets/Scenes/Game.unity}"
 W="${CAPTURE_W:-1920}"
 H="${CAPTURE_H:-1080}"
 UNITY_BIN="${UNITY_BIN:-/Applications/Unity/Hub/Editor/6000.3.27f1/Unity.app/Contents/MacOS/Unity}"
