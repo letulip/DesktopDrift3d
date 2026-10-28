@@ -1,0 +1,278 @@
+{
+  "CARS": [
+    {
+      "body": "#a4a4a4",
+      "drive": {
+        "driftDrag": 0.004,
+        "driftSteerBoost": 1.2,
+        "grip": 0.98,
+        "lowSpeedTurn": 0.2,
+        "maxSpeed": 470,
+        "rollFriction": 0.995,
+        "selfAlign": 0.82,
+        "steer": 2.2,
+        "steerSmooth": 4.5,
+        "thrust": 580
+      },
+      "driveRaw": {
+        "driftSteerBoost": 1.2,
+        "grip": 0.98,
+        "lowSpeedTurn": 0.2,
+        "maxSpeed": 470,
+        "selfAlign": 0.82,
+        "steer": 2.2,
+        "steerSmooth": 4.5,
+        "thrust": 580
+      },
+      "flip": true,
+      "id": "bismark",
+      "len": 82,
+      "name": "Bismark",
+      "stroke": "#222222",
+      "vh": 157,
+      "vw": 426,
+      "wid": 30.220657276995304
+    },
+    {
+      "body": "#eef0f2",
+      "drive": {
+        "driftDrag": 0.004,
+        "driftSteerBoost": 1.3,
+        "grip": 0.983,
+        "lowSpeedTurn": 0.3,
+        "maxSpeed": 410,
+        "rollFriction": 0.995,
+        "selfAlign": 0.82,
+        "steer": 3,
+        "steerSmooth": 8,
+        "thrust": 620
+      },
+      "driveRaw": {
+        "driftSteerBoost": 1.3,
+        "grip": 0.983,
+        "lowSpeedTurn": 0.3,
+        "maxSpeed": 410,
+        "selfAlign": 0.82,
+        "steer": 3,
+        "steerSmooth": 8,
+        "thrust": 620
+      },
+      "flip": true,
+      "id": "panda",
+      "len": 75,
+      "name": "Panda",
+      "stroke": "#222222",
+      "vh": 157,
+      "vw": 402,
+      "wid": 29.291044776119403
+    },
+    {
+      "body": "#8e4585",
+      "drive": {
+        "driftDrag": 0.004,
+        "driftSteerBoost": 1.25,
+        "grip": 0.98,
+        "lowSpeedTurn": 0.35,
+        "maxSpeed": 457,
+        "rollFriction": 0.995,
+        "selfAlign": 0.85,
+        "steer": 3.5,
+        "steerSmooth": 6,
+        "thrust": 630
+      },
+      "driveRaw": {
+        "driftSteerBoost": 1.25,
+        "grip": 0.98,
+        "lowSpeedTurn": 0.35,
+        "maxSpeed": 457,
+        "selfAlign": 0.85,
+        "steer": 3.5,
+        "steerSmooth": 6,
+        "thrust": 630
+      },
+      "flip": true,
+      "id": "plum",
+      "len": 78,
+      "name": "Plum",
+      "price": 250,
+      "stroke": "#222222",
+      "vh": 156,
+      "vw": 417,
+      "wid": 29.179856115107913
+    },
+    {
+      "body": "#4a4a4a",
+      "drive": {
+        "driftDrag": 0.004,
+        "driftSteerBoost": 1.25,
+        "grip": 0.98,
+        "lowSpeedTurn": 0.4,
+        "maxSpeed": 457,
+        "rollFriction": 0.995,
+        "selfAlign": 0.85,
+        "steer": 4,
+        "steerSmooth": 6,
+        "thrust": 540
+      },
+      "driveRaw": {
+        "driftSteerBoost": 1.25,
+        "grip": 0.98,
+        "lowSpeedTurn": 0.4,
+        "maxSpeed": 457,
+        "selfAlign": 0.85,
+        "steer": 4,
+        "steerSmooth": 6,
+        "thrust": 540
+      },
+      "flip": true,
+      "id": "bavarian",
+      "len": 76,
+      "name": "Bavarian",
+      "price": 350,
+      "stroke": "#222222",
+      "vh": 157,
+      "vw": 422,
+      "wid": 28.274881516587676
+    },
+    {
+      "body": "#c62828",
+      "drive": {
+        "driftDrag": 0.004,
+        "driftSteerBoost": 1.3,
+        "grip": 0.985,
+        "lowSpeedTurn": 0.45,
+        "maxSpeed": 391,
+        "rollFriction": 0.995,
+        "selfAlign": 0.82,
+        "steer": 4.5,
+        "steerSmooth": 6,
+        "thrust": 540
+      },
+      "driveRaw": {
+        "driftSteerBoost": 1.3,
+        "grip": 0.985,
+        "lowSpeedTurn": 0.45,
+        "maxSpeed": 391,
+        "selfAlign": 0.82,
+        "steer": 4.5,
+        "steerSmooth": 6,
+        "thrust": 540
+      },
+      "flip": true,
+      "id": "toretto",
+      "len": 74,
+      "name": "Toretto",
+      "price": 450,
+      "stroke": "#222222",
+      "vh": 157,
+      "vw": 404,
+      "wid": 28.757425742574256
+    },
+    {
+      "body": "#6b4226",
+      "drive": {
+        "driftDrag": 0.004,
+        "driftSteerBoost": 1.25,
+        "grip": 0.98,
+        "lowSpeedTurn": 0.25,
+        "maxSpeed": 522,
+        "rollFriction": 0.995,
+        "selfAlign": 0.85,
+        "steer": 2.5,
+        "steerSmooth": 6,
+        "thrust": 720
+      },
+      "driveRaw": {
+        "driftSteerBoost": 1.25,
+        "grip": 0.98,
+        "lowSpeedTurn": 0.25,
+        "maxSpeed": 522,
+        "selfAlign": 0.85,
+        "steer": 2.5,
+        "steerSmooth": 6,
+        "thrust": 720
+      },
+      "flip": true,
+      "id": "horse",
+      "len": 80,
+      "name": "Stallion",
+      "price": 400,
+      "stroke": "#222222",
+      "vh": 157,
+      "vw": 405,
+      "wid": 31.012345679012345
+    },
+    {
+      "body": "#BADA55",
+      "drive": {
+        "driftDrag": 0.004,
+        "driftSteerBoost": 1.25,
+        "grip": 0.98,
+        "lowSpeedTurn": 0.2,
+        "maxSpeed": 587,
+        "rollFriction": 0.995,
+        "selfAlign": 0.85,
+        "steer": 2,
+        "steerSmooth": 6,
+        "thrust": 810
+      },
+      "driveRaw": {
+        "driftSteerBoost": 1.25,
+        "grip": 0.98,
+        "lowSpeedTurn": 0.2,
+        "maxSpeed": 587,
+        "selfAlign": 0.85,
+        "steer": 2,
+        "steerSmooth": 6,
+        "thrust": 810
+      },
+      "flip": true,
+      "id": "smasher",
+      "len": 82,
+      "name": "Smasher",
+      "price": 500,
+      "stroke": "#222222",
+      "vh": 157,
+      "vw": 405,
+      "wid": 31.787654320987656
+    },
+    {
+      "body": "#2e5a9c",
+      "drive": {
+        "driftDrag": 0.004,
+        "driftSteerBoost": 1.3,
+        "grip": 0.985,
+        "lowSpeedTurn": 0.3,
+        "maxSpeed": 391,
+        "rollFriction": 0.995,
+        "selfAlign": 0.82,
+        "steer": 3,
+        "steerSmooth": 6,
+        "thrust": 540
+      },
+      "driveRaw": {
+        "driftSteerBoost": 1.3,
+        "grip": 0.985,
+        "lowSpeedTurn": 0.3,
+        "maxSpeed": 391,
+        "selfAlign": 0.82,
+        "steer": 3,
+        "steerSmooth": 6,
+        "thrust": 540
+      },
+      "flip": true,
+      "id": "catana",
+      "len": 81,
+      "name": "Catana",
+      "price": 300,
+      "stroke": "#222222",
+      "vh": 158,
+      "vw": 418,
+      "wid": 30.617224880382775
+    }
+  ],
+  "_source": {
+    "commit": "555614037583666e89dce09fbb73c10bccb29539",
+    "file": "js/config.js"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "COLA_CAP": {
+    "c": "#ff9999",
+    "hl": 0,
+    "imgFull": "objects/cola-filled.svg",
+    "imgSrc": "objects/cola.svg",
+    "kind": "cola",
+    "r": 18
+  },
+  "ITEM_TIRE_COIN": {
+    "c": "#555555",
+    "hl": 15,
+    "imgSrc": "objects/tire.svg",
+    "kind": "board",
+    "r": 12
+  },
+  "TIRE": {
+    "imgSrc": "objects/tire.svg",
+    "kind": "tire",
+    "r": 20,
+    "value": 1
+  },
+  "_source": {
+    "commit": "555614037583666e89dce09fbb73c10bccb29539",
+    "file": "js/collectibles.js"
+  }
+}

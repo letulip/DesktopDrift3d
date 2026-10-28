@@ -1,0 +1,26 @@
+{
+  "CAP_DECAY": 1.0471975511965976,
+  "CAP_INNER_R": 40,
+  "CAP_LOOPS": 2,
+  "CAP_OUTER_R": 160,
+  "CAP_TIRE_VALUE": 15,
+  "MULT_RESET_GRACE": 1.2,
+  "TIRE_CR": 35,
+  "ZONE_ADV": 8,
+  "ZONE_STALL": 3,
+  "_lines": {
+    "CAP_INNER_R": 74,
+    "CAP_OUTER_R": 75,
+    "CAP_DECAY": 76,
+    "CAP_TIRE_VALUE": 77,
+    "CAP_LOOPS": 78,
+    "TIRE_CR": 79,
+    "MULT_RESET_GRACE": 117,
+    "ZONE_ADV": 207,
+    "ZONE_STALL": 208
+  },
+  "_source": {
+    "commit": "555614037583666e89dce09fbb73c10bccb29539",
+    "file": "js/game-engine.js"
+  }
+}

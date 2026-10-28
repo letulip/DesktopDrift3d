@@ -1,0 +1,764 @@
+{
+  "_source": {
+    "commit": "555614037583666e89dce09fbb73c10bccb29539",
+    "file": "js/achievements.js"
+  },
+  "catalog": [
+    {
+      "category": "progression",
+      "desc": "Finish your first race.",
+      "hidden": false,
+      "icon": "🏁",
+      "id": "first-drift",
+      "name": "First Drift",
+      "reward": 10
+    },
+    {
+      "category": "progression",
+      "desc": "Clear every track (forward).",
+      "hidden": false,
+      "icon": "🗺️",
+      "id": "road-tripper",
+      "name": "Road Tripper",
+      "reward": 30
+    },
+    {
+      "category": "progression",
+      "desc": "Clear a reversed track.",
+      "hidden": false,
+      "icon": "🪞",
+      "id": "mirror-walker",
+      "name": "Through the Looking Glass",
+      "reward": 15
+    },
+    {
+      "category": "progression",
+      "desc": "Clear every reversed track.",
+      "hidden": false,
+      "icon": "↩️",
+      "id": "backwards",
+      "name": "Reverse Psychology",
+      "reward": 30
+    },
+    {
+      "category": "progression",
+      "desc": "Clear every track, both directions.",
+      "hidden": false,
+      "icon": "🏆",
+      "id": "completionist",
+      "name": "Completionist",
+      "reward": 75
+    },
+    {
+      "category": "skill",
+      "desc": "Earn 3 stars in a race.",
+      "hidden": false,
+      "icon": "⭐",
+      "id": "three-star",
+      "name": "Solid Run",
+      "reward": 5
+    },
+    {
+      "category": "skill",
+      "desc": "Earn 4 stars in a race.",
+      "hidden": false,
+      "icon": "🌟",
+      "id": "four-star",
+      "name": "Dialed In",
+      "reward": 20
+    },
+    {
+      "category": "skill",
+      "desc": "Earn 5 stars in a race.",
+      "hidden": false,
+      "icon": "💫",
+      "id": "five-star",
+      "name": "Flawless",
+      "reward": 40
+    },
+    {
+      "category": "skill",
+      "desc": "Land 10 near misses in one race.",
+      "hidden": false,
+      "icon": "😎",
+      "id": "daredevil",
+      "name": "Daredevil",
+      "reward": 25
+    },
+    {
+      "category": "combo",
+      "desc": "Hold an 8× combo for 10s total in a race.",
+      "hidden": false,
+      "icon": "🌀",
+      "id": "flow-1",
+      "name": "In the Zone",
+      "reward": 20
+    },
+    {
+      "category": "combo",
+      "desc": "Hold an 8× combo for 30s total in a race.",
+      "hidden": false,
+      "icon": "🌪️",
+      "id": "flow-2",
+      "name": "Untouchable Flow",
+      "reward": 35
+    },
+    {
+      "category": "combo",
+      "desc": "Hold an 8× combo for 60s total in a race.",
+      "hidden": false,
+      "icon": "🌈",
+      "id": "flow-3",
+      "name": "Trance State",
+      "reward": 50
+    },
+    {
+      "category": "combo",
+      "desc": "Finish a race in one unbroken drift.",
+      "hidden": true,
+      "icon": "♾️",
+      "id": "perpetual",
+      "name": "Perpetual Motion",
+      "reward": 75
+    },
+    {
+      "category": "economy",
+      "desc": "Collect every tire on a track in one run.",
+      "hidden": false,
+      "icon": "🧹",
+      "id": "clean-sweep",
+      "name": "Clean Sweep",
+      "reward": 20
+    },
+    {
+      "category": "economy",
+      "desc": "Collect your first cola cap.",
+      "hidden": false,
+      "icon": "🥤",
+      "id": "soda-pop",
+      "name": "Soda Pop",
+      "reward": 10
+    },
+    {
+      "category": "economy",
+      "desc": "Buy your first cosmetic.",
+      "hidden": false,
+      "icon": "🛍️",
+      "id": "big-spender",
+      "name": "Retail Therapy",
+      "reward": 15
+    },
+    {
+      "category": "economy",
+      "desc": "Own 5 cosmetics.",
+      "hidden": false,
+      "icon": "👗",
+      "id": "fashionista",
+      "name": "Fashionista",
+      "reward": 30
+    },
+    {
+      "category": "economy",
+      "desc": "Buy at least one item from every shop section.",
+      "hidden": false,
+      "icon": "🧩",
+      "id": "well-rounded",
+      "name": "Well Rounded",
+      "reward": 30
+    },
+    {
+      "category": "economy",
+      "desc": "Buy your first car.",
+      "hidden": false,
+      "icon": "🚗",
+      "id": "new-wheels",
+      "name": "New Wheels",
+      "reward": 25
+    },
+    {
+      "category": "economy",
+      "desc": "Own three bought cars.",
+      "hidden": false,
+      "icon": "🏎️",
+      "id": "three-car-garage",
+      "name": "Three-Car Garage",
+      "reward": 40
+    },
+    {
+      "category": "hidden",
+      "desc": "Own every car in the shop.",
+      "hidden": true,
+      "icon": "🏁",
+      "id": "full-garage",
+      "name": "Full Garage",
+      "reward": 150
+    },
+    {
+      "category": "hidden",
+      "desc": "5 stars and 15+ near misses in one race.",
+      "hidden": true,
+      "icon": "💥",
+      "id": "glass-cannon",
+      "name": "Living Dangerously",
+      "reward": 40
+    },
+    {
+      "category": "hidden",
+      "desc": "Crash 5 times in a single race.",
+      "hidden": true,
+      "icon": "💢",
+      "id": "crash-5",
+      "name": "Fender Bender",
+      "reward": 10
+    },
+    {
+      "category": "hidden",
+      "desc": "Crash 10 times in a single race.",
+      "hidden": true,
+      "icon": "🚑",
+      "id": "crash-10",
+      "name": "Demolition Derby",
+      "reward": 15
+    },
+    {
+      "category": "hidden",
+      "desc": "Crash 20 times in a single race.",
+      "hidden": true,
+      "icon": "🧱",
+      "id": "crash-20",
+      "name": "Wrecking Ball",
+      "reward": 25
+    },
+    {
+      "category": "hidden",
+      "desc": "Crash 40 times in a single race.",
+      "hidden": true,
+      "icon": "🔨",
+      "id": "crash-40",
+      "name": "Bull in a China Shop",
+      "reward": 40
+    },
+    {
+      "category": "hidden",
+      "desc": "Finish a race without a single crash.",
+      "hidden": true,
+      "icon": "🛡️",
+      "id": "untouchable",
+      "name": "Untouchable",
+      "reward": 30
+    },
+    {
+      "category": "hidden",
+      "desc": "Finish a race without knocking a single cone.",
+      "hidden": true,
+      "icon": "🚧",
+      "id": "slalom-saint",
+      "name": "Slalom Saint",
+      "reward": 60
+    },
+    {
+      "category": "hidden",
+      "desc": "Knock over every cone in a race.",
+      "hidden": true,
+      "icon": "🚜",
+      "id": "bulldozer",
+      "name": "Bulldozer",
+      "reward": 30
+    },
+    {
+      "category": "hidden",
+      "desc": "Finish a race scoring just 1 PPS.",
+      "hidden": true,
+      "icon": "🏅",
+      "id": "one-pps",
+      "name": "Participation Trophy",
+      "reward": 5
+    },
+    {
+      "category": "hidden",
+      "desc": "Collect the cola cap on every track.",
+      "hidden": true,
+      "icon": "🧃",
+      "id": "cola-collector",
+      "name": "Sugar High",
+      "reward": 40
+    },
+    {
+      "category": "hidden",
+      "desc": "Finish a race between 22:00 and 02:00.",
+      "hidden": true,
+      "icon": "🦉",
+      "id": "night-owl",
+      "name": "Night Owl",
+      "reward": 15
+    },
+    {
+      "category": "hidden",
+      "desc": "Finish a race between 02:00 and 05:00.",
+      "hidden": true,
+      "icon": "🌙",
+      "id": "midnight-drift",
+      "name": "Midnight Drift",
+      "reward": 15
+    },
+    {
+      "category": "hidden",
+      "desc": "Finish a race between 05:00 and 08:00.",
+      "hidden": true,
+      "icon": "🐦",
+      "id": "early-bird",
+      "name": "Early Bird",
+      "reward": 15
+    },
+    {
+      "category": "ddk",
+      "desc": "Earn the crown on every track, both directions.",
+      "hidden": true,
+      "icon": "👑",
+      "id": "absolute-ddk",
+      "name": "Absolute DDK",
+      "reward": 1000
+    },
+    {
+      "bar": true,
+      "category": "endurance",
+      "desc": "Drift for 10 minutes total.",
+      "hidden": false,
+      "icon": "⏱️",
+      "id": "drift-10",
+      "name": "Warm-Up",
+      "reward": 20,
+      "target": 600
+    },
+    {
+      "bar": true,
+      "category": "endurance",
+      "desc": "Drift for 25 minutes total.",
+      "hidden": false,
+      "icon": "⏱️",
+      "id": "drift-25",
+      "name": "Marathon",
+      "reward": 30,
+      "target": 1500
+    },
+    {
+      "bar": true,
+      "category": "endurance",
+      "desc": "Drift for 50 minutes total.",
+      "hidden": false,
+      "icon": "⏱️",
+      "id": "drift-50",
+      "name": "Endurance",
+      "reward": 40,
+      "target": 3000
+    },
+    {
+      "bar": true,
+      "category": "endurance",
+      "desc": "Drift for 100 minutes total.",
+      "hidden": false,
+      "icon": "⏱️",
+      "id": "drift-100",
+      "name": "Iron Wrists",
+      "reward": 60,
+      "target": 6000
+    },
+    {
+      "bar": true,
+      "category": "endurance",
+      "desc": "Drift for 250 minutes total.",
+      "hidden": false,
+      "icon": "⏱️",
+      "id": "drift-250",
+      "name": "Tireless",
+      "reward": 100,
+      "target": 15000
+    },
+    {
+      "bar": true,
+      "category": "endurance",
+      "desc": "Drift for 500 minutes total.",
+      "hidden": false,
+      "icon": "⏱️",
+      "id": "drift-500",
+      "name": "Eternal Drift",
+      "reward": 150,
+      "target": 30000
+    },
+    {
+      "bar": true,
+      "category": "dedication",
+      "desc": "Finish 10 races.",
+      "hidden": false,
+      "icon": "🔁",
+      "id": "races-10",
+      "name": "Rookie",
+      "reward": 15,
+      "target": 10
+    },
+    {
+      "bar": true,
+      "category": "dedication",
+      "desc": "Finish 50 races.",
+      "hidden": false,
+      "icon": "🔁",
+      "id": "races-50",
+      "name": "Regular",
+      "reward": 30,
+      "target": 50
+    },
+    {
+      "bar": true,
+      "category": "dedication",
+      "desc": "Finish 100 races.",
+      "hidden": false,
+      "icon": "🔁",
+      "id": "races-100",
+      "name": "Veteran",
+      "reward": 50,
+      "target": 100
+    },
+    {
+      "bar": true,
+      "category": "dedication",
+      "desc": "Finish 250 races.",
+      "hidden": false,
+      "icon": "🔁",
+      "id": "races-250",
+      "name": "Devotee",
+      "reward": 100,
+      "target": 250
+    },
+    {
+      "bar": true,
+      "category": "dedication",
+      "desc": "Finish 500 races.",
+      "hidden": false,
+      "icon": "🔁",
+      "id": "races-500",
+      "name": "Legend",
+      "reward": 150,
+      "target": 500
+    },
+    {
+      "bar": true,
+      "category": "wealth",
+      "desc": "Reach 500 tires in the wallet.",
+      "hidden": false,
+      "icon": "🛞",
+      "id": "hoard-500",
+      "name": "Tire Saver",
+      "reward": 25,
+      "target": 500
+    },
+    {
+      "bar": true,
+      "category": "wealth",
+      "desc": "Reach 1000 tires in the wallet.",
+      "hidden": false,
+      "icon": "🛞",
+      "id": "hoard-1000",
+      "name": "Tire Lover",
+      "reward": 40,
+      "target": 1000
+    },
+    {
+      "bar": true,
+      "category": "wealth",
+      "desc": "Reach 2500 tires in the wallet.",
+      "hidden": false,
+      "icon": "🛞",
+      "id": "hoard-2500",
+      "name": "Tire Warehouse",
+      "reward": 80,
+      "target": 2500
+    },
+    {
+      "bar": true,
+      "category": "wealth",
+      "desc": "Reach 5000 tires in the wallet.",
+      "hidden": false,
+      "icon": "🛞",
+      "id": "hoard-5000",
+      "name": "Tire Factory",
+      "reward": 150,
+      "target": 5000
+    },
+    {
+      "category": "ddk",
+      "desc": "Score 600+ PPS — a 6-star crown run.",
+      "hidden": true,
+      "icon": "👑",
+      "id": "ddk-green-study",
+      "name": "DDK Midnight Deadline",
+      "reward": 60
+    },
+    {
+      "category": "ddk",
+      "desc": "Score 600+ PPS — a 6-star crown run.",
+      "hidden": true,
+      "icon": "👑",
+      "id": "ddk-steel-kitchen",
+      "name": "DDK Stainless Speedway",
+      "reward": 60
+    },
+    {
+      "category": "ddk",
+      "desc": "Score 600+ PPS — a 6-star crown run.",
+      "hidden": true,
+      "icon": "👑",
+      "id": "ddk-workbench",
+      "name": "DDK Workshop Wasteland",
+      "reward": 60
+    },
+    {
+      "category": "ddk",
+      "desc": "Score 600+ PPS — a 6-star crown run.",
+      "hidden": true,
+      "icon": "👑",
+      "id": "ddk-cafe-marble",
+      "name": "DDK Macchiato Madness",
+      "reward": 60
+    },
+    {
+      "category": "ddk",
+      "desc": "Score 600+ PPS — a 6-star crown run.",
+      "hidden": true,
+      "icon": "👑",
+      "id": "ddk-dev-desk",
+      "name": "DDK Office Overdrive",
+      "reward": 60
+    },
+    {
+      "category": "ddk",
+      "desc": "Score 600+ PPS — a 6-star crown run.",
+      "hidden": true,
+      "icon": "👑",
+      "id": "ddk-dining-oak",
+      "name": "DDK Breakfast Boulevard",
+      "reward": 60
+    },
+    {
+      "category": "ddk",
+      "desc": "Score 600+ PPS — a 6-star crown run.",
+      "hidden": true,
+      "icon": "👑",
+      "id": "ddk-green-study:rev",
+      "name": "DDK Midnight Deadline (reversed)",
+      "reward": 60
+    },
+    {
+      "category": "ddk",
+      "desc": "Score 600+ PPS — a 6-star crown run.",
+      "hidden": true,
+      "icon": "👑",
+      "id": "ddk-steel-kitchen:rev",
+      "name": "DDK Stainless Speedway (reversed)",
+      "reward": 60
+    },
+    {
+      "category": "ddk",
+      "desc": "Score 600+ PPS — a 6-star crown run.",
+      "hidden": true,
+      "icon": "👑",
+      "id": "ddk-workbench:rev",
+      "name": "DDK Workshop Wasteland (reversed)",
+      "reward": 60
+    },
+    {
+      "category": "ddk",
+      "desc": "Score 600+ PPS — a 6-star crown run.",
+      "hidden": true,
+      "icon": "👑",
+      "id": "ddk-cafe-marble:rev",
+      "name": "DDK Macchiato Madness (reversed)",
+      "reward": 60
+    },
+    {
+      "category": "ddk",
+      "desc": "Score 600+ PPS — a 6-star crown run.",
+      "hidden": true,
+      "icon": "👑",
+      "id": "ddk-dev-desk:rev",
+      "name": "DDK Office Overdrive (reversed)",
+      "reward": 60
+    },
+    {
+      "category": "ddk",
+      "desc": "Score 600+ PPS — a 6-star crown run.",
+      "hidden": true,
+      "icon": "👑",
+      "id": "ddk-dining-oak:rev",
+      "name": "DDK Breakfast Boulevard (reversed)",
+      "reward": 60
+    }
+  ],
+  "categoryOrder": [
+    {
+      "key": "progression",
+      "label": "Progression"
+    },
+    {
+      "key": "skill",
+      "label": "Skill"
+    },
+    {
+      "key": "combo",
+      "label": "Combo"
+    },
+    {
+      "key": "endurance",
+      "label": "Endurance"
+    },
+    {
+      "key": "dedication",
+      "label": "Dedication"
+    },
+    {
+      "key": "wealth",
+      "label": "Wealth"
+    },
+    {
+      "key": "economy",
+      "label": "Economy"
+    },
+    {
+      "key": "hidden",
+      "label": "Secrets"
+    },
+    {
+      "key": "ddk",
+      "label": "Mastery"
+    }
+  ],
+  "content": {
+    "allInstanceIds": [
+      "green-study",
+      "steel-kitchen",
+      "workbench",
+      "cafe-marble",
+      "dev-desk",
+      "dining-oak",
+      "green-study:rev",
+      "steel-kitchen:rev",
+      "workbench:rev",
+      "cafe-marble:rev",
+      "dev-desk:rev",
+      "dining-oak:rev"
+    ],
+    "cars": [
+      "plum",
+      "bavarian",
+      "toretto",
+      "horse",
+      "smasher",
+      "catana"
+    ],
+    "catalogById": {
+      "emo-angry": "expression",
+      "emo-bored": "expression",
+      "emo-evil": "expression",
+      "emo-joy": "expression",
+      "emo-lol": "expression",
+      "emo-love": "expression",
+      "emo-puzzled": "expression",
+      "emo-questioned": "expression",
+      "emo-sleep": "expression",
+      "emo-smug": "expression",
+      "emo-tired": "expression",
+      "finish-chrome": "finish",
+      "finish-matte": "finish",
+      "finish-metallic": "finish",
+      "finish-pearl": "finish",
+      "glass-amber": "glass",
+      "glass-azure": "glass",
+      "glass-crimson": "glass",
+      "glass-ember": "glass",
+      "glass-gold": "glass",
+      "glass-jade": "glass",
+      "glass-lime": "glass",
+      "glass-mint": "glass",
+      "glass-rose": "glass",
+      "glass-sky": "glass",
+      "glass-slate": "glass",
+      "glass-smoke": "glass",
+      "glass-teal": "glass",
+      "glass-violet": "glass",
+      "neon-anim-flow": "neon-anim",
+      "neon-anim-pulse": "neon-anim",
+      "neon-anim-rainbow": "neon-anim",
+      "neon-layout-front-mid-rear": "neon-layout",
+      "neon-layout-longitudinal": "neon-layout",
+      "neon-layout-per-zone": "neon-layout",
+      "outline-azure": "outline",
+      "outline-blue": "outline",
+      "outline-crimson": "outline",
+      "outline-gold": "outline",
+      "outline-green": "outline",
+      "outline-ink": "outline",
+      "outline-lime": "outline",
+      "outline-magenta": "outline",
+      "outline-orange": "outline",
+      "outline-red": "outline",
+      "outline-silver": "outline",
+      "outline-teal": "outline",
+      "outline-violet": "outline",
+      "outline-white": "outline",
+      "trail-acqua": "trail",
+      "trail-azzurro": "trail",
+      "trail-crimson": "trail",
+      "trail-fuoco": "trail",
+      "trail-mint": "trail",
+      "trail-oro": "trail",
+      "trail-rosa": "trail",
+      "trail-viola": "trail"
+    },
+    "forwardIds": [
+      "green-study",
+      "steel-kitchen",
+      "workbench",
+      "cafe-marble",
+      "dev-desk",
+      "dining-oak"
+    ],
+    "forwardTrackIds": [
+      "green-study",
+      "steel-kitchen",
+      "workbench",
+      "cafe-marble",
+      "dev-desk",
+      "dining-oak"
+    ],
+    "names": {
+      "cafe-marble": "Macchiato Madness",
+      "cafe-marble:rev": "Macchiato Madness (reversed)",
+      "dev-desk": "Office Overdrive",
+      "dev-desk:rev": "Office Overdrive (reversed)",
+      "dining-oak": "Breakfast Boulevard",
+      "dining-oak:rev": "Breakfast Boulevard (reversed)",
+      "green-study": "Midnight Deadline",
+      "green-study:rev": "Midnight Deadline (reversed)",
+      "steel-kitchen": "Stainless Speedway",
+      "steel-kitchen:rev": "Stainless Speedway (reversed)",
+      "workbench": "Workshop Wasteland",
+      "workbench:rev": "Workshop Wasteland (reversed)"
+    },
+    "reversedIds": [
+      "green-study:rev",
+      "steel-kitchen:rev",
+      "workbench:rev",
+      "cafe-marble:rev",
+      "dev-desk:rev",
+      "dining-oak:rev"
+    ],
+    "shopCategories": [
+      "finish",
+      "trail",
+      "glass",
+      "outline",
+      "expression",
+      "neon-layout",
+      "neon-anim"
+    ]
+  }
+}

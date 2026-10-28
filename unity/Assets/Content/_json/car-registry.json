@@ -1,0 +1,134 @@
+{
+  "CAR_REGISTRY": [
+    {
+      "body": "#8e4585",
+      "feel": {
+        "driftSteerBoost": 1.25,
+        "grip": 0.98,
+        "selfAlign": 0.85,
+        "steerSmooth": 6
+      },
+      "flip": true,
+      "id": "plum",
+      "len": 78,
+      "name": "Plum",
+      "price": 250,
+      "ratings": {
+        "accel": 7,
+        "handling": 7,
+        "speed": 7
+      },
+      "stroke": "#222222",
+      "svg": "plum.svg"
+    },
+    {
+      "body": "#4a4a4a",
+      "feel": {
+        "driftSteerBoost": 1.25,
+        "grip": 0.98,
+        "selfAlign": 0.85,
+        "steerSmooth": 6
+      },
+      "flip": true,
+      "id": "bavarian",
+      "len": 76,
+      "name": "Bavarian",
+      "price": 350,
+      "ratings": {
+        "accel": 6,
+        "handling": 8,
+        "speed": 7
+      },
+      "stroke": "#222222",
+      "svg": "bavarian.svg"
+    },
+    {
+      "body": "#c62828",
+      "feel": {
+        "driftSteerBoost": 1.3,
+        "grip": 0.985,
+        "selfAlign": 0.82,
+        "steerSmooth": 6
+      },
+      "flip": true,
+      "id": "toretto",
+      "len": 74,
+      "name": "Toretto",
+      "price": 450,
+      "ratings": {
+        "accel": 6,
+        "handling": 9,
+        "speed": 6
+      },
+      "stroke": "#222222",
+      "svg": "toretto.svg"
+    },
+    {
+      "body": "#6b4226",
+      "feel": {
+        "driftSteerBoost": 1.25,
+        "grip": 0.98,
+        "selfAlign": 0.85,
+        "steerSmooth": 6
+      },
+      "flip": true,
+      "id": "horse",
+      "len": 80,
+      "name": "Stallion",
+      "price": 400,
+      "ratings": {
+        "accel": 8,
+        "handling": 5,
+        "speed": 8
+      },
+      "stroke": "#222222",
+      "svg": "horse.svg"
+    },
+    {
+      "body": "#BADA55",
+      "feel": {
+        "driftSteerBoost": 1.25,
+        "grip": 0.98,
+        "selfAlign": 0.85,
+        "steerSmooth": 6
+      },
+      "flip": true,
+      "id": "smasher",
+      "len": 82,
+      "name": "Smasher",
+      "price": 500,
+      "ratings": {
+        "accel": 9,
+        "handling": 4,
+        "speed": 9
+      },
+      "stroke": "#222222",
+      "svg": "smasher.svg"
+    },
+    {
+      "body": "#2e5a9c",
+      "feel": {
+        "driftSteerBoost": 1.3,
+        "grip": 0.985,
+        "selfAlign": 0.82,
+        "steerSmooth": 6
+      },
+      "flip": true,
+      "id": "catana",
+      "len": 81,
+      "name": "Catana",
+      "price": 300,
+      "ratings": {
+        "accel": 6,
+        "handling": 6,
+        "speed": 6
+      },
+      "stroke": "#222222",
+      "svg": "catana.svg"
+    }
+  ],
+  "_source": {
+    "commit": "555614037583666e89dce09fbb73c10bccb29539",
+    "file": "js/car-registry.js"
+  }
+}

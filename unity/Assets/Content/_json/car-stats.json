@@ -1,0 +1,12 @@
+{
+  "GU_TO_KMH": 0.023,
+  "LOWTURN_MAX": 0.5,
+  "MAX_RATING": 10,
+  "SPEED_MAX_KMH": 15,
+  "STEER_MAX": 5,
+  "THRUST_MAX": 900,
+  "_source": {
+    "commit": "555614037583666e89dce09fbb73c10bccb29539",
+    "file": "js/car-stats.js"
+  }
+}

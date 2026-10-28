@@ -1,0 +1,130 @@
+{
+  "NEON_PALETTE": [
+    {
+      "hex": "#FF073A",
+      "name": "Corsa"
+    },
+    {
+      "hex": "#FF6700",
+      "name": "Fuoco"
+    },
+    {
+      "hex": "#FFE600",
+      "name": "Giallo"
+    },
+    {
+      "hex": "#39FF14",
+      "name": "Verde"
+    },
+    {
+      "hex": "#00FF87",
+      "name": "Acqua"
+    },
+    {
+      "hex": "#00CFFF",
+      "name": "Cielo"
+    },
+    {
+      "hex": "#3D5AFE",
+      "name": "Blu"
+    },
+    {
+      "hex": "#BF00FF",
+      "name": "Viola"
+    },
+    {
+      "hex": "#FF00FF",
+      "name": "Magenta"
+    },
+    {
+      "hex": "#FFFFFF",
+      "name": "Snow"
+    }
+  ],
+  "PALETTE": [
+    {
+      "hex": "#D32F2F",
+      "name": "Rosso"
+    },
+    {
+      "hex": "#E64A19",
+      "name": "Fuoco"
+    },
+    {
+      "hex": "#FF8F00",
+      "name": "Arancio"
+    },
+    {
+      "hex": "#F9A825",
+      "name": "Giallo"
+    },
+    {
+      "hex": "#C0CA33",
+      "name": "Lime"
+    },
+    {
+      "hex": "#388E3C",
+      "name": "Verde"
+    },
+    {
+      "hex": "#00838F",
+      "name": "Acqua"
+    },
+    {
+      "hex": "#039BE5",
+      "name": "Cielo"
+    },
+    {
+      "hex": "#1565C0",
+      "name": "Blu"
+    },
+    {
+      "hex": "#283593",
+      "name": "Notte"
+    },
+    {
+      "hex": "#6A1B9A",
+      "name": "Viola"
+    },
+    {
+      "hex": "#AD1457",
+      "name": "Magenta"
+    },
+    {
+      "hex": "#F5F5F5",
+      "name": "Bianco"
+    },
+    {
+      "hex": "#B0BEC5",
+      "name": "Argento"
+    },
+    {
+      "hex": "#78909C",
+      "name": "Grigio"
+    },
+    {
+      "hex": "#455A64",
+      "name": "Ardesia"
+    },
+    {
+      "hex": "#212121",
+      "name": "Nero"
+    },
+    {
+      "hex": "#5D4037",
+      "name": "Tabacco"
+    },
+    {
+      "hex": "#FF6F00",
+      "name": "Ambra"
+    },
+    {
+      "hex": "#FFB14D",
+      "name": "Miele"
+    }
+  ],
+  "_source": {
+    "commit": "555614037583666e89dce09fbb73c10bccb29539",
+    "file": "js/palette.js"
+  }
+}

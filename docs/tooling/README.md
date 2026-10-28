@@ -1,6 +1,6 @@
 # docs/tooling – контур разработки через Unity CLI (SPEC-00)
 
-Версии (зафиксированы 27.10.2026): Unity **6000.3.27f1** · Unity CLI **1.0.0-beta.13** (`unity version`; beta.14 вышла 28.10 – обновление на границе волны, D-20 №7) ·
+Версии: Unity **6000.3.27f1** · Unity CLI **1.0.0-beta.14** (обновлён 28.10.2026 шагом 0 Волны 2 по D-20 №7 с beta.13; полный прогон шести скриптов и MCP зелёный, флаги скриптов не менялись; новое в beta.14: `unity terms status/accept`, `unity mcp --tools/--exclude-tools`, коды `OPEN/STATUS_BLOCKED_BY_DIALOG_*`, `unity open --until-ready`) ·
 Pipeline-пакет `com.unity.pipeline` **0.9.1-exp.1** · dotnet SDK 10.0.402 (установлен только рантайм .NET 10,
 поэтому `core-tests` – `net8.0` + `RollForward=Major`) · Node v26 · ffmpeg (яркость кадра).
 

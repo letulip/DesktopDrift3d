@@ -1,0 +1,104 @@
+{
+  "TRACKS": [
+    {
+      "caps": 1,
+      "desc": "Drift across a classic green baize desk. Dodge sharp compasses and leave tire marks on important documents!",
+      "id": "green-study",
+      "laps": 3,
+      "module": "js/track-green-study.js",
+      "name": "Midnight Deadline",
+      "svgSrc": "tracks/green-study.svg",
+      "theme": {
+        "background": "#14130e",
+        "table": "#2f4034",
+        "tableEdge": "#7a6334",
+        "track": "#cdbf9e"
+      },
+      "tires": 12
+    },
+    {
+      "caps": 1,
+      "desc": "Cold steel and sharp cleavers. Navigate a perilous maze of kitchen utensils on a stainless worktop.",
+      "id": "steel-kitchen",
+      "laps": 3,
+      "module": "js/track-steel-kitchen.js",
+      "name": "Stainless Speedway",
+      "svgSrc": "tracks/steel-kitchen.svg",
+      "theme": {
+        "background": "#c6cace",
+        "table": "#6b7178",
+        "tableEdge": "#444a50",
+        "track": "#c6bca1"
+      },
+      "tires": 11
+    },
+    {
+      "caps": 1,
+      "desc": "A rugged industrial workbench. Dodge wrenches, hammers and drills on weathered wood and cold metal.",
+      "id": "workbench",
+      "laps": 3,
+      "module": "js/track-workbench.js",
+      "name": "Workshop Wasteland",
+      "svgSrc": "tracks/workbench.svg",
+      "theme": {
+        "background": "#181d1d",
+        "table": "#574b39",
+        "tableEdge": "#837a68",
+        "track": "#9a8c6f"
+      },
+      "tires": 13
+    },
+    {
+      "caps": 1,
+      "desc": "An elegant bistro table. Slide around giant coffee cups and delicious doughnuts. Don't spill the espresso!",
+      "id": "cafe-marble",
+      "laps": 3,
+      "module": "js/track-cafe-marble.js",
+      "name": "Macchiato Madness",
+      "svgSrc": "tracks/cafe-marble.svg",
+      "theme": {
+        "background": "#d7d0c4",
+        "table": "#4a3726",
+        "tableEdge": "#2e2114",
+        "track": "#d3b483"
+      },
+      "tires": 12
+    },
+    {
+      "caps": 1,
+      "desc": "Late-night coding chaos. Drift through a maze of sticky notes, flash drives, and empty energy drinks!",
+      "id": "dev-desk",
+      "laps": 3,
+      "module": "js/track-dev-desk.js",
+      "name": "Office Overdrive",
+      "svgSrc": "tracks/dev-desk.svg",
+      "theme": {
+        "background": "#1b2230",
+        "table": "#8f99ac",
+        "tableEdge": "#5c667c",
+        "track": "#c7bda4"
+      },
+      "tires": 12
+    },
+    {
+      "caps": 1,
+      "desc": "A cozy dining table turned dangerous circuit. Watch out for the giant forks — they're unforgiving!",
+      "id": "dining-oak",
+      "laps": 3,
+      "module": "js/track-dining-oak.js",
+      "name": "Breakfast Boulevard",
+      "svgSrc": "tracks/dining-oak.svg",
+      "theme": {
+        "background": "#0f0b08",
+        "table": "#2e241a",
+        "tableEdge": "#5a4a36",
+        "track": "#cdbf9e"
+      },
+      "tires": 12
+    }
+  ],
+  "_source": {
+    "commit": "555614037583666e89dce09fbb73c10bccb29539",
+    "file": "js/track-registry.js"
+  }
+}

@@ -51,7 +51,7 @@ namespace DesktopDrift.Core.Tests
 
         private static Dictionary<string, object?> LoadTrace()
         {
-            object? root = MiniJson.Parse(File.ReadAllText(LocateTrace()));
+            object? root = Json.Parse(File.ReadAllText(LocateTrace()));
             var d = root as Dictionary<string, object?>;
             Assert.IsNotNull(d, "trace root must be an object");
             return d!;

@@ -236,3 +236,14 @@ vy 4.0e-13; compile.sh 0 ошибок, 5–6 с (холодный импорт 5
    после открытия `unity recompile` даёт код 6 без ошибок CS – редактор ещё компилирует; в скрипт добавлен повтор до
    6×5 с); `capture.sh` из GUI: камера 0.518 и экран (`CAPTURE_SOURCE=screen`) 0.522, 1920×1080; без фокуса окна
    `frameCount` в GUI не растёт (2→2) – покадровые проверки на headless-резиденте; `unity close` graceful.
+10. **Приёмка архитектора на `main` (28.10.2026, после мержа PR #1, f0267c7).** Все шесть скриптов и MCP повторены
+   из свежего чекаута: test.sh 5/5 за 2 с; trace.sh два запуска побайтно равны (sha256 9c4f4660…); паритет max |Δ|
+   2.7e-12; compile.sh headless 0 ошибок, 0 предупреждений, 11 с; unity-tests.sh 5/5 за 6 с; ProjectSetup.Apply повторно –
+   0 изменённых файлов; build.sh android 33 МБ за 26 с (коммит f0267c7, дерево чистое), в APK только `lib/arm64-v8a`,
+   строк `Unity.Pipeline` в метаданных 0; capture.sh 1920×1080, яркость 0.518, кадры 22055→22594; резидент ready за 2 с,
+   `script eval` и MCP `eval` вернули 6000.3.27f1, `unity close` graceful. Статика: в Core 0 ссылок на UnityEngine,
+   `noEngineReferences: true`, одна реализация `CoreMath.Hypot`, порядок операций `StepCar` совпадает с `physics.js`,
+   профиль машины и константы читаются из `parity-trace.json` (в C# не перепечатаны), все скрипты заканчиваются
+   `<NAME>_EXIT`. Находка: после прогона гейтов редактор пересериализовал
+   `unity/Assets/Settings/UniversalRenderPipelineGlobalSettings.asset` (как URP-ассеты в п. 6) – закоммичен в ветке
+   Волны 2, чтобы дерево после гейтов оставалось чистым и `BUILD_DIRTY` не врал. Вердикт: SPEC-00 ⬛.

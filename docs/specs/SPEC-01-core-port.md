@@ -159,4 +159,69 @@ SPEC-00 (контур), SPEC-02 (потребитель `RaceRules`), SPEC-03 (`
 
 ## Находки гейта
 
-(пусто)
+Волна 2, по ходу (28.10.2026):
+
+1. **`CoreMath.Hypot` переписан по алгоритму V8** (`MathHypot` в `src/builtins/math.tq`: NaN/∞-правила,
+   масштабирование по максимуму, сумма квадратов с компенсацией Кахана, `sqrt·max`). Причина: наивный
+   `sqrt(x²+y²)` расходится с `Math.hypot` на ulp, и на вырожденном тесте `sampleCheckpointsByCorner`
+   (равные кривизны) argmax выбирал другие точки (`[0,7,16,22,35]` вместо JS `[0,12,22,35]`); с V8-алгоритмом
+   ожидание JS выполняется, трасса паритета физики 2.7e-12 → 1.8e-12 (остаток – `pow`/`sin`/`cos` рантаймов).
+   Закон остаётся допуском 1e-6: IL2CPP/clang может свернуть `n·n − c` в FMA, бит-в-бит не обещается.
+2. `ParseSvgPath` строже JS: неизвестная команда (в том числе строчные `m l h v`) → `FormatException`;
+   JS молча портил точки. Для Figma-экспорта (только `M L H V Z`) поведение совпадает.
+3. Шаг 4 разделён: 4a – геометрия (`TrackUtil`, `TireSeed`, `TrackData`, 37 тестов), 4b – эталоны трасс
+   через настоящий DOM (`linkedom`) + `TrackBuilder.FromSvg` в Core (System.Xml) с тестом паритета по 6
+   трассам (перенесено сюда из SPEC-03 §1–2: парсер трасс живёт в Core, SPEC-03 только оборачивает его).
+4. Экспорт данных (шаг 1): `cars.json` хранит `drive` (= `_drive`, с дефолтами `driftDrag`/`rollFriction`) и
+   `driveRaw`; `price`/`ratings` живут в `car-registry.json` (стартовые bismark/panda там отсутствуют);
+   `engine.json` даёт 9 констант замыкания `game-engine.js` (включая `MULT_RESET_GRACE 1.2`, `ZONE_STALL 3`).
+5. Шаг 2: JS `Math.round` ≠ C# `Math.Round` (банковское) – введён `CoreMath.JsRound = floor(x+0.5)`;
+   `grep Math.Round` в Core запрещён гейтом.
+6. Шаг 4b: строгость `ParseSvgPath` из п. 2 ОТКАЧЕНА – `cafe-marble.svg` несёт две команды `C` в `track_path`,
+   живая игра молча берёт их числа как вершины; порт дословный. Эталоны: `linkedom` 0.18.14 без обходов,
+   паритет `TrackBuilder.FromSvg` ↔ JS 12/12 (6 трасс + реверс) при 1e-6, `toFixed(3)` ⇒ `Math.Round(…, 3,
+   AwayFromZero)` без расхождений; три proxy-линии с незапечённым `transform` пропускаются на обеих сторонах
+   (вопрос №2 владельцу). `XmlDocument.GetElementById` требует DTD – обход по `GetElementsByTagName("*")`.
+7. Шаг 5a: `RunStats` – поля-числа/булевы без «undefined»: у заезда без поля `crashes`/`hour` JS даёт false, C# –
+   0; движок всегда заполняет все поля, `run == null` ведёт себя как в JS. Каталог 62 определений и `content`
+   побайтно равны `achievements.json` (тест `CatalogMatchesExportedJson`); лестницы генерируются из таблиц
+   порогов, как в JS. Шаг 5b: `toFixed(2/3)` в `DriveForRatings` эмулируется `JsRound(x·10^d)/10^d`, в
+   `TrackBuilder` – `Math.Round(…, AwayFromZero)`; оба прошли паритет, унификация в `CoreMath.JsToFixed` –
+   пункт ревью шага 9. `hsl(...)` печатает hue через `"R"` (экспонента ниже 1e-5 вне диапазона игры).
+   `CarOwned` живёт в `Economy` (из `store.js:333`), тест `grantCar` не трогает Core (нет singleton-стора).
+8. Шаг 6 (решение архитектора по ходу): неизвестная/будущая версия сейва ведёт себя КАК В 2D – слияние поверх
+   дефолтов и сохранение данных (тест `unknown version preserves data`), а не «бэкап + дефолты» из D-17;
+   D-17 уточнён этим пунктом. JSON-дерево = `Dictionary<string, object?>`/`List<object?>` из `Core/Save/Json.cs`
+   (парсер переехал из `Core.Tests/MiniJson.cs`, добавлен сериализатор) – Newtonsoft слою Game не нужен.
+9. Шаг 7: сценарные трассы (`wall`, `props`, `cones`) ставят препятствия НА фактическую траекторию заезда
+   (с фиксированными позициями из спеки машина их не касалась – тест проверял бы пустоту); покрытие в тестах
+   утверждается явно (все 6 конусов сбиты, 4 предмета задеты, стена на 358/514 кадрах). Паритет C# ↔ JS:
+   wall 1.5e-12, props 1.2e-11, cones 1.4e-12. Харнес `tools/engine-harness.mjs` гоняет НАСТОЯЩИЙ
+   `game-engine.js` в Node (linkedom-DOM из `<template id="tpl-game">` в `index.html`, Proxy-канвас, Map-localStorage
+   с выключенными звуком/хаптикой, очередь rAF, `Tick`-часы с dt ровно 1/60, `Date` = 2026-01-01 12:00 UTC +
+   симуляция, `Math.random` = LCG 1664525/1013904223 mod 2^32 с сидом 1, автопилот по центру трассы с упреждением
+   12 точек); следы `tools/engine-trace-{oval,green-study}.json` (0.8 и 2.5 МБ, закоммичены как эталоны):
+   овал 2 круга за 2530 кадров, счёт 4627, +69 шин; green-study 3 круга за 5386 кадров, счёт 7324, +97 шин,
+   10 шин собрано, рекорд 84.43 PPS. Случайность в правилах одна – вращение сбитого конуса; `ach-toast` и
+   `sound` потребляют `Math.random` только в UI/аудио (после правил в кадре), реплей детерминирован.
+10. Шаг 8: `RaceRules` реплеит ПЯТЬ следов настоящего движка покадрово (oval 2530, green-study 5386,
+    green-study-rev 5384, green-study-zen-cap 900 с принудительным сбором крышки, oval-sandbox 5200 с
+    обрезкой `lapScores` до 3): все поля кадра, все вспышки с цветом, весь финальный сейв как дерево
+    (кроме `version`: JS 4, C# 1 по D-17 – утверждается явно). Мутация 0.96 → 0.9600001 в ударе о конус
+    роняет реплей на кадре 431/397 – чувствительность доказана. Случайность и часы инжектированы
+    (`random`, `hourOfDay`, `NowMs`); контракты хоста – `03-architecture.md` §12.
+11. Шаг 9 (ревью, `docs/handoff/wave-2-review.md`): блокеров 0, «исправить» 9, заметок 11; все девять
+    закрыты раундами A/B: защита `Step` после финиша; крышки хранятся `capId`-строкой, как в JS, читаются
+    по трём ключам; точный `CoreMath.JsToFixed` на BigInteger (эталон `tools/jsfixed-ref.json`, 492 случая)
+    и `JsNumberToString` (shortest round-trip по спецификации JS) вместо `"R"/"F2"`; `JsRound` без ошибки на
+    0.49999999999999994; сценарные тесты утверждают покрытие (стена 358/514 кадров, 4 предмета, 6 конусов);
+    `Assert.Ignore` без 2D-репо заменён на падение (обход `DD3D_SKIP_2D_PARITY=1`); юнит-тесты на
+    `NO PROGRESS!`, трофей 1-PPS, Perpetual Motion, круглый стол. Сюрприз JS: `startGame` лениво создаёт
+    `garage.cars["0"]` через `carLook` – повторено.
+12. Гейт Unity (6000.3.27f1, Mono) поймал то, чего dotnet не видит: `internal`-член Core недоступен тестовой
+    сборке Unity (в dotnet всё одна сборка) – `TrackUtil.JsNumber` стал public; `double.Parse` Mono бросает
+    OverflowException на `"1.7976931348623157E+308"` – обратная проверка в `JsNumberToString` терпит
+    переполнение. APK с `System.Numerics` (BigInteger) вырос с 33 до 35 МБ. Итог гейта: dotnet 268/268 за 2 с,
+    EditMode 268/268 за 11 с, compile 0/0, `trace.sh` 4 файла воспроизводимы, `tracks-ref` 12/12 без изменений
+    при перегенерации, `engine-trace.sh` 5 следов воспроизводимы, `build.sh android` 35 МБ.
+
