@@ -44,9 +44,9 @@
 scripts/test.sh          # dotnet test по Core + Core.Tests, секунды (TEST_EXIT)
 scripts/trace.sh         # трасса паритета из JS → tools/parity-trace.json (TRACE_EXIT)
 scripts/compile.sh       # живой редактор → unity recompile, иначе unity run + лог (COMPILE_EXIT)
-scripts/unity-tests.sh   # Unity EditMode-тесты через unity test, NUnit+JUnit в artifacts/ (UNITY_TESTS_EXIT)
+scripts/unity-tests.sh   # Unity EditMode-тесты через unity test, NUnit+JUnit в artifacts/ (UNITY_TESTS_EXIT); UNITY_TESTS_MODE=PlayMode – сценные тесты
 scripts/build.sh android # APK через unity build --profile Android + artifacts/build/report.md (BUILD_EXIT); mac – настольная сборка
-scripts/capture.sh       # кадр из play mode через Pipeline → artifacts/capture/*.png (CAPTURE_EXIT)
+scripts/capture.sh       # кадр из play mode через Pipeline → artifacts/capture/*.png (CAPTURE_EXIT); DD_STEER=trace CAPTURE_DELAY=12 – кадр заезда
 node tools/mcp-smoke.mjs # одна операция через официальный MCP редактора (MCP_EXIT)
 ```
 
