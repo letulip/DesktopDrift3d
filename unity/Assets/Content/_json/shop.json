@@ -1,0 +1,407 @@
+{
+  "CATALOG": [
+    {
+      "id": "finish-matte",
+      "kind": "finish",
+      "name": "Matte",
+      "price": 40,
+      "value": "matte"
+    },
+    {
+      "id": "finish-metallic",
+      "kind": "finish",
+      "name": "Metallic",
+      "price": 80,
+      "value": "metallic"
+    },
+    {
+      "id": "finish-pearl",
+      "kind": "finish",
+      "name": "Pearl",
+      "price": 150,
+      "value": "pearl"
+    },
+    {
+      "id": "finish-chrome",
+      "kind": "finish",
+      "name": "Chrome",
+      "price": 250,
+      "value": "chrome"
+    },
+    {
+      "id": "trail-crimson",
+      "kind": "trail",
+      "name": "Crimson",
+      "price": 40,
+      "value": "#FF2244"
+    },
+    {
+      "id": "trail-fuoco",
+      "kind": "trail",
+      "name": "Fuoco",
+      "price": 40,
+      "value": "#FF6600"
+    },
+    {
+      "id": "trail-oro",
+      "kind": "trail",
+      "name": "Oro",
+      "price": 40,
+      "value": "#FFCC00"
+    },
+    {
+      "id": "trail-mint",
+      "kind": "trail",
+      "name": "Mint",
+      "price": 40,
+      "value": "#00FF88"
+    },
+    {
+      "id": "trail-azzurro",
+      "kind": "trail",
+      "name": "Azzurro",
+      "price": 40,
+      "value": "#00AAFF"
+    },
+    {
+      "id": "trail-viola",
+      "kind": "trail",
+      "name": "Viola",
+      "price": 40,
+      "value": "#CC44FF"
+    },
+    {
+      "id": "trail-rosa",
+      "kind": "trail",
+      "name": "Rosa",
+      "price": 40,
+      "value": "#FF44CC"
+    },
+    {
+      "id": "trail-acqua",
+      "kind": "trail",
+      "name": "Acqua",
+      "price": 40,
+      "value": "#44FFCC"
+    },
+    {
+      "id": "glass-smoke",
+      "kind": "glass",
+      "name": "Smoke",
+      "price": 40,
+      "value": "#3a3f47"
+    },
+    {
+      "id": "glass-slate",
+      "kind": "glass",
+      "name": "Slate",
+      "price": 40,
+      "value": "#566275"
+    },
+    {
+      "id": "glass-azure",
+      "kind": "glass",
+      "name": "Azure",
+      "price": 40,
+      "value": "#2f6fb0"
+    },
+    {
+      "id": "glass-sky",
+      "kind": "glass",
+      "name": "Sky",
+      "price": 40,
+      "value": "#4aa3e0"
+    },
+    {
+      "id": "glass-teal",
+      "kind": "glass",
+      "name": "Teal",
+      "price": 40,
+      "value": "#2f9e9e"
+    },
+    {
+      "id": "glass-jade",
+      "kind": "glass",
+      "name": "Jade",
+      "price": 40,
+      "value": "#1f8f6a"
+    },
+    {
+      "id": "glass-mint",
+      "kind": "glass",
+      "name": "Mint",
+      "price": 40,
+      "value": "#4fbf8f"
+    },
+    {
+      "id": "glass-lime",
+      "kind": "glass",
+      "name": "Lime",
+      "price": 40,
+      "value": "#6fae3a"
+    },
+    {
+      "id": "glass-amber",
+      "kind": "glass",
+      "name": "Amber",
+      "price": 40,
+      "value": "#c8912f"
+    },
+    {
+      "id": "glass-gold",
+      "kind": "glass",
+      "name": "Gold",
+      "price": 40,
+      "value": "#d4a828"
+    },
+    {
+      "id": "glass-ember",
+      "kind": "glass",
+      "name": "Ember",
+      "price": 40,
+      "value": "#c85a2a"
+    },
+    {
+      "id": "glass-crimson",
+      "kind": "glass",
+      "name": "Crimson",
+      "price": 40,
+      "value": "#c0304a"
+    },
+    {
+      "id": "glass-rose",
+      "kind": "glass",
+      "name": "Rose",
+      "price": 40,
+      "value": "#b0446a"
+    },
+    {
+      "id": "glass-violet",
+      "kind": "glass",
+      "name": "Violet",
+      "price": 40,
+      "value": "#6a4fb0"
+    },
+    {
+      "id": "outline-white",
+      "kind": "outline",
+      "name": "White",
+      "price": 40,
+      "value": "#e8e8e8"
+    },
+    {
+      "id": "outline-silver",
+      "kind": "outline",
+      "name": "Silver",
+      "price": 40,
+      "value": "#b8bcc4"
+    },
+    {
+      "id": "outline-ink",
+      "kind": "outline",
+      "name": "Ink",
+      "price": 40,
+      "value": "#101418"
+    },
+    {
+      "id": "outline-crimson",
+      "kind": "outline",
+      "name": "Crimson",
+      "price": 40,
+      "value": "#d02240"
+    },
+    {
+      "id": "outline-red",
+      "kind": "outline",
+      "name": "Red",
+      "price": 40,
+      "value": "#e83a2a"
+    },
+    {
+      "id": "outline-orange",
+      "kind": "outline",
+      "name": "Orange",
+      "price": 40,
+      "value": "#e06a20"
+    },
+    {
+      "id": "outline-gold",
+      "kind": "outline",
+      "name": "Gold",
+      "price": 40,
+      "value": "#e0b020"
+    },
+    {
+      "id": "outline-lime",
+      "kind": "outline",
+      "name": "Lime",
+      "price": 40,
+      "value": "#7ad048"
+    },
+    {
+      "id": "outline-green",
+      "kind": "outline",
+      "name": "Green",
+      "price": 40,
+      "value": "#30b050"
+    },
+    {
+      "id": "outline-teal",
+      "kind": "outline",
+      "name": "Teal",
+      "price": 40,
+      "value": "#20b0a0"
+    },
+    {
+      "id": "outline-azure",
+      "kind": "outline",
+      "name": "Azure",
+      "price": 40,
+      "value": "#2f8fd0"
+    },
+    {
+      "id": "outline-blue",
+      "kind": "outline",
+      "name": "Blue",
+      "price": 40,
+      "value": "#3a5ce8"
+    },
+    {
+      "id": "outline-violet",
+      "kind": "outline",
+      "name": "Violet",
+      "price": 40,
+      "value": "#8a5cf0"
+    },
+    {
+      "id": "outline-magenta",
+      "kind": "outline",
+      "name": "Magenta",
+      "price": 40,
+      "value": "#d048b0"
+    },
+    {
+      "id": "emo-angry",
+      "kind": "expression",
+      "name": "Angry",
+      "price": 40,
+      "value": "angry"
+    },
+    {
+      "id": "emo-bored",
+      "kind": "expression",
+      "name": "Bored",
+      "price": 40,
+      "value": "bored"
+    },
+    {
+      "id": "emo-evil",
+      "kind": "expression",
+      "name": "Evil",
+      "price": 40,
+      "value": "evil"
+    },
+    {
+      "id": "emo-joy",
+      "kind": "expression",
+      "name": "Joy",
+      "price": 40,
+      "value": "joy"
+    },
+    {
+      "id": "emo-lol",
+      "kind": "expression",
+      "name": "LOL",
+      "price": 40,
+      "value": "lol"
+    },
+    {
+      "id": "emo-love",
+      "kind": "expression",
+      "name": "Love",
+      "price": 40,
+      "value": "love"
+    },
+    {
+      "id": "emo-puzzled",
+      "kind": "expression",
+      "name": "Puzzled",
+      "price": 40,
+      "value": "puzzled"
+    },
+    {
+      "id": "emo-questioned",
+      "kind": "expression",
+      "name": "Curious",
+      "price": 40,
+      "value": "questioned"
+    },
+    {
+      "id": "emo-sleep",
+      "kind": "expression",
+      "name": "Sleepy",
+      "price": 40,
+      "value": "sleep"
+    },
+    {
+      "id": "emo-smug",
+      "kind": "expression",
+      "name": "Smug",
+      "price": 40,
+      "value": "smug"
+    },
+    {
+      "id": "emo-tired",
+      "kind": "expression",
+      "name": "Tired",
+      "price": 40,
+      "value": "tired"
+    },
+    {
+      "id": "neon-layout-longitudinal",
+      "kind": "neon-layout",
+      "name": "Left / Right",
+      "price": 80,
+      "value": "longitudinal"
+    },
+    {
+      "id": "neon-layout-front-mid-rear",
+      "kind": "neon-layout",
+      "name": "Front / Mid / Rear",
+      "price": 110,
+      "value": "front-mid-rear"
+    },
+    {
+      "id": "neon-layout-per-zone",
+      "kind": "neon-layout",
+      "name": "Per-zone",
+      "price": 150,
+      "value": "per-zone"
+    },
+    {
+      "id": "neon-anim-pulse",
+      "kind": "neon-anim",
+      "name": "Pulse",
+      "price": 120,
+      "value": "pulse"
+    },
+    {
+      "id": "neon-anim-rainbow",
+      "kind": "neon-anim",
+      "name": "Rainbow",
+      "price": 150,
+      "value": "rainbow"
+    },
+    {
+      "id": "neon-anim-flow",
+      "kind": "neon-anim",
+      "name": "Circular Flow",
+      "price": 250,
+      "value": "flow"
+    }
+  ],
+  "_source": {
+    "commit": "555614037583666e89dce09fbb73c10bccb29539",
+    "file": "js/shop-catalog.js"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "COMBO_RATE": 0.0015,
+  "DRIFT_MIN_SLIP": 60,
+  "DRIFT_MIN_SPEED": 90,
+  "MULT_GAIN_PER_S": 0.14,
+  "MULT_MAX": 8,
+  "MULT_NEARMISS_BONUS": 0.28,
+  "MULT_TRANSITION_BONUS": 0.3,
+  "QUALITY_MAX": 1.4,
+  "QUALITY_SLIP_REF": 160,
+  "QUALITY_SPEED_REF": 260,
+  "SLIP_SIGN_THRESHOLD": 50,
+  "_source": {
+    "commit": "555614037583666e89dce09fbb73c10bccb29539",
+    "file": "js/scoring.js"
+  }
+}

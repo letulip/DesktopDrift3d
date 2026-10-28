@@ -1,0 +1,19 @@
+{
+  "CAR_GATING_ENABLED": true,
+  "DDK_PPS": 600,
+  "FINISH_FLAT": 2,
+  "FINISH_PER_STAR": 2,
+  "FIRST_CLEAR_BONUS": 20,
+  "FREE_CARS": [
+    "bismark",
+    "panda"
+  ],
+  "MAX_STARS": 5,
+  "ONE_PPS_BONUS": 5,
+  "STAR_PPS": 100,
+  "UNBROKEN_BONUS": 30,
+  "_source": {
+    "commit": "555614037583666e89dce09fbb73c10bccb29539",
+    "file": "js/economy.js"
+  }
+}

@@ -1,0 +1,531 @@
+{
+  "ITEM_BOARD_1": {
+    "c": "#a48c84",
+    "hl": 88,
+    "imgSrc": "items/kitchen-board-1-ready.svg",
+    "kind": "board",
+    "r": 117
+  },
+  "ITEM_BOARD_2": {
+    "c": "#bcccd4",
+    "hl": 58,
+    "imgSrc": "items/kitchen-board-2-ready.svg",
+    "kind": "board",
+    "r": 117
+  },
+  "ITEM_BOWL_SOUP_1": {
+    "c": "#f5f5f5",
+    "hl": 0,
+    "imgSrc": "items/plate-soup3-ready.svg",
+    "kind": "plate",
+    "r": 117
+  },
+  "ITEM_BOWL_SOUP_EGG": {
+    "c": "#ffdb59",
+    "hl": 0,
+    "imgSrc": "items/plate-soup1-ready.svg",
+    "kind": "plate",
+    "r": 117
+  },
+  "ITEM_CLEAVER": {
+    "c": "#c8ccce",
+    "hl": 122,
+    "imgSrc": "items/cook-knife-ready.svg",
+    "kind": "knife",
+    "r": 52
+  },
+  "ITEM_CLIPBOARD": {
+    "c": "#70a441",
+    "hl": 52,
+    "imgSrc": "items/writing-board-ready.svg",
+    "kind": "board",
+    "r": 135
+  },
+  "ITEM_COLA_CAP": {
+    "c": "#ff9999",
+    "hl": 0,
+    "imgSrc": "objects/cola.svg",
+    "kind": "plate",
+    "r": 18
+  },
+  "ITEM_COMB": {
+    "c": "#568ae5",
+    "hl": 94,
+    "imgSrc": "items/comb-ready.svg",
+    "kind": "knife",
+    "r": 53
+  },
+  "ITEM_COMPASS_1": {
+    "c": "#b5bcc2",
+    "hl": 73,
+    "imgSrc": "items/compass-ready.svg",
+    "kind": "knife",
+    "r": 15
+  },
+  "ITEM_COMPASS_2": {
+    "c": "#7db9d6",
+    "hl": 73,
+    "imgSrc": "items/compass2-ready.svg",
+    "kind": "knife",
+    "r": 55
+  },
+  "ITEM_COMPASS_RULER": {
+    "c": "#a4acb4",
+    "hl": 29,
+    "imgSrc": "items/ruler-plus-ready.svg",
+    "kind": "board",
+    "r": 78
+  },
+  "ITEM_CORRECTOR": {
+    "c": "#609f40",
+    "hl": 30,
+    "imgSrc": "items/corrector-ready.svg",
+    "kind": "board",
+    "r": 29
+  },
+  "ITEM_CUP": {
+    "c": "#ffffff",
+    "hl": 0,
+    "imgSrc": "items/cup-ready.svg",
+    "kind": "bowl",
+    "r": 88
+  },
+  "ITEM_CUTTER": {
+    "c": "#fed42d",
+    "hl": 73,
+    "imgSrc": "items/card-knife-ready.svg",
+    "kind": "knife",
+    "r": 20
+  },
+  "ITEM_DOUGHNUT_1": {
+    "c": "#ff6b5a",
+    "hl": 0,
+    "imgSrc": "items/doughnut-1-ready.svg",
+    "kind": "plate",
+    "r": 88
+  },
+  "ITEM_DOUGHNUT_2": {
+    "c": "#7b5c46",
+    "hl": 0,
+    "imgSrc": "items/doughnut-2-ready.svg",
+    "kind": "plate",
+    "r": 88
+  },
+  "ITEM_DOUGHNUT_3": {
+    "c": "#f07178",
+    "hl": 0,
+    "imgSrc": "items/doughnut-3-ready.svg",
+    "kind": "plate",
+    "r": 88
+  },
+  "ITEM_DRILL": {
+    "c": "#fca311",
+    "hl": 27,
+    "imgSrc": "items/drill-ready.svg",
+    "kind": "board",
+    "r": 200
+  },
+  "ITEM_FORK_1": {
+    "c": "#a4b3bc",
+    "hl": 75,
+    "imgSrc": "items/fork1-ready.svg",
+    "kind": "fork",
+    "r": 15
+  },
+  "ITEM_FORK_2": {
+    "c": "#a4b3bc",
+    "hl": 75,
+    "imgSrc": "items/fork2-ready.svg",
+    "kind": "fork",
+    "r": 15
+  },
+  "ITEM_FRIES_ORANGE": {
+    "c": "#f27221",
+    "hl": 35,
+    "imgSrc": "items/fries1-ready.svg",
+    "kind": "board",
+    "r": 76
+  },
+  "ITEM_FRIES_RED": {
+    "c": "#f92a1c",
+    "hl": 35,
+    "imgSrc": "items/fries2-ready.svg",
+    "kind": "board",
+    "r": 66
+  },
+  "ITEM_GLOVES": {
+    "c": "#eed247",
+    "hl": 29,
+    "imgSrc": "items/gloves1-ready.svg",
+    "kind": "board",
+    "r": 117
+  },
+  "ITEM_GRATER": {
+    "c": "#9cbecf",
+    "hl": 70,
+    "imgSrc": "items/grater-ready.svg",
+    "kind": "board",
+    "r": 58
+  },
+  "ITEM_HAMMER_1": {
+    "c": "#787676",
+    "hl": 120,
+    "imgSrc": "items/hummer1-ready.svg",
+    "kind": "knife",
+    "r": 110
+  },
+  "ITEM_HORSESHOE": {
+    "c": "#fabf48",
+    "hl": 0,
+    "imgSrc": "items/horseshoe-ready.svg",
+    "kind": "plate",
+    "r": 110
+  },
+  "ITEM_KNIFE_1": {
+    "c": "#a4b3bc",
+    "hl": 75,
+    "imgSrc": "items/knife1-ready.svg",
+    "kind": "knife",
+    "r": 15
+  },
+  "ITEM_KNIFE_2": {
+    "c": "#a4b3bc",
+    "hl": 75,
+    "imgSrc": "items/knife2-ready.svg",
+    "kind": "knife",
+    "r": 15
+  },
+  "ITEM_KNIFE_3": {
+    "c": "#a4b3bc",
+    "hl": 75,
+    "imgSrc": "items/knife3-ready.svg",
+    "kind": "knife",
+    "r": 15
+  },
+  "ITEM_LAPTOP_CLOSED": {
+    "c": "#d2d6d9",
+    "hl": 54,
+    "imgSrc": "items/laptop-ready.svg",
+    "kind": "board",
+    "r": 124
+  },
+  "ITEM_LAPTOP_OPEN": {
+    "c": "#e2e6e8",
+    "hl": 54,
+    "imgSrc": "items/laptop-open-ready.svg",
+    "kind": "board",
+    "r": 124
+  },
+  "ITEM_MITTEN": {
+    "c": "#f4dcac",
+    "hl": 59,
+    "imgSrc": "items/mitten-ready.svg",
+    "kind": "board",
+    "r": 105
+  },
+  "ITEM_MIXER": {
+    "c": "#e3e5e6",
+    "hl": 40,
+    "imgSrc": "items/mixer2-ready.svg",
+    "kind": "board",
+    "r": 105
+  },
+  "ITEM_NAILS_CROSS": {
+    "c": "#ffd600",
+    "hl": 0,
+    "imgSrc": "items/nails1-ready.svg",
+    "kind": "plate",
+    "r": 58
+  },
+  "ITEM_NAILS_ROW": {
+    "c": "#ffd600",
+    "hl": 12,
+    "imgSrc": "items/nails2-ready.svg",
+    "kind": "board",
+    "r": 46
+  },
+  "ITEM_NOTEBOOK": {
+    "c": "#6ca342",
+    "hl": 55,
+    "imgSrc": "items/daily-ready.svg",
+    "kind": "board",
+    "r": 108
+  },
+  "ITEM_NOTEBOOK_2": {
+    "c": "#c8cfd5",
+    "hl": 55,
+    "imgSrc": "items/notebook2-ready.svg",
+    "kind": "board",
+    "r": 108
+  },
+  "ITEM_OPENER": {
+    "c": "#9c5c56",
+    "hl": 76,
+    "imgSrc": "items/opener-ready.svg",
+    "kind": "knife",
+    "r": 29
+  },
+  "ITEM_PAN_EGG": {
+    "c": "#385253",
+    "hl": 80,
+    "imgSrc": "items/pan1-ready.svg",
+    "kind": "bowl",
+    "r": 164
+  },
+  "ITEM_PAN_STEER": {
+    "c": "#3d434a",
+    "hl": 0,
+    "imgSrc": "items/pan-steer-ready.svg",
+    "kind": "bowl",
+    "r": 184
+  },
+  "ITEM_PENCIL": {
+    "c": "#64a03c",
+    "hl": 102,
+    "imgSrc": "items/pencil-ready.svg",
+    "kind": "knife",
+    "r": 9
+  },
+  "ITEM_PENCIL_2": {
+    "c": "#fca311",
+    "hl": 102,
+    "imgSrc": "items/pencil2-ready.svg",
+    "kind": "knife",
+    "r": 9
+  },
+  "ITEM_PENCIL_PLUS": {
+    "c": "#fed42d",
+    "hl": 67,
+    "imgSrc": "items/pencil-plus-ready.svg",
+    "kind": "board",
+    "r": 32
+  },
+  "ITEM_PEN_1": {
+    "c": "#437cd6",
+    "hl": 80,
+    "imgSrc": "items/pen1-ready.svg",
+    "kind": "knife",
+    "r": 9
+  },
+  "ITEM_PEN_PENCIL": {
+    "c": "#437cd6",
+    "hl": 94,
+    "imgSrc": "items/pen-pencil-ready.svg",
+    "kind": "board",
+    "r": 17
+  },
+  "ITEM_PHONE": {
+    "c": "#f0ce35",
+    "hl": 30,
+    "imgSrc": "items/phone1-ready.svg",
+    "kind": "board",
+    "r": 100
+  },
+  "ITEM_PHONE_2": {
+    "c": "#ced3d8",
+    "hl": 30,
+    "imgSrc": "items/phone2-ready.svg",
+    "kind": "board",
+    "r": 100
+  },
+  "ITEM_PLATE_BBQ": {
+    "c": "#faba02",
+    "hl": 0,
+    "imgSrc": "items/plate-bbq-ready.svg",
+    "kind": "plate",
+    "r": 164
+  },
+  "ITEM_PLATE_CHICKEN": {
+    "c": "#a0b4ed",
+    "hl": 0,
+    "imgSrc": "items/plate-chicken-ready.svg",
+    "kind": "plate",
+    "r": 164
+  },
+  "ITEM_PLATE_GREY": {
+    "c": "#dce3e8",
+    "hl": 0,
+    "imgSrc": "items/plate2-ready.svg",
+    "kind": "plate",
+    "r": 164
+  },
+  "ITEM_PLATE_MASHED": {
+    "c": "#ededed",
+    "hl": 0,
+    "imgSrc": "items/plate-mashed-chicken-ready.svg",
+    "kind": "plate",
+    "r": 164
+  },
+  "ITEM_PLATE_SAUSAGE_SET": {
+    "c": "#f5f2db",
+    "hl": 40,
+    "imgSrc": "items/plate-sausage-ready.svg",
+    "kind": "plate",
+    "r": 175
+  },
+  "ITEM_PLATE_SOUP_SPOON": {
+    "c": "#dce2e8",
+    "hl": 40,
+    "imgSrc": "items/plate-soup2-ready.svg",
+    "kind": "plate",
+    "r": 175
+  },
+  "ITEM_PLATE_WHITE": {
+    "c": "#ffffff",
+    "hl": 0,
+    "imgSrc": "items/plate1-ready.svg",
+    "kind": "plate",
+    "r": 164
+  },
+  "ITEM_PLATE_YELLOW": {
+    "c": "#fff9d6",
+    "hl": 0,
+    "imgSrc": "items/plate1-yellow-ready.svg",
+    "kind": "plate",
+    "r": 164
+  },
+  "ITEM_RUBBER_DUCK": {
+    "c": "#fff2b2",
+    "hl": 12,
+    "imgSrc": "items/rubber-duck-ready.svg",
+    "kind": "board",
+    "r": 46
+  },
+  "ITEM_RULER": {
+    "c": "#a4acb4",
+    "hl": 35,
+    "imgSrc": "items/ruler-ready.svg",
+    "kind": "board",
+    "r": 35
+  },
+  "ITEM_RULER_LONG": {
+    "c": "#f59e0b",
+    "hl": 158,
+    "imgSrc": "items/ruler2-ready.svg",
+    "kind": "knife",
+    "r": 17
+  },
+  "ITEM_SCREWDRIVER_1": {
+    "c": "#d94b4b",
+    "hl": 100,
+    "imgSrc": "items/screwdriver1-ready.svg",
+    "kind": "knife",
+    "r": 17
+  },
+  "ITEM_SCREWDRIVER_2": {
+    "c": "#eb7152",
+    "hl": 100,
+    "imgSrc": "items/screwdriver2-ready.svg",
+    "kind": "knife",
+    "r": 27
+  },
+  "ITEM_SET_1": {
+    "c": "#faf5d4",
+    "hl": 0,
+    "imgSrc": "items/cutlery-set1-ready.svg",
+    "kind": "plate",
+    "r": 175
+  },
+  "ITEM_SET_2": {
+    "c": "#faf5d4",
+    "hl": 0,
+    "imgSrc": "items/cutlery-set2-ready.svg",
+    "kind": "plate",
+    "r": 175
+  },
+  "ITEM_SMARTPHONE_1": {
+    "c": "#333333",
+    "hl": 53,
+    "imgSrc": "items/smartphone1-ready.svg",
+    "kind": "board",
+    "r": 74
+  },
+  "ITEM_SMARTPHONE_2": {
+    "c": "#000000",
+    "hl": 53,
+    "imgSrc": "items/smartphone2-ready.svg",
+    "kind": "board",
+    "r": 74
+  },
+  "ITEM_SPATULA_1": {
+    "c": "#c9ccce",
+    "hl": 128,
+    "imgSrc": "items/spatula1-ready.svg",
+    "kind": "knife",
+    "r": 46
+  },
+  "ITEM_SPATULA_2": {
+    "c": "#c9ccce",
+    "hl": 128,
+    "imgSrc": "items/spatula2-ready.svg",
+    "kind": "knife",
+    "r": 46
+  },
+  "ITEM_SPRAY": {
+    "c": "#a4d3ee",
+    "hl": 87,
+    "imgSrc": "items/washer-ready.svg",
+    "kind": "board",
+    "r": 58
+  },
+  "ITEM_STAPLER": {
+    "c": "#b3b8bd",
+    "hl": 70,
+    "imgSrc": "items/stapler-ready.svg",
+    "kind": "board",
+    "r": 64
+  },
+  "ITEM_TABLET_10": {
+    "c": "#3d444d",
+    "hl": 41,
+    "imgSrc": "items/tablet-10inch-ready.svg",
+    "kind": "board",
+    "r": 99
+  },
+  "ITEM_TAPE": {
+    "c": "#ffd13b",
+    "hl": 30,
+    "imgSrc": "items/ducttape-dispensor-ready.svg",
+    "kind": "board",
+    "r": 29
+  },
+  "ITEM_TOOLSET_1": {
+    "c": "#cccccc",
+    "hl": 59,
+    "imgSrc": "items/toolset1-ready.svg",
+    "kind": "board",
+    "r": 128
+  },
+  "ITEM_TOOLSET_2": {
+    "c": "#737373",
+    "hl": 0,
+    "imgSrc": "items/toolset2-ready.svg",
+    "kind": "plate",
+    "r": 146
+  },
+  "ITEM_TRIDENT": {
+    "c": "#79c8f2",
+    "hl": 170,
+    "imgSrc": "items/trident1-ready.svg",
+    "kind": "fork",
+    "r": 20
+  },
+  "ITEM_WRENCH_1": {
+    "c": "#cccccc",
+    "hl": 70,
+    "imgSrc": "items/wrench1-ready.svg",
+    "kind": "knife",
+    "r": 27
+  },
+  "ITEM_WRENCH_2": {
+    "c": "#cccccc",
+    "hl": 88,
+    "imgSrc": "items/wrench2-ready.svg",
+    "kind": "knife",
+    "r": 39
+  },
+  "_source": {
+    "commit": "555614037583666e89dce09fbb73c10bccb29539",
+    "file": "js/items.js"
+  }
+}

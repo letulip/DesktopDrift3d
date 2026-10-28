@@ -1,0 +1,28 @@
+{
+  "CFG": {
+    "driftDrag": 0.004,
+    "driftSteerBoost": 1.2,
+    "grip": 0.97,
+    "lowSpeedTurn": 0.25,
+    "maxSpeed": 400,
+    "rollFriction": 0.995,
+    "selfAlign": 1,
+    "steer": 2.5,
+    "steerSmooth": 6,
+    "thrust": 550
+  },
+  "GRIP_WOBBLE": 0.7,
+  "GU_TO_KMH": 0.023,
+  "NM_BAND": 42,
+  "PHYS_HZ": 120,
+  "STEER_WOBBLE": 0.16,
+  "TABLE": {
+    "h": 2900,
+    "shape": "rect",
+    "w": 3400
+  },
+  "_source": {
+    "commit": "555614037583666e89dce09fbb73c10bccb29539",
+    "file": "js/config.js"
+  }
+}

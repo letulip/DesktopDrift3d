@@ -1,0 +1,47 @@
+{
+  "ANIMS": [
+    {
+      "id": "none",
+      "label": "Static"
+    },
+    {
+      "id": "pulse",
+      "label": "Pulse"
+    },
+    {
+      "id": "rainbow",
+      "label": "Rainbow"
+    },
+    {
+      "id": "flow",
+      "label": "Circular Flow"
+    }
+  ],
+  "LAYOUTS": [
+    {
+      "colours": 1,
+      "id": "solid",
+      "label": "Solid"
+    },
+    {
+      "colours": 2,
+      "id": "longitudinal",
+      "label": "Left / Right"
+    },
+    {
+      "colours": 3,
+      "id": "front-mid-rear",
+      "label": "Front / Mid / Rear"
+    },
+    {
+      "colours": 6,
+      "id": "per-zone",
+      "label": "Per-zone"
+    }
+  ],
+  "NEON_ZONES": 6,
+  "_source": {
+    "commit": "555614037583666e89dce09fbb73c10bccb29539",
+    "file": "js/neon.js"
+  }
+}
