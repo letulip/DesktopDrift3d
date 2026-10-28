@@ -224,4 +224,9 @@ SPEC-00 (контур), SPEC-02 (потребитель `RaceRules`), SPEC-03 (`
     переполнение. APK с `System.Numerics` (BigInteger) вырос с 33 до 35 МБ. Итог гейта: dotnet 268/268 за 2 с,
     EditMode 268/268 за 11 с, compile 0/0, `trace.sh` 4 файла воспроизводимы, `tracks-ref` 12/12 без изменений
     при перегенерации, `engine-trace.sh` 5 следов воспроизводимы, `build.sh android` 35 МБ.
+13. **Приёмка архитектора на `main` (28.10.2026, после мержа PR #2, a84d7f3).** Из свежего чекаута: test.sh
+    268/268 за 2 с; trace.sh 4 файла; export-data / export-tracks / engine-trace перегенерированы – 0 изменённых
+    файлов; compile.sh 0/0 за 13 с; unity-tests.sh 268/268 за 9 с (Mono); build.sh android 35 МБ за 54 с (дерево
+    чистое, коммит a84d7f3); в Core 0 вхождений UnityEngine/DateTime/Random/float/Math.Round; единственный
+    `Assert.Ignore` – документированный обход `DD3D_SKIP_2D_PARITY`. Вердикт: SPEC-01 ⬛.
 

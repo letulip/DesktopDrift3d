@@ -12,13 +12,14 @@
 # The fallback boots an editor (about 1 min); source=screen is unavailable
 # headless, so capture uses source=camera.
 #
-# Env: CAPTURE_SCENE (default Assets/Scenes/SampleScene.unity), CAPTURE_W/CAPTURE_H (1920/1080).
+# Env: CAPTURE_SCENE (default Assets/Scenes/Game.unity), CAPTURE_W/CAPTURE_H (1920/1080),
+#      CAPTURE_DELAY (seconds to wait in play mode before the shot, default 0; e.g. 12 for a mid-lap frame).
 # Last line is always CAPTURE_EXIT=<code>.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PROJECT="$ROOT/unity"
-SCENE="${CAPTURE_SCENE:-Assets/Scenes/SampleScene.unity}"
+SCENE="${CAPTURE_SCENE:-Assets/Scenes/Game.unity}"
 W="${CAPTURE_W:-1920}"
 H="${CAPTURE_H:-1080}"
 UNITY_BIN="${UNITY_BIN:-/Applications/Unity/Hub/Editor/6000.3.27f1/Unity.app/Contents/MacOS/Unity}"
@@ -66,6 +67,7 @@ run() {
     sleep 3
   done
   [ "$ok" = 1 ] || { echo "ERROR: play mode not reached"; return 1; }
+  if [ "${CAPTURE_DELAY:-0}" != "0" ]; then sleep "$CAPTURE_DELAY"; fi
 
   f0="$(frame)"
   cmd capture game_view -- --source "${CAPTURE_SOURCE:-camera}" --width "$W" --height "$H" --save_path "Captures/$ts.png"

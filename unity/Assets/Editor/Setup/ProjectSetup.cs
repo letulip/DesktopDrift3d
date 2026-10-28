@@ -62,6 +62,26 @@ namespace DesktopDrift.Editor
                 Debug.Log("ProjectSetup: activeInputHandler ok (1)");
             }
 
+            // Unity 6 stores "Fixed Timestep" as a rational: m_Count ticks of m_Rate (Hz) – 1/60 s = rate / 60 ticks.
+            var tm = new SerializedObject(Unsupported.GetSerializedAssetInterfaceSingleton("TimeManager"));
+            var count = tm.FindProperty("Fixed Timestep.m_Count");
+            var num = tm.FindProperty("Fixed Timestep.m_Rate.m_Numerator");
+            var den = tm.FindProperty("Fixed Timestep.m_Rate.m_Denominator");
+            var maxStep = tm.FindProperty("Maximum Allowed Timestep");
+            long wantCount = num.longValue / (den.longValue * 60);
+            if (count.longValue != wantCount || maxStep.floatValue != 0.05f)
+            {
+                Debug.Log($"ProjectSetup: TimeManager fixed {count.longValue}/{num.longValue} -> {wantCount}/{num.longValue}, max {maxStep.floatValue} -> 0.05");
+                count.longValue = wantCount;
+                maxStep.floatValue = 0.05f;
+                tm.ApplyModifiedPropertiesWithoutUndo();
+                AssetDatabase.SaveAssets();
+            }
+            else
+            {
+                Debug.Log($"ProjectSetup: TimeManager ok (fixed {count.longValue}/{num.longValue} = 1/60, max 0.05)");
+            }
+
             // matched by type name: the Editor asmdef does not reference the URP runtime assembly
             Check(GraphicsSettings.defaultRenderPipeline != null && GraphicsSettings.defaultRenderPipeline.GetType().FullName == "UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset",
                 "GraphicsSettings.defaultRenderPipeline is not a UniversalRenderPipelineAsset");
@@ -73,6 +93,20 @@ namespace DesktopDrift.Editor
             Check(File.Exists(versionFile) && File.ReadAllText(versionFile).Contains("m_EditorVersion: " + ExpectedEditorVersion),
                 "ProjectVersion.txt does not contain m_EditorVersion: " + ExpectedEditorVersion);
             Debug.Log($"ProjectSetup: ProjectVersion ok ({ExpectedEditorVersion})");
+
+            // SPEC-02 step 7: the owner's APK carries the camera tuning overlay; the release profile (SPEC-09) drops the define.
+            var androidProfile = AssetDatabase.LoadAssetAtPath<UnityEditor.Build.Profile.BuildProfile>("Assets/Settings/Build Profiles/Android.asset");
+            Check(androidProfile != null, "Android build profile not found");
+            var defines = androidProfile!.scriptingDefines;
+            if (defines != null && defines.Length == 1 && defines[0] == "DD_TUNING")
+                Debug.Log("ProjectSetup: Android profile scriptingDefines ok (DD_TUNING)");
+            else
+            {
+                Debug.Log("ProjectSetup: Android profile scriptingDefines -> DD_TUNING");
+                androidProfile.scriptingDefines = new[] { "DD_TUNING" };
+                EditorUtility.SetDirty(androidProfile);
+                AssetDatabase.SaveAssets();
+            }
 
             // PlayerSettings.* setters alone did not flush ProjectSettings.asset in batchmode (2026-10-28): the file was only
             // written while activeInputHandler changed above. Mark the singleton dirty so SaveAssets always writes it.

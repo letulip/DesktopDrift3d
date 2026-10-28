@@ -1,0 +1,65 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="Hud.uss" />
+    <ui:VisualElement name="hud">
+        <ui:VisualElement name="hud-left">
+            <ui:VisualElement name="timePanel" class="panel">
+                <ui:VisualElement class="row"><ui:Label text="lap: " /><ui:Label name="lap" class="big" text="0.00" /><ui:Label text=" s" /></ui:VisualElement>
+                <ui:VisualElement class="row dim"><ui:Label text="last: " /><ui:Label name="last" text="—" /></ui:VisualElement>
+                <ui:VisualElement class="row dim"><ui:Label text="best: " /><ui:Label name="best" text="—" /></ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="mini" />
+        </ui:VisualElement>
+        <ui:VisualElement name="controls">
+            <ui:Button name="menuBtn" class="btn" text="☰ Menu" tooltip="back to menu" />
+        </ui:VisualElement>
+        <ui:VisualElement name="hud-right">
+            <ui:VisualElement name="scorePanel" class="panel">
+                <ui:VisualElement class="row"><ui:Label text="score: " /><ui:Label name="score" class="big" text="0" /></ui:VisualElement>
+                <ui:Label name="lapScores" class="dim" text="" />
+                <ui:VisualElement class="row dim"><ui:Label text="speed: " /><ui:Label name="spd" text="0.0" /><ui:Label text=" " /><ui:Label name="spdUnit" text="km/h" /></ui:VisualElement>
+                <ui:VisualElement name="tiresRow" class="row dim"><ui:Label text="tires: " /><ui:Label name="wallet" text="0" /></ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="lapCounter" class="row"><ui:Label name="lapNum" text="1" /><ui:Label text="/" /><ui:Label name="lapTotal" text="-" /></ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+    <ui:Label name="combo" />
+    <ui:Label name="flash" />
+    <ui:Label name="count" />
+    <ui:Label name="hint" text="Hold the LEFT half of the screen to steer left, the RIGHT half to steer right (or ← → keys). Drift through the corners. Dodge the obstacles!" />
+    <ui:Button name="pauseBtn" class="btn" text="⏸" tooltip="Pause (P)" />
+
+    <ui:VisualElement name="pauseOverlay" class="overlay">
+        <ui:Label class="ov-title" text="PAUSED" />
+        <ui:Label class="ov-sub" text="tap to resume" />
+    </ui:VisualElement>
+
+    <ui:VisualElement name="confirmExitOverlay" class="overlay">
+        <ui:VisualElement class="card">
+            <ui:Label name="confirmTitle" class="ov-title" text="Leave the race?" />
+            <ui:Button name="confirmRestartBtn" class="btn wide" text="↺ Restart" />
+            <ui:Button name="confirmExitBtn" class="btn wide" text="Exit to menu" />
+            <ui:Button name="confirmCancelBtn" class="btn wide" text="Cancel" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+
+    <ui:VisualElement name="raceResultsOverlay" class="overlay">
+        <ui:VisualElement class="card">
+            <ui:Label name="rr-title" class="ov-title" text="Race Complete" />
+            <ui:VisualElement name="rr-score" />
+            <ui:VisualElement name="rr-tires" />
+            <ui:VisualElement name="rr-achievements" />
+            <ui:VisualElement name="rr-laps" />
+            <ui:Label name="rr-best" />
+            <ui:Button name="rr-restart" class="btn wide" text="↺ Race Again" />
+            <ui:Button name="rr-back" class="btn wide" text="Back to tracks" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+
+    <ui:VisualElement name="launchOverlay" class="overlay">
+        <ui:VisualElement class="card">
+            <ui:Button name="launchTimeAttack" class="btn wide" text="Time Attack" />
+            <ui:Button name="launchSandbox" class="btn wide" text="Sandbox" />
+            <ui:Button name="launchZen" class="btn wide" text="Zen Drift" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

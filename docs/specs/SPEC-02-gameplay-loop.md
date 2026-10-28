@@ -4,6 +4,24 @@
 > как в 2D, камера по решению D-08. Всё, что здесь строится, живёт на серой параметрической трассе
 > (овал из `track-oval.js`) и переезжает на настоящие трассы без правок в SPEC-03.
 
+## Поправки после Волны 2 (28.10.2026, архитектор)
+
+SPEC-01 перенёс в Core больше, чем эта спека предполагала при написании, поэтому часть выходов уже есть:
+- `Core/Track/OvalTrack.cs` существует (SPEC-01 шаг 8a) – шаг 1 его НЕ пишет, а только строит сцену над ним.
+- `Core/Race/{RaceRules,RaceState,RaceOptions,RaceEvent,RaceResult}.cs` существуют и доказаны реплеями пяти следов
+  настоящего движка (`tools/engine-trace-*.json`) – шаг 3 (`RaceLoop`) становится тонким: `FixedUpdate` → `RaceRules.Step`
+  → диспетчер `RaceEvent`; правила НЕ переписывать. Контракты хоста – `03-architecture.md` §12 (dt = 1/60, пауза без
+  `Step`, `hourOfDay`, `NowMs`, `random`, машина по `carIndex`, крышки по `capId`).
+- Сейв есть (`Core/Save/SaveState.cs`), поэтому «заглушка `ICapStore` в памяти» из §3 не нужна: `RaceLoop` берёт
+  `SaveState` из `SaveSchema.Load` (файл – SPEC-07; до него – загрузка пустого сейва, `OnChanged` пишется в лог).
+- Новый пункт в шаге 3 (ревью Волны 2, И3): `Core/Meta/CarCatalog.cs` – `CarDefinition` (id, name, drive, len, wid,
+  vw, vh, flip, price) из `Content/_json/cars.json` (+ ratings/feel из `car-registry.json`), чтобы `RaceLoop`
+  передавал в `RaceRules` машину по `garage.carIndex`, а не руками.
+- `SteerInput` – порт `resolveSteer` из `js/input.js` (10 строк): результат только −1/0/1; геймпад в 1.1 (D-16).
+- Ориентация: D-19 – PoC крутится в Portrait и обоих Landscape, камера и HUD проектируются «портрет первым»;
+  выбор на гейте этого этапа.
+- Бюджет шага 3 снижается до ⟨opus · high · ≤50⟩, шага 1 – до ≤50.
+
 ## Цель
 
 Сцена `Game.unity`: машина-плейсхолдер едет по серому овалу по правилам `RaceRules`, с вводом
@@ -174,4 +192,31 @@ D-08, D-14, D-19, O-01, O-04, O-08; SPEC-03 (заменяет овал), SPEC-06
 
 ## Находки гейта
 
-(пусто)
+Волна 3, 28.10.2026, ветка `feat/spec-02-gameplay-loop` (гейт архитектора до фила владельца; пункты 14–15 – после него).
+
+1. **TimeManager в Unity 6 хранит Fixed Timestep дробью** (`m_Count/m_Rate`), запись `floatValue` в `SerializedProperty` – тихий no-op; `ProjectSetup` пишет `m_Count = rate/60` (2352000/141120000) и `Maximum Allowed Timestep = 0.05`; `RaceLoop.Awake` дублирует (`Time.fixedDeltaTime`, `maximumDeltaTime`, `targetFrameRate = 60` – Android по умолчанию 30 fps).
+2. **`dt` в `Step` – только `RaceLoop.FixedDt = 1.0/60` (double)**: `Time.fixedDeltaTime` – float 0.01666667 ≠ 1/60, паритет был бы не побитовым. Паритет через `RaceLoop`: побитово с прямым `RaceRules` и ≤ 1e-6 к следу движка на всех 2530 кадрах `engine-trace-oval`; сценный тест – `Finished` на шаге 1328 (в следе круг закрыт на 1327).
+3. **Ввод**: композит `1DAxis` не выражает правило 2D «стрелка влево + D → 0» (решает больший модуль), поэтому `Steer` – два Button-действия `SteerLeft`/`SteerRight` (`IsPressed`), чистый порт `resolveSteer` без изменений; читатель без состояния (сброс указателей на паузе не нужен).
+4. **Интерполяция на паузе/после финиша качалась** между двумя последними состояниями (`Time.fixedTime` идёт, `Push` нет): `CarView` и `CameraRig` держат последнее состояние, когда фиксированный шаг прошёл без `Push`.
+5. **Props-плейсхолдеры**: капсула с `Hl = 0` давала пилюлю длиной 4R; теперь плоские «тарелки» со следом коллизии 2D (`scale.y = hl + r`, высота 0.25·r) – до моделей SPEC-03/05.
+6. **Камера C2** (`Core/Camera`): «pitch» не параметр – наклон следует из `Height/Distance` и точки взгляда; сходимость при `YawLag 0.35` проверяется за 360 шагов; боковое смещение C3 идёт с тем же лагом (`CamState.Lateral`): прямое `vS` прыгало на 60 ед. за шаг и ломало границу непрерывности; облёт после финиша стартует из текущего `yaw`; интро проверено подручным захватом (масштаб ≈ 1.89 на 1-й с) – у `capture.sh` нет хука на отсчёт.
+7. **UI Toolkit**: `picking-mode` – не свойство USS в 6000.3 (импортёр предупреждает), ставится из кода; рантайм-ввод UI идёт через project-wide actions – шаблонный `InputSystem_Actions.inputactions` с картой `UI` оставлен нарочно; клики/тач по кнопкам headless не проверяются – первая проверка на телефоне.
+8. **Крышки**: `Cola.CapProgress` – однооборотный помощник правил, а рисунок 2D заливает диск за `CapLoops = 2` оборота (`render.js:521`) – формула вида в `ColaCaps`. `Collectible.Kind` крышки – `"cola"`, не `"cap"`.
+9. Unity сам создал `Assets/UI Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss` и `ProjectSettings/SceneTemplateSettings.json` – закоммичены; `Tire.mat` получил синхронизацию `_Color` от билдера сцены – закоммичена.
+10. **Dev-хуки контура** (headless-редактор наследует окружение): `UNITY_TESTS_MODE=PlayMode`, `CAPTURE_DELAY=<с>`, `DD_STEER=trace` (только редактор, руль из `tools/engine-trace-oval.json`), `DD_CAMERA_MODE=C1|C2`; сцена `Game.unity` ГЕНЕРИРУЕТСЯ `Editor/Scene/GameSceneBuilder.Build` (идемпотентно), YAML руками не правится.
+11. **Профиль сборки Android несёт define `DD_TUNING`** (`ProjectSetup`): dev-APK с оверлеем тюнинга и fps; релиз SPEC-09 define убирает.
+12. **Следы**: 2 рендерера / 1 материал (≤ 2 draw-call); бюджет 0.3 мс не измерен до телефона. Миникарта – `Painter2D`, не `RenderTexture` (меньше машинерии).
+13. **Что не проверено headless**: вид HUD (портрет/landscape, глифы ☰ ⏸ ▶ ★ 🛞 👑 ♾️), клики, экран результата, стенд режимов, скрытие панелей в Zen, тюнинг-панель, тач-половины на устройстве, fps – всё в чек-листе владельца `artifacts/feel-checklist.md`.
+14. *(после фила владельца)* раунд правок, fps на Poco X6, JSON пресета → `Content/Camera/Default.asset`.
+15. *(после фила владельца)* решения: камера C2/C1 и ориентация (D-19) → `01-decisions.md`, O-01.
+16. **Гейт архитектора на ветке (29.10.2026, e5d3b1b, свежий чекаут, до фила владельца).** test.sh 290/290 за 2 с;
+    compile.sh 0/0 за 10 с; EditMode 356/356 за 8 с; PlayMode 3/3 за 32 с (круг овала с `Finished`, паритет через
+    `RaceLoop` 2530 кадров ≤ 1e-6, сценный HUD); build.sh android 35 МБ за 24 с (дерево чистое); capture.sh C2 на 12-й
+    секунде без `DD_STEER=trace` – машина едет прямо и сходит с овала (параметры захвата, не дефект); борт в повороте и
+    следы подтверждены просмотром кадров сессии `20261028-205325` (C2) и `20261028-211123` (следы). Статика: `Core/{Physics,Race,Collision,Scoring,Rules,Save}`
+    без изменений против `main`; инварианты Core 0 вхождений; `Time.timeScale` только в комментарии; `RaceRules.Step`
+    вызывается в одном месте (`RaceLoop.FixedUpdate`, `FixedDt = 1.0/60` double, не на паузе и не после `Finished`,
+    §12); `RaceLoop` без математики правил; 14 строк HUD найдены в 2D дословно; ориентация – автоповорот Portrait +
+    оба Landscape (D-19); `SteerInput` – дословный `resolveSteer`. Вердикт архитектора: принято; остаётся гейт
+    владельца на Poco X6 (`artifacts/feel-checklist.md`, 14 пунктов) → раунд правок → D-21/D-22 → мерж.
+
