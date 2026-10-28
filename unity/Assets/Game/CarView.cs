@@ -10,6 +10,7 @@ namespace DesktopDrift.Game
 
         Transform? body;
         double prevX, prevY, prevA, curX, curY, curA;
+        float pushedAt; // Time.fixedTime of the last Push/SetPose: a fixed step without one means paused/finished
 
         public void Configure(double lenUnits = 82, double widUnits = 30.220657276995304)
         {
@@ -31,6 +32,7 @@ namespace DesktopDrift.Game
         public void SetPose(double x, double y, double angle)
         {
             prevX = curX = x; prevY = curY = y; prevA = curA = angle;
+            pushedAt = Time.fixedTime;
             Apply(1f);
         }
 
@@ -38,11 +40,15 @@ namespace DesktopDrift.Game
         {
             prevX = curX; prevY = curY; prevA = curA;
             curX = x; curY = y; curA = angle;
+            pushedAt = Time.fixedTime;
         }
 
         void LateUpdate()
         {
-            float alpha = Mathf.Clamp01((Time.time - Time.fixedTime) / Time.fixedDeltaTime);
+            // No Push since the last fixed step (paused / finished): hold the last state instead of
+            // oscillating between prev and cur as Time.fixedTime keeps advancing.
+            bool stale = Time.fixedTime - pushedAt > 0.5f * Time.fixedDeltaTime;
+            float alpha = stale ? 1f : Mathf.Clamp01((Time.time - Time.fixedTime) / Time.fixedDeltaTime);
             Apply(alpha);
         }
 

@@ -115,9 +115,12 @@ namespace DesktopDrift.Game
                 float r = (float)p.R * WorldMapping.UnitsToMeters;
                 float hl = (float)p.Hl * WorldMapping.UnitsToMeters;
                 var go = Primitive(PrimitiveType.Capsule, "Prop" + i, propMaterial);
-                // Capsule primitive: radius 0.5, height 2 along Y. Scale.y = half length incl. caps (min r*2 so Hl = 0 is a sphere).
-                go.transform.localScale = new Vector3(2f * r, Mathf.Max(hl + r, 2f * r), 2f * r);
-                go.transform.position = WorldMapping.ToWorld(p.X, p.Y) + Vector3.up * r;
+                // Capsule primitive: radius 0.5, height 2 along Y. scale.y = hl + r gives total length 2hl + 2r
+                // (Hl = 0 -> a disc of radius r). The axis is laid flat below, so local Z becomes the height:
+                // flattened to h so dishes read as plates, not as balls taller than the car (placeholder until SPEC-03/05).
+                float h = Mathf.Max(0.010f, 0.25f * r);
+                go.transform.localScale = new Vector3(2f * r, hl + r, h);
+                go.transform.position = WorldMapping.ToWorld(p.X, p.Y) + Vector3.up * (0.5f * h);
                 // Euler(90,0,0) lays the capsule axis on local +Z (the car-forward convention), then yaw by Ang.
                 go.transform.rotation = WorldMapping.Yaw(p.Ang) * Quaternion.Euler(90f, 0f, 0f);
             }

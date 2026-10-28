@@ -20,6 +20,7 @@ namespace DesktopDrift.Game
         // C2 state on the fixed-step grid; LateUpdate interpolates prev -> cur like CarView.
         CamState prev, cur;
         bool hasC2;
+        float steppedAt; // Time.fixedTime of the last step: a fixed step without one means paused/finished
 
         void Awake()
         {
@@ -49,6 +50,7 @@ namespace DesktopDrift.Game
             if (preset == null) return;
             cur = prev = ChaseCameraMath.Reset(Kin(), preset.c2);
             hasC2 = true;
+            steppedAt = Time.fixedTime;
         }
 
         void HandleStepped()
@@ -56,6 +58,7 @@ namespace DesktopDrift.Game
             if (!hasC2) return;
             prev = cur;
             cur = ChaseCameraMath.Step(cur, Kin(), preset.c2, RaceLoop.FixedDt);
+            steppedAt = Time.fixedTime;
         }
 
         CarKinematics Kin()
@@ -69,7 +72,9 @@ namespace DesktopDrift.Game
             if (preset == null || cam == null || carView == null) return;
             if (Mode == CameraMode.C2 && hasC2)
             {
-                float alpha = Mathf.Clamp01((Time.time - Time.fixedTime) / Time.fixedDeltaTime);
+                // Hold the last state while paused / finished (see CarView.LateUpdate).
+                bool stale = Time.fixedTime - steppedAt > 0.5f * Time.fixedDeltaTime;
+                float alpha = stale ? 1f : Mathf.Clamp01((Time.time - Time.fixedTime) / Time.fixedDeltaTime);
                 Vector3 pos = Vector3.Lerp(W(prev.PosX, prev.PosY, prev.PosH), W(cur.PosX, cur.PosY, cur.PosH), alpha);
                 Vector3 look = Vector3.Lerp(W(prev.LookX, prev.LookY, prev.LookH), W(cur.LookX, cur.LookY, cur.LookH), alpha);
                 cam.transform.SetPositionAndRotation(pos, Quaternion.LookRotation(look - pos, Vector3.up));
