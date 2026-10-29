@@ -1,0 +1,17 @@
+{
+"_source": {"commit":"555614037583666e89dce09fbb73c10bccb29539","seed":1,"rng":"LCG 1664525/1013904223 mod 2^32"},
+"instances": [
+{"run":"ta-green-study","frames":5386,"finished":true,"lapNum":3,"score":7324,"walletDelta":97,"conesKnocked":31,"capsCollected":10},
+{"run":"ta-green-study-rev","frames":5384,"finished":true,"lapNum":3,"score":7972,"walletDelta":111,"conesKnocked":22,"capsCollected":9},
+{"run":"ta-steel-kitchen","frames":5129,"finished":true,"lapNum":3,"score":8871,"walletDelta":66,"conesKnocked":19,"capsCollected":7},
+{"run":"ta-steel-kitchen-rev","frames":5165,"finished":true,"lapNum":3,"score":7391,"walletDelta":108,"conesKnocked":25,"capsCollected":6},
+{"run":"ta-workbench","frames":6091,"finished":true,"lapNum":3,"score":15520,"walletDelta":99,"conesKnocked":16,"capsCollected":10},
+{"run":"ta-workbench-rev","frames":6311,"finished":true,"lapNum":3,"score":5732,"walletDelta":92,"conesKnocked":21,"capsCollected":10},
+{"run":"ta-cafe-marble","frames":6900,"finished":true,"lapNum":3,"score":8952,"walletDelta":95,"conesKnocked":38,"capsCollected":8},
+{"run":"ta-cafe-marble-rev","frames":6823,"finished":true,"lapNum":3,"score":6430,"walletDelta":78,"conesKnocked":34,"capsCollected":6},
+{"run":"ta-dev-desk","frames":6818,"finished":true,"lapNum":3,"score":11521,"walletDelta":96,"conesKnocked":38,"capsCollected":7},
+{"run":"ta-dev-desk-rev","frames":6786,"finished":true,"lapNum":3,"score":3820,"walletDelta":80,"conesKnocked":41,"capsCollected":8},
+{"run":"ta-dining-oak","frames":4266,"finished":true,"lapNum":3,"score":5836,"walletDelta":96,"conesKnocked":20,"capsCollected":9},
+{"run":"ta-dining-oak-rev","frames":4362,"finished":true,"lapNum":3,"score":4938,"walletDelta":83,"conesKnocked":11,"capsCollected":11}
+]
+}

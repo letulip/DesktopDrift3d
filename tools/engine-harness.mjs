@@ -35,6 +35,13 @@ const RUNS = {
     donut: { dx: 140, dy: 100, angle: -Math.PI / 2, key: 'ArrowLeft' } },
   'oval-sandbox': { module: 'js/track-oval.js', opts: { laps: 0, stock: true, initItems: false }, cap: 5200, fixed: true },
 };
+// SPEC-03 step 7: Time Attack on every registered track and direction (ids = unity/Assets/Content/_json/tracks.json).
+for (const id of ['green-study', 'steel-kitchen', 'workbench', 'cafe-marble', 'dev-desk', 'dining-oak']) {
+  RUNS[`ta-${id}`] = { module: `js/track-${id}.js`, opts: { initItems: true }, cap: 20000 };
+  RUNS[`ta-${id}-rev`] = { module: `js/track-${id}.js`, opts: { initItems: true, reversed: true }, cap: 20000 };
+}
+// --summary: no trace file, one JSON line with the race result (scripts/engine-finish.sh).
+const SUMMARY = process.argv[3] === '--summary';
 if (!RUNS[TRACK]) throw new Error(`usage: engine-harness.mjs ${Object.keys(RUNS).join('|')}`);
 const RUN = RUNS[TRACK];
 const SEED = 1;
@@ -215,6 +222,11 @@ const final = {
 };
 
 const J = JSON.stringify;
+if (SUMMARY) {
+  console.log(J({ run: TRACK, frames: final.frames, finished: final.finished, lapNum: final.lapNum, score: final.score,
+    walletDelta: final.walletDelta, conesKnocked: final.conesKnocked, capsCollected: final.capsCollected }));
+  process.exit(0);
+}
 const out =
   '{\n' +
   '"traceVersion": 2,\n' +
