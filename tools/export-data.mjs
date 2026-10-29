@@ -105,6 +105,15 @@ const tracks = reg.TRACKS.map((t, i) => {
   if (t.tires !== undefined && t.tires !== Number(tires[1])) {
     throw new Error(`${t.id}: registry tires ${t.tires} != module tires ${tires[1]}`);
   }
+  // full 7-key theme from the module's makeTrack block; the registry theme (4 keys) must agree with it
+  const thBlock = text.match(/theme:\s*\{([\s\S]*?)\}/);
+  if (!thBlock) throw new Error(`${mod}: theme block not found`);
+  const modTheme = {};
+  for (const m of thBlock[1].matchAll(/(\w+):\s*'([^']*)'/g)) modTheme[m[1]] = m[2];
+  for (const k of Object.keys(t.theme || {})) {
+    if (modTheme[k] !== t.theme[k]) throw new Error(`${t.id}: theme.${k} registry '${t.theme[k]}' != module '${modTheme[k]}'`);
+  }
+  o.theme = sortTop(modTheme);
   o.laps = Number(laps[1]);
   o.tires = Number(tires[1]);
   o.module = mod;

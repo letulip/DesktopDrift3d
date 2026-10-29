@@ -43,42 +43,11 @@ namespace DesktopDrift.Core.Tests
         internal static TrackData Build(string id)
         {
             string dd = DesktopDriftDir();
-            Dictionary<string, object?>? row = null;
-            foreach (object? t in A(JsonDoc("unity/Assets/Content/_json/tracks.json")["TRACKS"]))
-                if (S(O(t)["id"]) == id) row = O(t);
-            Assert.That(row, Is.Not.Null, "track '" + id + "' missing in _json/tracks.json");
-
-            var th = O(row!["theme"]);
-            string Th(string k) { return th.TryGetValue(k, out object? v) ? S(v) : ""; }
-            var theme = new TrackTheme
-            {
-                Background = Th("background"), Table = Th("table"), TableEdge = Th("tableEdge"), Track = Th("track"),
-                Skid = Th("skid"), Checkpoint = Th("checkpoint"), Cone = Th("cone"),
-            };
-
-            var items = new Dictionary<string, ItemDef>();
-            foreach (KeyValuePair<string, object?> kv in JsonDoc("unity/Assets/Content/_json/items.json"))
-            {
-                if (!kv.Key.StartsWith("ITEM_", StringComparison.Ordinal)) continue;
-                var o = O(kv.Value);
-                items[kv.Key] = new ItemDef { Hl = D(o["hl"]), R = D(o["r"]), Kind = S(o["kind"]) };
-            }
-
-            var col = JsonDoc("unity/Assets/Content/_json/collectibles.json");
-            Collectible Proto(string key)
-            {
-                var o = O(col[key]);
-                return new Collectible
-                {
-                    Kind = S(o["kind"]),
-                    R = D(o["r"]),
-                    Hl = o.TryGetValue("hl", out object? hl) ? D(hl) : 0,
-                    Value = o.TryGetValue("value", out object? val) ? (int)D(val) : 0,
-                };
-            }
-
             string svg = File.ReadAllText(Path.Combine(dd, "tracks", id + ".svg"));
-            return TrackBuilder.FromSvg(svg, id, (int)D(row["laps"]), (int)D(row["tires"]), theme, items, Proto("COLA_CAP"), Proto("TIRE"));
+            return TrackSources.BuildFromContent(svg, id,
+                File.ReadAllText(TestPaths.Locate("unity/Assets/Content/_json/tracks.json")),
+                File.ReadAllText(TestPaths.Locate("unity/Assets/Content/_json/items.json")),
+                File.ReadAllText(TestPaths.Locate("unity/Assets/Content/_json/collectibles.json")));
         }
 
         private static void Near(string id, string field, int i, double expected, double actual)

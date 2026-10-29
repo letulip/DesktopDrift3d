@@ -10,6 +10,9 @@
       "svgSrc": "tracks/green-study.svg",
       "theme": {
         "background": "#14130e",
+        "checkpoint": "rgba(125,212,255,0.5)",
+        "cone": "#ff7a1a",
+        "skid": "rgba(10,16,10,0.5)",
         "table": "#2f4034",
         "tableEdge": "#7a6334",
         "track": "#cdbf9e"
@@ -26,6 +29,9 @@
       "svgSrc": "tracks/steel-kitchen.svg",
       "theme": {
         "background": "#c6cace",
+        "checkpoint": "rgba(60,120,160,0.6)",
+        "cone": "#ff7a1a",
+        "skid": "rgba(30,34,40,0.5)",
         "table": "#6b7178",
         "tableEdge": "#444a50",
         "track": "#c6bca1"
@@ -42,6 +48,9 @@
       "svgSrc": "tracks/workbench.svg",
       "theme": {
         "background": "#181d1d",
+        "checkpoint": "rgba(125,212,255,0.5)",
+        "cone": "#ff7a1a",
+        "skid": "rgba(14,12,8,0.55)",
         "table": "#574b39",
         "tableEdge": "#837a68",
         "track": "#9a8c6f"
@@ -58,6 +67,10 @@
       "svgSrc": "tracks/cafe-marble.svg",
       "theme": {
         "background": "#d7d0c4",
+        "checkpoint": "rgba(125,212,255,0.5)",
+        "cone": "#ff7a1a",
+        "skid": "rgba(30,18,8,0.5)",
+        "startLine": "#2e2114",
         "table": "#4a3726",
         "tableEdge": "#2e2114",
         "track": "#d3b483"
@@ -74,6 +87,10 @@
       "svgSrc": "tracks/dev-desk.svg",
       "theme": {
         "background": "#1b2230",
+        "checkpoint": "rgba(0,207,255,0.55)",
+        "cone": "#ff7a1a",
+        "skid": "rgba(40,46,58,0.5)",
+        "startLine": "#3a4150",
         "table": "#8f99ac",
         "tableEdge": "#5c667c",
         "track": "#c7bda4"
@@ -90,6 +107,9 @@
       "svgSrc": "tracks/dining-oak.svg",
       "theme": {
         "background": "#0f0b08",
+        "checkpoint": "rgba(125,212,255,0.5)",
+        "cone": "#ff7a1a",
+        "skid": "rgba(15,9,6,0.5)",
         "table": "#2e241a",
         "tableEdge": "#5a4a36",
         "track": "#cdbf9e"

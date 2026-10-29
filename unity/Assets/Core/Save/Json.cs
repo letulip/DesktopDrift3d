@@ -23,7 +23,7 @@ namespace DesktopDrift.Core
         }
 
         // Compact JSON (no whitespace). Dictionary keys are written in enumeration order. Numbers are
-        // printed like JS: integral values without a decimal part, otherwise "R" round-trip.
+        // printed like JS: integral values without a decimal part, otherwise the shortest round-trip form (CoreMath.JsNumberToString).
         public static string Serialize(object? value)
         {
             var sb = new StringBuilder();
@@ -79,7 +79,7 @@ namespace DesktopDrift.Core
         {
             if (double.IsNaN(d) || double.IsInfinity(d)) return "null"; // JSON.stringify(NaN) -> null
             if (d == Math.Floor(d) && Math.Abs(d) < 1e15) return ((long)d).ToString(CultureInfo.InvariantCulture); // -0 -> "0"
-            return d.ToString("R", CultureInfo.InvariantCulture);
+            return CoreMath.JsNumberToString(d); // shortest round-trip (exact on Mono too, unlike "R")
         }
 
         private static void WriteString(StringBuilder sb, string s)
