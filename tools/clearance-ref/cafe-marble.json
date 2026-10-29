@@ -1,0 +1,19 @@
+{
+  "_source": {
+    "commit": "555614037583666e89dce09fbb73c10bccb29539",
+    "svg": "tracks/cafe-marble.svg"
+  },
+  "exitCode": 0,
+  "lines": [
+    "",
+    "Item clearance report: /Users/letulip/Projects/Claude/DesktopDrift/tracks/cafe-marble.svg",
+    "Scale=0.25  TRACK_HALF=100  svgCx=8199.5  svgCy=4378",
+    "────────────────────────────────────────────────────────────────────────────────────────",
+    "ITEM_SET_1                 gx=  -575 gy=   385  dist= 289  need=275  ⚡ tight     14 GU",
+    "ITEM_DOUGHNUT_2_3          gx=   214 gy=   586  dist= 220  need=188  ⚠️  watch     32 GU",
+    "ITEM_CUP_2                 gx=   903 gy=   650  dist= 242  need=188  ⚠️  watch     54 GU",
+    "────────────────────────────────────────────────────────────────────────────────────────",
+    "",
+    "All items clear ✓"
+  ]
+}

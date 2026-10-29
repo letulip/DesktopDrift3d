@@ -1,0 +1,18 @@
+{
+  "_source": {
+    "commit": "555614037583666e89dce09fbb73c10bccb29539",
+    "svg": "tracks/dev-desk.svg"
+  },
+  "exitCode": 0,
+  "lines": [
+    "",
+    "Item clearance report: /Users/letulip/Projects/Claude/DesktopDrift/tracks/dev-desk.svg",
+    "Scale=0.25  TRACK_HALF=100  svgCx=8199.5  svgCy=4378",
+    "────────────────────────────────────────────────────────────────────────────────────────",
+    "ITEM_SMARTPHONE_1          gx=  1776 gy=  -235  dist= 216  need=174  ⚠️  watch     42 GU",
+    "ITEM_SMARTPHONE_2          gx=  1487 gy=  -824  dist= 231  need=174  ⚠️  watch     57 GU",
+    "────────────────────────────────────────────────────────────────────────────────────────",
+    "",
+    "All items clear ✓"
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "_source": {
+    "commit": "555614037583666e89dce09fbb73c10bccb29539",
+    "svg": "tracks/green-study.svg"
+  },
+  "exitCode": 0,
+  "lines": [
+    "",
+    "Item clearance report: /Users/letulip/Projects/Claude/DesktopDrift/tracks/green-study.svg",
+    "Scale=0.25  TRACK_HALF=100  svgCx=7231  svgCy=3914.5",
+    "────────────────────────────────────────────────────────────────────────────────────────",
+    "ITEM_STAPLER               gx=  -777 gy=   451  dist= 187  need=164  ⚡ tight     23 GU",
+    "ITEM_CLIPBOARD             gx= -1216 gy=   302  dist= 263  need=235  ⚡ tight     28 GU",
+    "ITEM_PENCIL_PLUS           gx=  -221 gy=  -643  dist= 167  need=132  ⚠️  watch     35 GU",
+    "ITEM_PENCIL_2              gx=  1451 gy=   200  dist= 144  need=109  ⚠️  watch     35 GU",
+    "ITEM_STAPLER_2             gx=  -570 gy=  -495  dist= 201  need=164  ⚠️  watch     37 GU",
+    "ITEM_PENCIL                gx=   723 gy=   651  dist= 148  need=109  ⚠️  watch     39 GU",
+    "ITEM_CORRECTOR_2           gx=  1480 gy=  -715  dist= 181  need=129  ⚠️  watch     52 GU",
+    "ITEM_CORRECTOR             gx=   918 gy=  -235  dist= 185  need=129  ⚠️  watch     56 GU",
+    "ITEM_CUTTER                gx=  1389 gy=  -260  dist= 177  need=120  ⚠️  watch     57 GU",
+    "────────────────────────────────────────────────────────────────────────────────────────",
+    "",
+    "All items clear ✓"
+  ]
+}

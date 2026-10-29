@@ -1,0 +1,22 @@
+{
+  "_source": {
+    "commit": "555614037583666e89dce09fbb73c10bccb29539",
+    "svg": "tracks/steel-kitchen.svg"
+  },
+  "exitCode": 0,
+  "lines": [
+    "",
+    "Item clearance report: /Users/letulip/Projects/Claude/DesktopDrift/tracks/steel-kitchen.svg",
+    "Scale=0.25  TRACK_HALF=100  svgCx=8199.5  svgCy=4378",
+    "────────────────────────────────────────────────────────────────────────────────────────",
+    "ITEM_MITTEN_2              gx=   103 gy=   121  dist= 209  need=205  ⚡ tight      4 GU",
+    "ITEM_GRATER_2              gx=   330 gy=   827  dist= 175  need=158  ⚡ tight     17 GU",
+    "ITEM_BOARD_1               gx= -1471 gy=   806  dist= 238  need=217  ⚡ tight     21 GU",
+    "ITEM_MITTEN                gx=  1449 gy=   739  dist= 227  need=205  ⚡ tight     22 GU",
+    "ITEM_GRATER                gx=  -526 gy=  -636  dist= 203  need=158  ⚠️  watch     45 GU",
+    "ITEM_PAN_EGG               gx=  -518 gy=   -14  dist= 316  need=264  ⚠️  watch     52 GU",
+    "────────────────────────────────────────────────────────────────────────────────────────",
+    "",
+    "All items clear ✓"
+  ]
+}

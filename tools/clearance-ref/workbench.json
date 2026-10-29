@@ -1,0 +1,30 @@
+{
+  "_source": {
+    "commit": "555614037583666e89dce09fbb73c10bccb29539",
+    "svg": "tracks/workbench.svg"
+  },
+  "exitCode": 1,
+  "lines": [
+    "",
+    "Item clearance report: /Users/letulip/Projects/Claude/DesktopDrift/tracks/workbench.svg",
+    "Scale=0.25  TRACK_HALF=100  svgCx=8256  svgCy=4378",
+    "────────────────────────────────────────────────────────────────────────────────────────",
+    "ITEM_COMB                  gx=  1865 gy=   758  dist= 149  need=153  ❌ OVERLAP    4 GU",
+    "ITEM_HAMMER_1              gx=  -153 gy=   270  dist= 217  need=210  ⚡ tight      7 GU",
+    "ITEM_GLOVES_2              gx=  1008 gy=  -196  dist= 247  need=217  ⚠️  watch     30 GU",
+    "ITEM_HORSESHOE             gx=  -323 gy=  -310  dist= 241  need=210  ⚠️  watch     31 GU",
+    "ITEM_PENCIL_2              gx=  1915 gy=  -696  dist= 142  need=109  ⚠️  watch     33 GU",
+    "ITEM_NAILS_CROSS           gx=   450 gy=   227  dist= 194  need=158  ⚠️  watch     36 GU",
+    "ITEM_PEN_1                 gx=   282 gy=   562  dist= 149  need=109  ⚠️  watch     40 GU",
+    "ITEM_SCREWDRIVER_1_2       gx= -1438 gy=  -578  dist= 157  need=117  ⚠️  watch     40 GU",
+    "ITEM_NAILS_CROSS_2         gx= -1613 gy=  -115  dist= 200  need=158  ⚠️  watch     42 GU",
+    "ITEM_PENCIL_2_2            gx=   516 gy=   846  dist= 151  need=109  ⚠️  watch     42 GU",
+    "ITEM_DRILL                 gx= -1574 gy=   226  dist= 349  need=300  ⚠️  watch     49 GU",
+    "ITEM_TOOLSET_2             gx=   312 gy=    44  dist= 298  need=246  ⚠️  watch     52 GU",
+    "ITEM_RULER_LONG            gx= -1170 gy=   177  dist= 171  need=117  ⚠️  watch     54 GU",
+    "ITEM_PEN_PENCIL_2          gx= -1869 gy=  -385  dist= 171  need=117  ⚠️  watch     54 GU",
+    "────────────────────────────────────────────────────────────────────────────────────────",
+    "",
+    "1 item(s) overlap the track — move them outward in the SVG."
+  ]
+}

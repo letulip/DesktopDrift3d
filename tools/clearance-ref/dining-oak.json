@@ -1,0 +1,21 @@
+{
+  "_source": {
+    "commit": "555614037583666e89dce09fbb73c10bccb29539",
+    "svg": "tracks/dining-oak.svg"
+  },
+  "exitCode": 0,
+  "lines": [
+    "",
+    "Item clearance report: /Users/letulip/Projects/Claude/DesktopDrift/tracks/dining-oak.svg",
+    "Scale=0.25  TRACK_HALF=100  svgCx=8199.5  svgCy=4378",
+    "────────────────────────────────────────────────────────────────────────────────────────",
+    "ITEM_PLATE_MASHED          gx=  -636 gy=  -233  dist= 285  need=264  ⚡ tight     21 GU",
+    "ITEM_PLATE_BBQ             gx= -1008 gy=  -619  dist= 289  need=264  ⚡ tight     25 GU",
+    "ITEM_PLATE_CHICKEN         gx=  -475 gy=   873  dist= 297  need=264  ⚠️  watch     33 GU",
+    "ITEM_FRIES_ORANGE_2        gx=  -874 gy=   960  dist= 216  need=176  ⚠️  watch     40 GU",
+    "ITEM_KNIFE_2_7             gx= -1820 gy=  -240  dist= 170  need=115  ⚠️  watch     55 GU",
+    "────────────────────────────────────────────────────────────────────────────────────────",
+    "",
+    "All items clear ✓"
+  ]
+}
