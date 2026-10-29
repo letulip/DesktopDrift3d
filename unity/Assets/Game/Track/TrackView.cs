@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace DesktopDrift.Game
 {
-    /// <summary>Temporary gray-oval view: table, ribbon from outer/inner, cones, props (SPEC-03 replaces it).</summary>
+    /// <summary>Track view: table (rect/ellipse + edge), floor, 2D round-stroke ribbon, cones, props; theme colours via MaterialPropertyBlock.</summary>
     public sealed class TrackView : MonoBehaviour
     {
         [SerializeField] Material? tableMaterial;
@@ -14,6 +14,21 @@ namespace DesktopDrift.Game
         [SerializeField] Material? propMaterial;
 
         const float RibbonY = 0.0005f;
+        const float EdgeBandY = 0.0002f;        // flat edge band: 0.2 mm above the table top
+        const float TableDepthUnits = 30f;      // side faces / floor depth, 2D units
+        const float EdgeBandUnits = 12f;        // 2D: tableEdge lineWidth = 12, centred on the boundary
+        const int EllipseSegments = 128;
+        static readonly int BaseColor = Shader.PropertyToID("_BaseColor");
+
+        /// <summary>Used only where a track carries no theme string (the sandbox oval has none).</summary>
+        public static class Fallback
+        {
+            public static readonly Color32 Background = new Color32(0x10, 0x11, 0x14, 255);
+            public static readonly Color32 Table = new Color32(0x2b, 0x2d, 0x31, 255);
+            public static readonly Color32 TableEdge = new Color32(0x1b, 0x1c, 0x1f, 255);
+            public static readonly Color32 Track = new Color32(0x6a, 0x6d, 0x73, 255);
+            public static readonly Color32 Cone = new Color32(0xff, 0x7a, 0x1a, 255);
+        }
 
         public List<Transform> ConeViews { get; } = new List<Transform>();
 
@@ -36,13 +51,14 @@ namespace DesktopDrift.Game
             }
         }
 
-        GameObject MeshObject(string name, Mesh mesh, Material? mat)
+        GameObject MeshObject(string name, Mesh mesh, Material? mat, Color color)
         {
             var go = new GameObject(name);
             go.transform.SetParent(transform, false);
             go.AddComponent<MeshFilter>().sharedMesh = mesh;
             var r = go.AddComponent<MeshRenderer>();
             if (mat != null) r.sharedMaterial = mat;
+            Tint(r, color);
             return go;
         }
 
@@ -59,38 +75,165 @@ namespace DesktopDrift.Game
 
         void BuildTable(TrackData track)
         {
+            var theme = track.Theme;
+            Color table = Resolve(theme.Table, Fallback.Table);
+            Color edge = Resolve(theme.TableEdge, Fallback.TableEdge);
+            Color background = Resolve(theme.Background, Fallback.Background);
+
+            bool round = track.Table.Round;
             float hw = (float)track.Table.W * WorldMapping.UnitsToMeters * 0.5f;
             float hh = (float)track.Table.H * WorldMapping.UnitsToMeters * 0.5f;
-            var mesh = new Mesh { name = "Table" };
-            mesh.vertices = new[] { new Vector3(-hw, 0, -hh), new Vector3(-hw, 0, hh), new Vector3(hw, 0, hh), new Vector3(hw, 0, -hh) };
-            mesh.normals = new[] { Vector3.up, Vector3.up, Vector3.up, Vector3.up };
-            mesh.triangles = new[] { 0, 1, 2, 0, 2, 3 };
-            MeshObject("Table", mesh, tableMaterial);
+            float depth = TableDepthUnits * WorldMapping.UnitsToMeters;
+
+            // Top face (y = 0): a fan around the centre for the ellipse, two triangles for the rectangle.
+            var top = new List<Vector3>();
+            var topTris = new List<int>();
+            if (round)
+            {
+                top.Add(Vector3.zero);
+                for (int i = 0; i < EllipseSegments; i++) top.Add(EllipsePoint(hw, hh, i));
+                for (int i = 0; i < EllipseSegments; i++) { topTris.Add(0); topTris.Add(1 + i); topTris.Add(1 + (i + 1) % EllipseSegments); }
+            }
+            else
+            {
+                top.AddRange(RectPoints(hw, hh));
+                topTris.AddRange(new[] { 0, 1, 2, 0, 2, 3 });
+            }
+            OrientUp(top, topTris);
+            MeshObject("Table", FlatMesh("Table", top, topTris), tableMaterial, table);
+
+            // Edge: a vertical skirt `depth` deep around the boundary plus a flat band 12 units wide centred on it.
+            float half = EdgeBandUnits * 0.5f * WorldMapping.UnitsToMeters;
+            var outline = Outline(round, hw, hh, 0f);
+            var verts = new List<Vector3>();
+            var normals = new List<Vector3>();
+            var tris = new List<int>();
+            int n = outline.Count;
+            for (int i = 0; i < n; i++)
+            {
+                Vector3 p0 = outline[i], p1 = outline[(i + 1) % n];
+                Vector3 outward = new Vector3(p1.z - p0.z, 0f, -(p1.x - p0.x)).normalized; // clockwise outline seen from above
+                if (Vector3.Dot(outward, 0.5f * (p0 + p1)) < 0f) outward = -outward;
+                int v = verts.Count;
+                verts.Add(p0); verts.Add(p1); verts.Add(p1 + Vector3.down * depth); verts.Add(p0 + Vector3.down * depth);
+                for (int k = 0; k < 4; k++) normals.Add(outward);
+                var q = new[] { v, v + 1, v + 2, v, v + 2, v + 3 };
+                // Seen from outside the quad must be clockwise: Unity's Cross is then along the outward normal.
+                if (Vector3.Dot(Vector3.Cross(verts[q[1]] - verts[q[0]], verts[q[2]] - verts[q[0]]), outward) < 0f)
+                    for (int t = 0; t < 6; t += 3) (q[t + 1], q[t + 2]) = (q[t + 2], q[t + 1]);
+                tris.AddRange(q);
+            }
+            var outer = Outline(round, hw, hh, +half);
+            var inner = Outline(round, hw, hh, -half);
+            int bandStart = verts.Count, bandTriStart = tris.Count;
+            for (int i = 0; i < n; i++)
+            {
+                verts.Add(outer[i] + Vector3.up * EdgeBandY);
+                verts.Add(inner[i] + Vector3.up * EdgeBandY);
+                normals.Add(Vector3.up); normals.Add(Vector3.up);
+            }
+            for (int i = 0; i < n; i++)
+            {
+                int o0 = bandStart + i * 2, i0 = o0 + 1, o1 = bandStart + ((i + 1) % n) * 2, i1 = o1 + 1;
+                tris.AddRange(new[] { o0, i0, o1, i0, i1, o1 });
+            }
+            OrientUp(verts, tris, bandTriStart);
+            var edgeMesh = new Mesh { name = "TableEdge" };
+            edgeMesh.SetVertices(verts);
+            edgeMesh.SetNormals(normals);
+            edgeMesh.SetTriangles(tris, 0);
+            MeshObject("TableEdge", edgeMesh, tableMaterial, edge);
+
+            // Floor at the table bottom, 10x the table extents, in the theme background.
+            float fx = 5f * hw * 2f, fz = 5f * hh * 2f;
+            var floor = new List<Vector3>
+            {
+                new Vector3(-fx, -depth, -fz), new Vector3(-fx, -depth, fz), new Vector3(fx, -depth, fz), new Vector3(fx, -depth, -fz),
+            };
+            var floorTris = new List<int> { 0, 1, 2, 0, 2, 3 };
+            OrientUp(floor, floorTris);
+            MeshObject("Floor", FlatMesh("Floor", floor, floorTris), tableMaterial, background);
+
+            var cam = Camera.main;
+            if (cam != null) cam.backgroundColor = background;
         }
 
         void BuildRibbon(TrackData track)
         {
-            int n = Mathf.Min(track.Outer.Count, track.Inner.Count);
-            var verts = new Vector3[n * 2];
-            var normals = new Vector3[n * 2];
-            for (int i = 0; i < n; i++)
+            // The 2D renderer's round stroke (RibbonGeometry): 2D vertices -> world, y a hair above the table.
+            var rib = RibbonGeometry.Build(track.Center, track.TrackHalf);
+            var verts = new List<Vector3>(rib.Vertices.Count);
+            foreach (var v in rib.Vertices) verts.Add(WorldMapping.ToWorld(v) + Vector3.up * RibbonY);
+            var tris = new List<int>(rib.Triangles);
+            OrientUp(verts, tris);
+            var mesh = FlatMesh("Ribbon", verts, tris);
+            MeshObject("Ribbon", mesh, ribbonMaterial, Resolve(track.Theme.Track, Fallback.Track));
+        }
+
+        // Unity front faces are clockwise seen from the camera: flip every triangle (once) when the net normal points down.
+        static void OrientUp(List<Vector3> verts, List<int> tris, int from = 0)
+        {
+            double sum = 0;
+            for (int t = from; t < tris.Count; t += 3)
+                sum += Vector3.Cross(verts[tris[t + 1]] - verts[tris[t]], verts[tris[t + 2]] - verts[tris[t]]).y;
+            if (sum >= 0) return;
+            for (int t = from; t < tris.Count; t += 3) (tris[t + 1], tris[t + 2]) = (tris[t + 2], tris[t + 1]);
+        }
+
+        static Mesh FlatMesh(string name, List<Vector3> verts, List<int> tris)
+        {
+            var mesh = new Mesh { name = name };
+            if (verts.Count > 65535) mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+            mesh.SetVertices(verts);
+            var normals = new Vector3[verts.Count];
+            for (int i = 0; i < normals.Length; i++) normals[i] = Vector3.up;
+            mesh.SetNormals(normals);
+            mesh.SetTriangles(tris, 0);
+            mesh.RecalculateBounds();
+            return mesh;
+        }
+
+        static Vector3 EllipsePoint(float a, float b, int i)
+        {
+            float t = 2f * Mathf.PI * i / EllipseSegments;
+            return new Vector3(a * Mathf.Cos(t), 0f, b * Mathf.Sin(t));
+        }
+
+        static Vector3[] RectPoints(float hw, float hh)
+        {
+            return new[] { new Vector3(-hw, 0, -hh), new Vector3(-hw, 0, hh), new Vector3(hw, 0, hh), new Vector3(hw, 0, -hh) };
+        }
+
+        // Table boundary offset by `grow` (metres, + outward): miter corners for the rectangle, the exact offset curve for the ellipse.
+        static List<Vector3> Outline(bool round, float hw, float hh, float grow)
+        {
+            var pts = new List<Vector3>();
+            if (!round)
             {
-                verts[i * 2] = WorldMapping.ToWorld(track.Outer[i]) + Vector3.up * RibbonY;
-                verts[i * 2 + 1] = WorldMapping.ToWorld(track.Inner[i]) + Vector3.up * RibbonY;
-                normals[i * 2] = normals[i * 2 + 1] = Vector3.up;
+                pts.AddRange(RectPoints(hw + grow, hh + grow));
+                return pts;
             }
-            var tris = new int[n * 6];
-            for (int i = 0; i < n; i++)
+            for (int i = 0; i < EllipseSegments; i++)
             {
-                int o0 = i * 2, i0 = o0 + 1, o1 = ((i + 1) % n) * 2, i1 = o1 + 1;
-                tris[i * 6 + 0] = o0; tris[i * 6 + 1] = i0; tris[i * 6 + 2] = o1;
-                tris[i * 6 + 3] = i0; tris[i * 6 + 4] = i1; tris[i * 6 + 5] = o1;
+                Vector3 p = EllipsePoint(hw, hh, i);
+                Vector3 n = new Vector3(p.x / (hw * hw), 0f, p.z / (hh * hh)).normalized;
+                pts.Add(p + n * grow);
             }
-            // Unity front faces are clockwise seen from the camera: make the normal point up whatever the 2D winding was.
-            if (n > 1 && Vector3.Cross(verts[tris[1]] - verts[tris[0]], verts[tris[2]] - verts[tris[0]]).y < 0f)
-                for (int t = 0; t < tris.Length; t += 3) (tris[t + 1], tris[t + 2]) = (tris[t + 2], tris[t + 1]);
-            var mesh = new Mesh { name = "Ribbon", vertices = verts, normals = normals, triangles = tris };
-            MeshObject("Ribbon", mesh, ribbonMaterial);
+            return pts;
+        }
+
+        static Color Resolve(string s, Color32 fallback)
+        {
+            if (string.IsNullOrEmpty(s)) return fallback;
+            ThemeColor c = ThemeColor.Parse(s);
+            return new Color((float)c.R, (float)c.G, (float)c.B, 1f);
+        }
+
+        static void Tint(Renderer r, Color c)
+        {
+            var block = new MaterialPropertyBlock();
+            block.SetColor(BaseColor, c);
+            r.SetPropertyBlock(block);
         }
 
         void BuildCones(TrackData track)
@@ -100,6 +243,7 @@ namespace DesktopDrift.Game
             {
                 var c = track.Cones[i];
                 var go = Primitive(PrimitiveType.Cylinder, "Cone" + i, coneMaterial);
+                Tint(go.GetComponent<Renderer>(), Resolve(track.Theme.Cone, Fallback.Cone));
                 // Cylinder primitive: diameter 1, height 2 at scale 1; height 2r needs scale.y = r; base sits on the table.
                 go.transform.localScale = new Vector3(2f * r, r, 2f * r);
                 go.transform.position = WorldMapping.ToWorld(c.X, c.Y) + Vector3.up * r;

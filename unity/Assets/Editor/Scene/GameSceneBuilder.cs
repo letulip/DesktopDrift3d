@@ -43,7 +43,7 @@ namespace DesktopDrift.Editor
             cam.nearClipPlane = 0.01f;
             cam.farClipPlane = 50f;
             cam.clearFlags = CameraClearFlags.SolidColor;
-            cam.backgroundColor = new Color32(0x10, 0x11, 0x14, 255);
+            cam.backgroundColor = new Color32(0x14, 0x13, 0x0e, 255); // green-study theme background; TrackView sets the real one per track
             camGo.transform.position = start - fwd * 0.3f + Vector3.up * 0.5f;
             camGo.transform.LookAt(start + fwd * 0.15f);
 
