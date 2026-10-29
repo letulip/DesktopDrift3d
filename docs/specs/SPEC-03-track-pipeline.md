@@ -4,6 +4,51 @@
 > это остаётся источником истины. Импортёр повторяет `makeTrack` числом (паритет с эталонами
 > `tools/tracks-ref/` из SPEC-01) и строит 3D-представление: лента, стол, предметы-плейсхолдеры.
 
+## Поправки после Волны 3 (29.10.2026, архитектор) – действуют поверх текста ниже
+
+Волны 2–3 сделали часть этой спеки заранее, поэтому шаги пересобраны вокруг готового кода:
+- **Разбор SVG уже есть:** `Core/Track/TrackBuilder.FromSvg` (SPEC-01 шаг 4b) – дословный `makeTrack`, паритет 12/12 с
+  `tools/tracks-ref/*.json` в `dotnet test` (`Core.Tests/TrackBuilderParityTests.cs`). Импортёр НЕ пишет свой парсер: он
+  вызывает `FromSvg` на `DesktopDrift/tracks/<id>.svg` (путь – `DESKTOPDRIFT_DIR`, по умолчанию
+  `/Users/letulip/Projects/Claude/DesktopDrift`, как в тестах) и сериализует результат.
+- **Реверс уже есть:** `TrackUtil.ReverseTrack` + `TrackUtil.InstanceId` – шаг реверса сводится к проводке в рантайме.
+- **Вид трассы уже есть:** `Game/Track/TrackView` (SPEC-02) строит стол, ленту, конусы и предметы из `TrackData`; его
+  расширяют (флаг старта, кольцо следующего чекпоинта, кант и форма стола, пол, темы), новый `TrackMeshBuilder` не нужен.
+- **`RaceLoop.Init(TrackData, …)`** принимает любую трассу: овал остаётся песочницей (Sandbox), Time Attack и Zen идут на
+  настоящих трассах.
+- **D-25 (архитектор): префабов на трассу нет.** `TrackAsset` (ScriptableObject, только данные `TrackData` в `double`)
+  – единственный источник; трасса собирается при запуске `TrackView` (+ `StaticBatchingUtility.Combine`); 12 инстансов
+  из 6 ассетов (реверс в рантайме). Предметы – заглушки с `PropRef(itemId)`, SPEC-05 подменяет их моделями по `itemId` в
+  рантайме. Шаг «Префаб трассы» снят, `Art/Prefabs/Tracks/` не создаётся.
+- **Тема целиком из 2D:** `tracks.json` сейчас несёт 4 цвета темы из `track-registry.js`; поля `skid`, `checkpoint`,
+  `cone` живут в модулях `js/track-<id>.js` – расширить `tools/export-data.mjs` разбором `theme: {…}` из текста модуля
+  (как `laps`/`tires`), не перепечатывать.
+- **Особенности данных 2D сохраняются** (SPEC-01 находки 2 и 6, вопросы Волны 2 №2–3): `cafe-marble` содержит команды `C`
+  в `track_path` – они читаются как вершины, как в 2D; три proxy-линии с незапечённым `transform` пропускаются. Риск
+  «импортёр обязан падать на неизвестной команде» ниже ОТМЕНЁН: падать нельзя, иначе разойдёмся с 2D.
+- **Выбор трассы для плейтеста:** временный dev-стенд рядом со стендом режимов SPEC-02 – список трасс по именам 2D из
+  `tracks.json` и переключатель «reversed», заголовок – строка 2D «Choose a track»; открыты все 12 инстансов (гейт 3★ – SPEC-06/07).
+  Ничего сверх 2D не изобретать (урок кольца дрифта, D-23); SPEC-06 заменит стенд экраном 2D как есть.
+- **Ориентация (D-22):** окончательное решение – на плейтесте этой волны на настоящих трассах (пункт чек-листа).
+- **Полный цикл D-24:** одна ветка `feat/spec-03-track-pipeline` → шаги → гейт архитектора → плейтест владельца на Poco X6
+  (12 инстансов, ориентация, читаемость трасс камерой C2) → правки в той же ветке → PR → мерж.
+
+Пересобранная диспетчеризация (заменяет таблицу ниже):
+
+| № | Шаг | Диспетчеризация | Выход |
+|---|---|---|---|
+| 1 | Тема целиком в `export-data` + `TrackAsset` + `TrackImporter.ImportAll()` (Editor, обёртка над `FromSvg`) | ⟨Importer · general-purpose · sonnet · high · ≤50⟩ | `Content/Tracks/<id>.asset` ×6, `_json/tracks.json` с полной темой |
+| 2 | Паритет: `TrackAsset` → `TrackData` == `FromSvg` == `tracks-ref` | ⟨Importer · general-purpose · sonnet · medium · ≤30⟩ | EditMode-тест на 6 трассах |
+| 3 | `TrackView`: флаг старта, кольцо следующего чекпоинта, кант/эллипс стола, пол, темы (бывшие шаги 3 и 9) | ⟨Builder · general-purpose · sonnet · high · ≤60⟩ | кадры `capture.sh` по 2 трассам |
+| 4 | `TrackRuntime.Load(id, reversed)` → `TrackData` (`ReverseTrack`, `InstanceId`), проводка Time Attack/Zen | ⟨Builder · general-purpose · sonnet · medium · ≤40⟩ | заезд на настоящей трассе из сцены |
+| 5 | Валидатор зазоров (порт `tools/check-item-clearance.js`) как тест | ⟨Builder · general-purpose · sonnet · medium · ≤40⟩ | EditMode-тест на 6 трассах |
+| 6 | Превью трасс 512² (прямое и зеркальное) для SPEC-06 | ⟨Builder · general-purpose · sonnet · medium · ≤40⟩ | `Content/Tracks/<id>-thumb.png` (+`-rev`) |
+| 7 | PlayMode-проезд 12/12 по центру (чекпоинты, финиш) | ⟨Builder · general-purpose · sonnet · high · ≤50⟩ | PlayMode-тест |
+| 8 | Временный стенд выбора трассы (12 инстансов) | ⟨Builder · general-purpose · sonnet · medium · ≤30⟩ | стенд в HUD-заглушке |
+| 9 | APK + чек-лист плейтеста владельцу; затем раунд правок в той же ветке | ⟨Gate-runner · general-purpose · sonnet · medium · ≤30⟩ + владелец | `artifacts/feel/`, `artifacts/feel-checklist-spec03.md` |
+
+Бюджет волны ≈ 370 ходов (было ≈ 440).
+
 ## Цель
 
 Все 6 трасс × 2 направления + овал играются в сцене `Game.unity` через `TrackAsset` и префабы,
