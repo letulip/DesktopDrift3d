@@ -43,5 +43,43 @@ namespace DesktopDrift.Game.Tests
                 RaceLaunch.Laps = null;
             }
         }
+
+        // Feel round 1 (D-23): the portrait values live under the "narrow" class on the document root; the
+        // selector must reach elements below the UXML container, and the two widths are the 2D sandbox.css
+        // values x3 (120px / 156px). The controller is disabled so its per-frame toggle cannot interfere.
+        [UnityTest]
+        public IEnumerator NarrowClassSwitchesPortraitLayout()
+        {
+            RaceLaunch.AutoStart = false;
+            try
+            {
+                SceneManager.LoadScene("Game");
+                yield return null;
+                var hud = Object.FindFirstObjectByType<HudController>();
+                Assert.IsNotNull(hud, "HudController");
+                hud.enabled = false;
+                var root = hud.GetComponent<UIDocument>().rootVisualElement;
+                var timePanel = root.Q("timePanel");
+                var mini = root.Q("mini");
+                Assert.IsNotNull(timePanel, "timePanel");
+
+                root.EnableInClassList("narrow", true);
+                yield return null;
+                yield return null;
+                // Tolerance: the panel scale snaps layout to device pixels (360 -> 360.79 in the batch editor).
+                Assert.AreEqual(360f, timePanel.resolvedStyle.width, 5f, "portrait width (2D 120px x3)");
+                Assert.AreEqual(309f, mini.resolvedStyle.height, 5f, "portrait minimap height (2D 103px x3)");
+
+                root.EnableInClassList("narrow", false);
+                yield return null;
+                yield return null;
+                Assert.AreEqual(468f, timePanel.resolvedStyle.width, 5f, "landscape width (2D 156px x3)");
+                hud.enabled = true;
+            }
+            finally
+            {
+                RaceLaunch.AutoStart = true;
+            }
+        }
     }
 }

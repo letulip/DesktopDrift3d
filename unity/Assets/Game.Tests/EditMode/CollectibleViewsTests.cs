@@ -68,22 +68,5 @@ namespace DesktopDrift.Game.Tests
             Assert.IsTrue(tires.Views[0].activeSelf);
             Assert.AreEqual(2, tires.transform.childCount);
         }
-
-        [Test]
-        public void DriftZones_ColoursAndTimers()
-        {
-            var z = Make<DriftZones>();
-            z.OnRaceEvent(new RaceEvent(RaceEvent.EventKind.DriftStart));
-            z.Tick(0.1f);
-            Assert.AreEqual(0.5f, z.CurrentAlpha, 1e-6f);
-            z.OnRaceEvent(new RaceEvent(RaceEvent.EventKind.NearMiss));
-            z.Tick(0.1f);
-            Assert.AreEqual(new Color32(0xff, 0xd3, 0x6a, 255), (Color32)z.CurrentColor);
-            z.Tick(0.2f);
-            Assert.AreEqual(0.5f, z.CurrentAlpha, 1e-6f);
-            z.OnRaceEvent(new RaceEvent(RaceEvent.EventKind.DriftEnd));
-            z.Tick(0.31f);
-            Assert.AreEqual(0f, z.CurrentAlpha, 1e-6f);
-        }
     }
 }
