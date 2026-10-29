@@ -1,7 +1,8 @@
-// SPEC-03 step 3b: TrackView builds the 2D look - round-stroke ribbon, rect/ellipse table with edge, floor, theme colours
+// SPEC-03 steps 3b/3c: TrackView builds the 2D look - round-stroke ribbon, rect/ellipse table with edge, floor, theme colours
 // through MaterialPropertyBlocks (no leaked material instances).
 #nullable enable
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using DesktopDrift.Core;
 using NUnit.Framework;
@@ -37,13 +38,15 @@ namespace DesktopDrift.Game.Tests
             var go = new GameObject("TrackViewTest");
             created.Add(go);
             var view = go.AddComponent<TrackView>();
-            var shader = Shader.Find("Universal Render Pipeline/Lit");
-            foreach (string f in new[] { "tableMaterial", "ribbonMaterial", "coneMaterial", "propMaterial" })
+            // The real scene materials (Table/Ribbon unlit, Cone/Prop lit), so the shader assertions test what the builder produced.
+            foreach (string f in new[] { "Table", "Ribbon", "Cone", "Prop" })
             {
-                var m = new Material(shader);
-                created.Add(m);
-                typeof(TrackView).GetField(f, BindingFlags.NonPublic | BindingFlags.Instance)!.SetValue(view, m);
+                var m = AssetDatabase.LoadAssetAtPath<Material>("Assets/Art/Materials/" + f + ".mat");
+                Assert.IsNotNull(m, "missing material " + f);
+                typeof(TrackView).GetField(char.ToLowerInvariant(f[0]) + f.Substring(1) + "Material", BindingFlags.NonPublic | BindingFlags.Instance)!.SetValue(view, m);
             }
+            typeof(TrackView).GetField("renderJson", BindingFlags.NonPublic | BindingFlags.Instance)!
+                .SetValue(view, AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/Content/_json/render.json"));
             view.Build(track);
             return view;
         }
@@ -62,9 +65,11 @@ namespace DesktopDrift.Game.Tests
             return b.GetColor("_BaseColor");
         }
 
-        static Color Expected(string s, Color32 fallback)
+        static TrackTheme Default() => TrackTheme.ParseDefault(File.ReadAllText("Assets/Content/_json/render.json"));
+
+        static Color Expected(string s)
         {
-            if (string.IsNullOrEmpty(s)) return fallback;
+            Assert.IsFalse(string.IsNullOrEmpty(s), "merged theme strings are never empty");
             var c = ThemeColor.Parse(s);
             return new Color((float)c.R, (float)c.G, (float)c.B, 1f);
         }
@@ -158,17 +163,38 @@ namespace DesktopDrift.Game.Tests
             created.Add(camGo);
             camGo.AddComponent<Camera>();
             var view = BuildView(track);
-            var th = track.Theme;
-            var bg = Expected(th.Background, TrackView.Fallback.Background);
-            AssertColor(Expected(th.Table, TrackView.Fallback.Table), BlockColor(Child(view, "Table")), id + " table");
-            AssertColor(Expected(th.TableEdge, TrackView.Fallback.TableEdge), BlockColor(Child(view, "TableEdge")), id + " edge");
-            AssertColor(Expected(th.Track, TrackView.Fallback.Track), BlockColor(Child(view, "Ribbon")), id + " ribbon");
+            var th = TrackTheme.Merge(track.Theme, Default());
+            var bg = Expected(th.Background);
+            AssertColor(Expected(th.Table), BlockColor(Child(view, "Table")), id + " table");
+            AssertColor(Expected(th.TableEdge), BlockColor(Child(view, "TableEdge")), id + " edge");
+            AssertColor(Expected(th.Track), BlockColor(Child(view, "Ribbon")), id + " ribbon");
             AssertColor(bg, BlockColor(Child(view, "Floor")), id + " floor");
             Assert.IsNotNull(Camera.main);
             AssertColor(bg, Camera.main!.backgroundColor, id + " camera");
             Assert.AreEqual(track.Cones.Count, view.ConeViews.Count);
             for (int i = 0; i < track.Cones.Count; i++)
-                AssertColor(Expected(th.Cone, TrackView.Fallback.Cone), BlockColor(Child(view, "Cone" + i)), id + " cone " + i);
+                AssertColor(Expected(th.Cone), BlockColor(Child(view, "Cone" + i)), id + " cone " + i);
+        }
+
+        [Test]
+        public void Oval_ShowsTheTwoDThemeDefault()
+        {
+            var view = BuildView(OvalTrack.Build());
+            AssertColor(new Color32(0x0f, 0x0b, 0x08, 255), BlockColor(Child(view, "Floor")), "oval floor #0f0b08");
+            AssertColor(new Color32(0x2e, 0x24, 0x1a, 255), BlockColor(Child(view, "Table")), "oval table #2e241a");
+            AssertColor(new Color32(0x5a, 0x4a, 0x36, 255), BlockColor(Child(view, "TableEdge")), "oval edge #5a4a36");
+            AssertColor(new Color32(0x43, 0x37, 0x2a, 255), BlockColor(Child(view, "Ribbon")), "oval track #43372a");
+            AssertColor(new Color32(0xff, 0x7a, 0x1a, 255), BlockColor(Child(view, "Cone0")), "oval cone #ff7a1a");
+        }
+
+        [Test]
+        public void FlatSurfacesAreUnlit_ObjectsStayLit()
+        {
+            var view = BuildView(Load("cafe-marble"));
+            const string unlit = "Universal Render Pipeline/Unlit", lit = "Universal Render Pipeline/Lit";
+            foreach (string n in new[] { "Floor", "Table", "TableEdge", "Ribbon" })
+                Assert.AreEqual(unlit, Child(view, n).sharedMaterial.shader.name, n);
+            Assert.AreEqual(lit, Child(view, "Cone0").sharedMaterial.shader.name, "cone");
         }
 
         [Test]

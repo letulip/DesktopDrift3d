@@ -15,12 +15,13 @@ namespace DesktopDrift.Editor
     {
         const string ScenePath = "Assets/Scenes/Game.unity";
         const string MaterialsDir = "Assets/Art/Materials";
+        const string Lit = "Universal Render Pipeline/Lit", Unlit = "Universal Render Pipeline/Unlit";
 
         [MenuItem("DesktopDrift/Scene/Build Game Scene")]
         public static void Build()
         {
-            var table = Mat("Table", new Color32(0x2b, 0x2d, 0x31, 255));
-            var ribbon = Mat("Ribbon", new Color32(0x6a, 0x6d, 0x73, 255));
+            var table = Mat("Table", new Color32(0x2b, 0x2d, 0x31, 255), Unlit); // flat surfaces: unlit, the theme colour exactly like the 2D canvas
+            var ribbon = Mat("Ribbon", new Color32(0x6a, 0x6d, 0x73, 255), Unlit);
             var cone = Mat("Cone", new Color32(0xff, 0x7a, 0x1a, 255));
             var prop = Mat("Prop", new Color32(0x9a, 0x8c, 0x7a, 255));
             var car = Mat("Car", new Color32(0xd8, 0x30, 0x30, 255));
@@ -48,7 +49,7 @@ namespace DesktopDrift.Editor
             camGo.transform.LookAt(start + fwd * 0.15f);
 
             var track = new GameObject("Track").AddComponent<TrackView>();
-            SetRefs(track, ("tableMaterial", table), ("ribbonMaterial", ribbon), ("coneMaterial", cone), ("propMaterial", prop));
+            SetRefs(track, ("tableMaterial", table), ("ribbonMaterial", ribbon), ("coneMaterial", cone), ("propMaterial", prop), ("renderJson", Json("render.json")));
 
             var carView = new GameObject("Car").AddComponent<CarView>();
             SetRefs(carView, ("material", car));
@@ -74,7 +75,7 @@ namespace DesktopDrift.Editor
             SetRefs(rig, ("preset", preset), ("cam", cam), ("carView", carView), ("loop", race));
 
             var skids = new GameObject("SkidMarks").AddComponent<SkidMarks>();
-            SetRefs(skids, ("loop", race), ("material", SkidMat()));
+            SetRefs(skids, ("loop", race), ("trackView", track), ("material", SkidMat()));
 
             var tires = new GameObject("Tires").AddComponent<Tires>();
             SetRefs(tires, ("loop", race), ("material", Mat("Tire", new Color32(0x2a, 0x2a, 0x2c, 255))));
@@ -137,16 +138,17 @@ namespace DesktopDrift.Editor
             return AssetDatabase.LoadAssetAtPath<TextAsset>(path) ?? throw new Exception("Missing TextAsset " + path);
         }
 
-        static Material Mat(string name, Color color)
+        static Material Mat(string name, Color color, string shaderName = Lit)
         {
             if (!AssetDatabase.IsValidFolder(MaterialsDir)) AssetDatabase.CreateFolder("Assets/Art", "Materials");
             string path = $"{MaterialsDir}/{name}.mat";
             var m = AssetDatabase.LoadAssetAtPath<Material>(path);
             if (m == null)
             {
-                m = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+                m = new Material(Shader.Find(shaderName));
                 AssetDatabase.CreateAsset(m, path);
             }
+            m.shader = Shader.Find(shaderName) ?? throw new Exception("Missing shader " + shaderName);
             m.SetColor("_BaseColor", color);
             EditorUtility.SetDirty(m);
             return m;

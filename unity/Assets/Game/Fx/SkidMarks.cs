@@ -12,14 +12,14 @@ namespace DesktopDrift.Game
     {
         [SerializeField] RaceLoop loop;
         [SerializeField] Material material;
+        [SerializeField] TrackView trackView;   // supplies the merged theme (THEME_DEFAULT + track theme)
         [SerializeField] int maxSegmentsPerWheel = 750;
 
         const float MarkY = 0.001f;        // 1 mm above the table (ribbon sits at 0.0005)
         const double HalfWidth = 3.0;      // 2D: 6x6 rect per mark
         const int Levels = 6;              // 2D SKID_LEVELS
-        static readonly Color32 FallbackRgb = new Color32(0x0F, 0x09, 0x06, 255); // used only when the track has no skid string
 
-        Color32 skidRgb = FallbackRgb; // RGB of the track's theme skid (2D keeps only the RGB; alpha is per level)
+        Color32 skidRgb; // RGB of the track's theme skid (2D keeps only the RGB; alpha is per level)
 
         Strip left, right;
 
@@ -74,14 +74,9 @@ namespace DesktopDrift.Game
         {
             if (loop.Track != null)
             {
-                string skid = loop.Track.Theme.Skid;
-                if (string.IsNullOrEmpty(skid)) skidRgb = FallbackRgb;
-                else
-                {
-                    ThemeColor c = ThemeColor.Parse(skid);
-                    skidRgb = new Color32((byte)Mathf.RoundToInt((float)c.R * 255f), (byte)Mathf.RoundToInt((float)c.G * 255f),
-                        (byte)Mathf.RoundToInt((float)c.B * 255f), 255);
-                }
+                ThemeColor c = ThemeColor.Parse(trackView.ThemeFor(loop.Track).Skid);
+                skidRgb = new Color32((byte)Mathf.RoundToInt((float)c.R * 255f), (byte)Mathf.RoundToInt((float)c.G * 255f),
+                    (byte)Mathf.RoundToInt((float)c.B * 255f), 255);
                 // Table rectangle, set once per race (2x the table so either origin convention is covered).
                 var size = new Vector3((float)loop.Track.Table.W, 0f, (float)loop.Track.Table.H) * (2f * WorldMapping.UnitsToMeters);
                 var bounds = new Bounds(new Vector3(0f, MarkY, 0f), size + new Vector3(0f, 0.01f, 0f));

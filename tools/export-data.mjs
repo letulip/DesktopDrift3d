@@ -121,6 +121,15 @@ const tracks = reg.TRACKS.map((t, i) => {
 });
 emit('tracks', 'js/track-registry.js', { TRACKS: tracks });
 
+// ── render: THEME_DEFAULT of js/render.js (a non-exported const), read from the module text ──
+const renderText = readFileSync(join(DD, 'js/render.js'), 'utf8');
+const tdBlock = renderText.match(/const THEME_DEFAULT\s*=\s*\{([\s\S]*?)\};/);
+if (!tdBlock) throw new Error('render.js: THEME_DEFAULT block not found');
+const themeDefault = {};
+for (const m of tdBlock[1].matchAll(/(\w+):\s*'([^']*)'/g)) themeDefault[m[1]] = m[2];
+if (Object.keys(themeDefault).length !== 7) throw new Error(`render.js: THEME_DEFAULT has ${Object.keys(themeDefault).length} keys, expected 7`);
+emit('render', 'js/render.js', { THEME_DEFAULT: sortTop(themeDefault) });
+
 // ── achievements: catalog built by code from the live registries ─────────────
 const ach = await load('js/achievements.js');
 const content = ach.buildContent(reg.TRACKS, shop.CATALOG, cfg.CARS);

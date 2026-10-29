@@ -12,6 +12,7 @@ namespace DesktopDrift.Game
         [SerializeField] Material? ribbonMaterial;
         [SerializeField] Material? coneMaterial;
         [SerializeField] Material? propMaterial;
+        [SerializeField] TextAsset? renderJson;   // Content/_json/render.json: THEME_DEFAULT of the 2D render.js
 
         const float RibbonY = 0.0005f;
         const float EdgeBandY = 0.0002f;        // flat edge band: 0.2 mm above the table top
@@ -20,14 +21,20 @@ namespace DesktopDrift.Game
         const int EllipseSegments = 128;
         static readonly int BaseColor = Shader.PropertyToID("_BaseColor");
 
-        /// <summary>Used only where a track carries no theme string (the sandbox oval has none).</summary>
-        public static class Fallback
+        /// <summary>The theme in force for the current track: `{ ...THEME_DEFAULT, ...track.Theme }` (2D render.js), never an empty string.</summary>
+        public TrackTheme? EffectiveTheme { get; private set; }
+
+        TrackTheme? defaultTheme;
+
+        /// <summary>Merge of a track's own theme with THEME_DEFAULT parsed from the serialized render.json.</summary>
+        public TrackTheme ThemeFor(TrackData track)
         {
-            public static readonly Color32 Background = new Color32(0x10, 0x11, 0x14, 255);
-            public static readonly Color32 Table = new Color32(0x2b, 0x2d, 0x31, 255);
-            public static readonly Color32 TableEdge = new Color32(0x1b, 0x1c, 0x1f, 255);
-            public static readonly Color32 Track = new Color32(0x6a, 0x6d, 0x73, 255);
-            public static readonly Color32 Cone = new Color32(0xff, 0x7a, 0x1a, 255);
+            if (defaultTheme == null)
+            {
+                if (renderJson == null) throw new System.InvalidOperationException("TrackView.renderJson is not assigned");
+                defaultTheme = TrackTheme.ParseDefault(renderJson.text);
+            }
+            return TrackTheme.Merge(track.Theme, defaultTheme);
         }
 
         public List<Transform> ConeViews { get; } = new List<Transform>();
@@ -35,6 +42,7 @@ namespace DesktopDrift.Game
         public void Build(TrackData track)
         {
             Clear();
+            EffectiveTheme = ThemeFor(track);
             BuildTable(track);
             BuildRibbon(track);
             BuildCones(track);
@@ -75,10 +83,10 @@ namespace DesktopDrift.Game
 
         void BuildTable(TrackData track)
         {
-            var theme = track.Theme;
-            Color table = Resolve(theme.Table, Fallback.Table);
-            Color edge = Resolve(theme.TableEdge, Fallback.TableEdge);
-            Color background = Resolve(theme.Background, Fallback.Background);
+            var theme = EffectiveTheme!;
+            Color table = Resolve(theme.Table);
+            Color edge = Resolve(theme.TableEdge);
+            Color background = Resolve(theme.Background);
 
             bool round = track.Table.Round;
             float hw = (float)track.Table.W * WorldMapping.UnitsToMeters * 0.5f;
@@ -167,7 +175,7 @@ namespace DesktopDrift.Game
             var tris = new List<int>(rib.Triangles);
             OrientUp(verts, tris);
             var mesh = FlatMesh("Ribbon", verts, tris);
-            MeshObject("Ribbon", mesh, ribbonMaterial, Resolve(track.Theme.Track, Fallback.Track));
+            MeshObject("Ribbon", mesh, ribbonMaterial, Resolve(EffectiveTheme!.Track));
         }
 
         // Unity front faces are clockwise seen from the camera: flip every triangle (once) when the net normal points down.
@@ -222,9 +230,8 @@ namespace DesktopDrift.Game
             return pts;
         }
 
-        static Color Resolve(string s, Color32 fallback)
+        static Color Resolve(string s)
         {
-            if (string.IsNullOrEmpty(s)) return fallback;
             ThemeColor c = ThemeColor.Parse(s);
             return new Color((float)c.R, (float)c.G, (float)c.B, 1f);
         }
@@ -243,7 +250,7 @@ namespace DesktopDrift.Game
             {
                 var c = track.Cones[i];
                 var go = Primitive(PrimitiveType.Cylinder, "Cone" + i, coneMaterial);
-                Tint(go.GetComponent<Renderer>(), Resolve(track.Theme.Cone, Fallback.Cone));
+                Tint(go.GetComponent<Renderer>(), Resolve(EffectiveTheme!.Cone));
                 // Cylinder primitive: diameter 1, height 2 at scale 1; height 2r needs scale.y = r; base sits on the table.
                 go.transform.localScale = new Vector3(2f * r, r, 2f * r);
                 go.transform.position = WorldMapping.ToWorld(c.X, c.Y) + Vector3.up * r;

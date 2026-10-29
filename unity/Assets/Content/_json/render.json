@@ -1,0 +1,15 @@
+{
+  "THEME_DEFAULT": {
+    "background": "#0f0b08",
+    "checkpoint": "rgba(125,212,255,0.5)",
+    "cone": "#ff7a1a",
+    "skid": "rgba(15,9,6,1)",
+    "table": "#2e241a",
+    "tableEdge": "#5a4a36",
+    "track": "#43372a"
+  },
+  "_source": {
+    "commit": "555614037583666e89dce09fbb73c10bccb29539",
+    "file": "js/render.js"
+  }
+}
