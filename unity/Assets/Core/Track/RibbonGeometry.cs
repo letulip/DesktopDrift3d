@@ -19,7 +19,7 @@ namespace DesktopDrift.Core
             public int PathPoints;
         }
 
-        public static Ribbon Build(IReadOnlyList<Vec2> center, double half, int step = 3, int discSegments = 16)
+        public static Ribbon Build(IReadOnlyList<Vec2> center, double half, int step = 3, int discSegments = 32)
         {
             if (step < 1) throw new ArgumentOutOfRangeException("step");
             if (discSegments < 3) throw new ArgumentOutOfRangeException("discSegments");
