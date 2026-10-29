@@ -33,6 +33,8 @@ namespace DesktopDrift.Game.Tests
                 yield return null;
                 var loop = Object.FindFirstObjectByType<RaceLoop>();
                 Assert.IsNotNull(loop, "RaceLoop in scene Game");
+                // The scene defaults to the first real track in Time Attack (SPEC-03); the recorded steering is the oval's.
+                loop.Init(OvalTrack.Build(), loop.Catalog, loop.Physics, loop.Content, loop.Save);
                 var frames = (List<object?>)TraceFiles.Trace()["frames"]!;
                 loop.SteerSource = new ScriptedSteer(frames, loop);
                 bool lapOne = false, finished = false;

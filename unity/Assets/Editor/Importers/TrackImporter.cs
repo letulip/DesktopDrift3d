@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using DesktopDrift.Core;
 using DesktopDrift.Game;
@@ -77,7 +78,26 @@ namespace DesktopDrift.Editor
                     + " collectibles=" + t.Collectibles.Count + " checkpoints=" + t.Checkpoints.Count + " bytes=" + bytes.Length
                     + " changed=" + ((changed || assetChanged) ? "true" : "false"));
             }
+            UpdateCatalog(new List<string>(TrackSources.TrackIds(tracks)));
             AssetDatabase.SaveAssets();
+        }
+
+        // Assets/Content/Tracks/TrackCatalog.asset: the TrackAssets in tracks.json order; only dirtied when the list changed.
+        static void UpdateCatalog(List<string> ids)
+        {
+            const string rel = OutDir + "/TrackCatalog.asset";
+            var catalog = AssetDatabase.LoadAssetAtPath<TrackCatalog>(rel);
+            bool changed = catalog == null;
+            if (catalog == null)
+            {
+                catalog = ScriptableObject.CreateInstance<TrackCatalog>();
+                AssetDatabase.CreateAsset(catalog, rel);
+            }
+            var want = new List<TrackAsset>();
+            foreach (string id in ids) want.Add(AssetDatabase.LoadAssetAtPath<TrackAsset>(OutDir + "/" + id + ".asset"));
+            if (!catalog.Tracks.SequenceEqual(want)) { catalog.Tracks = want; changed = true; }
+            if (changed) EditorUtility.SetDirty(catalog);
+            Debug.Log("TRACK catalog entries=" + want.Count + " changed=" + (changed ? "true" : "false"));
         }
 
         static bool Set(ref string field, string value)

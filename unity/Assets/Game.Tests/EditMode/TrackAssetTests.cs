@@ -78,10 +78,23 @@ namespace DesktopDrift.Game.Tests
             var want = new List<string>(TrackSources.TrackIds(Content("tracks.json")));
             var have = new List<string>();
             foreach (string path in Directory.GetFiles(Path.Combine(Application.dataPath, "Content/Tracks"), "*.asset"))
-                have.Add(Path.GetFileNameWithoutExtension(path));
+            {
+                string name = Path.GetFileNameWithoutExtension(path);
+                if (name != "TrackCatalog") have.Add(name);
+            }
             want.Sort(StringComparer.Ordinal);
             have.Sort(StringComparer.Ordinal);
             CollectionAssert.AreEqual(want, have, "Content/Tracks assets differ from tracks.json ids" + Hint);
+        }
+
+        [Test]
+        public void CatalogListsTracksJsonIdsInOrder()
+        {
+            var catalog = AssetDatabase.LoadAssetAtPath<TrackCatalog>(Dir + "/TrackCatalog.asset");
+            Assert.IsNotNull(catalog, "missing " + Dir + "/TrackCatalog.asset" + Hint);
+            var have = new List<string>();
+            foreach (TrackAsset t in catalog!.Tracks) have.Add(t.Id);
+            CollectionAssert.AreEqual(new List<string>(TrackSources.TrackIds(Content("tracks.json"))), have, "catalog differs from tracks.json" + Hint);
         }
     }
 }

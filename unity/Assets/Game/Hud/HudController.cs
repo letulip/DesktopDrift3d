@@ -123,7 +123,7 @@ namespace DesktopDrift.Game
         void BindLaunch(Button b, RaceMode mode)
         {
             b.text = RaceLaunch.ModeTitle(mode);
-            b.clicked += () => { Hide(launchOverlay); RaceLaunch.Mode = mode; loop.StartRace(); };
+            b.clicked += () => { Hide(launchOverlay); RaceLaunch.Mode = mode; loop.Relaunch(); };
         }
 
         static void Show(VisualElement e) => e.style.display = DisplayStyle.Flex;

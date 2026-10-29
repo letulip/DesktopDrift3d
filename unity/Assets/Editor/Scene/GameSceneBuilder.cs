@@ -59,7 +59,8 @@ namespace DesktopDrift.Editor
             var race = new GameObject("Race").AddComponent<RaceLoop>();
             SetRefs(race, ("trackView", track), ("carView", carView), ("steerReader", input),
                 ("carsJson", Json("cars.json")), ("registryJson", Json("car-registry.json")), ("configJson", Json("config.json")),
-                ("tracksJson", Json("tracks.json")), ("shopJson", Json("shop.json")));
+                ("tracksJson", Json("tracks.json")), ("shopJson", Json("shop.json")),
+                ("trackCatalog", AssetDatabase.LoadAssetAtPath<TrackCatalog>("Assets/Content/Tracks/TrackCatalog.asset")));
 
             const string presetPath = "Assets/Content/Camera/Default.asset";
             var preset = AssetDatabase.LoadAssetAtPath<CameraPreset>(presetPath);

@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf2754031d477426abfee6d75ecf6387, type: 3}
+  m_Name: TrackCatalog
+  m_EditorClassIdentifier: DesktopDrift.Game::DesktopDrift.Game.TrackCatalog
+  Tracks:
+  - {fileID: 11400000, guid: 3cfa60cbd12a84ccfb7059cc036a350d, type: 2}
+  - {fileID: 11400000, guid: 9171b400d2b314836ab8d0ed424bc5ab, type: 2}
+  - {fileID: 11400000, guid: 2c1cd4a85f14f4c209ed6c89ab375818, type: 2}
+  - {fileID: 11400000, guid: 1fae8faf469e94e62a094c25763b49e8, type: 2}
+  - {fileID: 11400000, guid: da9ece7bc52374ffbb91707fa6b27e25, type: 2}
+  - {fileID: 11400000, guid: 494625a0955794916a3669478a4b349c, type: 2}

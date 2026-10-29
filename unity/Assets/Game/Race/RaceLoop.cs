@@ -17,6 +17,7 @@ namespace DesktopDrift.Game
 
         [SerializeField] TextAsset? carsJson, registryJson, configJson, tracksJson, shopJson;
         [SerializeField] TrackView? trackView;
+        [SerializeField] TrackCatalog? trackCatalog;
         [SerializeField] CarView? carView;
         [SerializeField] SteerReader? steerReader;
 
@@ -45,10 +46,12 @@ namespace DesktopDrift.Game
 
         bool _initialized;
         bool _saveDirty;
+        bool _trackReversed;
 
         public void Init(TrackData track, CarCatalog catalog, PhysicsConstants physics, ContentDescriptor content, SaveState save)
         {
             Track = track;
+            _trackReversed = RaceLaunch.Mode != RaceMode.Sandbox && RaceLaunch.Reversed;
             Catalog = catalog;
             Physics = physics;
             Content = content;
@@ -66,7 +69,7 @@ namespace DesktopDrift.Game
             Application.targetFrameRate = 60;
             if (carsJson != null && !_initialized)
             {
-                Init(OvalTrack.Build(),
+                Init(RaceLaunch.ResolveTrack(trackCatalog),
                     CarCatalog.FromJson(carsJson.text, registryJson?.text),
                     CarCatalog.PhysicsFromConfig(configJson!.text),
                     ContentJson.Build(tracksJson!.text, shopJson!.text, carsJson.text),
@@ -100,6 +103,20 @@ namespace DesktopDrift.Game
             carView?.Configure(Car.Len, Car.Wid);
             carView?.SetPose(State.Car.X, State.Car.Y, State.Car.Angle);
             OnReset?.Invoke();
+        }
+
+        /// <summary>
+        /// Start a race from the current RaceLaunch selection (mode, track, direction): swaps the track (oval for Sandbox,
+        /// a real track otherwise) when it differs from the loaded one, then starts. Views reset through OnReset.
+        /// </summary>
+        public void Relaunch()
+        {
+            if (Running) StopRace();
+            TrackData next = RaceLaunch.ResolveTrack(trackCatalog);
+            bool reversed = RaceLaunch.Mode != RaceMode.Sandbox && RaceLaunch.Reversed;
+            if (Track == null || next.Id != Track.Id || reversed != _trackReversed)
+                Init(next, Catalog, Physics, Content, Save);
+            StartRace();
         }
 
         /// <summary>"Race again" / "Restart" without reloading the scene.</summary>
