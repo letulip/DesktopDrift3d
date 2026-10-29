@@ -27,6 +27,9 @@ namespace DesktopDrift.Game
         public Func<int> HourOfDay { get; set; } = () => DateTime.Now.Hour;
         public Func<double> NowMs { get; set; } = () => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
+        /// <summary>The ordered track assets (tracks.json order) for the menu / track-select screens.</summary>
+        public TrackCatalog? TrackCatalog => trackCatalog;
+
         public TrackData Track = null!;
         public CarCatalog Catalog = null!;
         public PhysicsConstants Physics = null!;

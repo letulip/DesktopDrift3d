@@ -23,7 +23,15 @@ namespace DesktopDrift.Game
             wallet = null!, lapNum = null!, lapTotal = null!, combo = null!, flash = null!, count = null!;
         Button pauseBtn = null!;
         VisualElement hudLeft = null!, hudRight = null!, hint = null!, pauseOverlay = null!, confirmOverlay = null!,
-            resultsOverlay = null!, launchOverlay = null!;
+            resultsOverlay = null!, launchOverlay = null!, trackOverlay = null!, trackToggle = null!;
+        Label trackTitle = null!, trackSub = null!;
+        Button btnNormal = null!, btnReversed = null!;
+        ScrollView trackCards = null!;
+        RaceMode standMode = RaceMode.TimeAttack;
+        bool standReversed;
+        // Forward TrackData of each catalog track, deserialized once and cached for the thumbnails.
+        readonly List<TrackData> forwardTracks = new List<TrackData>();
+        string? pendingStand;   // DD_STAND (editor hook), applied once the document is bound
         bool wasPaused;
         float hintTimer;
         RaceResult? pendingResult;
@@ -60,6 +68,15 @@ namespace DesktopDrift.Game
             }
         }
 
+        void Awake()
+        {
+#if UNITY_EDITOR
+            // Dev hook for scripts/capture.sh: DD_STAND=ta|zen|modes shows that stand instead of auto-starting the race.
+            string? stand = Environment.GetEnvironmentVariable("DD_STAND");
+            if (stand == "ta" || stand == "zen" || stand == "modes") { pendingStand = stand; RaceLaunch.AutoStart = false; }
+#endif
+        }
+
         void OnEnable()
         {
             if (loop != null) { loop.OnEvent += OnRaceEvent; loop.OnReset += OnReset; }
@@ -94,10 +111,14 @@ namespace DesktopDrift.Game
             hudLeft = root.Q("hud-left"); hudRight = root.Q("hud-right"); hint = root.Q("hint");
             pauseOverlay = root.Q("pauseOverlay"); confirmOverlay = root.Q("confirmExitOverlay");
             resultsOverlay = root.Q("raceResultsOverlay"); launchOverlay = root.Q("launchOverlay");
+            trackOverlay = root.Q("trackOverlay"); trackToggle = root.Q("trackToggle");
+            trackTitle = root.Q<Label>("trackTitle"); trackSub = root.Q<Label>("trackSub");
+            btnNormal = root.Q<Button>("btnNormal"); btnReversed = root.Q<Button>("btnReversed");
+            trackCards = root.Q<ScrollView>("trackCards");
             // Touch must reach the steering input: ignore pointers everywhere except buttons and overlays.
             root.pickingMode = PickingMode.Ignore;
             root.Query<VisualElement>().ForEach(e =>
-                e.pickingMode = e is Button || e.ClassListContains("overlay") ? PickingMode.Position : PickingMode.Ignore);
+                e.pickingMode = e is Button || e.ClassListContains("overlay") || trackOverlay.Contains(e) ? PickingMode.Position : PickingMode.Ignore);
             var pb = root.Q<Button>("pauseBtn");
             pauseBtn = pb;
 
@@ -118,12 +139,87 @@ namespace DesktopDrift.Game
             BindLaunch(root.Q<Button>("launchTimeAttack"), RaceMode.TimeAttack);
             BindLaunch(root.Q<Button>("launchSandbox"), RaceMode.Sandbox);
             BindLaunch(root.Q<Button>("launchZen"), RaceMode.Zen);
+
+            btnNormal.clicked += () => SetDirection(false);
+            btnReversed.clicked += () => SetDirection(true);
+            root.Q<Button>("trackBack").clicked += () => { Hide(trackOverlay); Show(launchOverlay); };
         }
 
+        // Sandbox is always the oval and starts directly (2D sandbox.html); Time Attack / Zen open the track stand.
         void BindLaunch(Button b, RaceMode mode)
         {
             b.text = RaceLaunch.ModeTitle(mode);
-            b.clicked += () => { Hide(launchOverlay); RaceLaunch.Mode = mode; loop.Relaunch(); };
+            b.clicked += () =>
+            {
+                if (mode == RaceMode.Sandbox) { Hide(launchOverlay); RaceLaunch.Mode = mode; loop.Relaunch(); }
+                else OpenTrackStand(mode);
+            };
+        }
+
+        /// <summary>The mode stand (Time Attack / Sandbox / Zen Drift); SPEC-06 replaces it with the menu.</summary>
+        public void ShowModeStand()
+        {
+            if (!EnsureBound()) return;
+            Hide(trackOverlay);
+            Show(launchOverlay);
+        }
+
+        /// <summary>
+        /// Temporary track-select stand (SPEC-03 step 8): 2D track-select structure and wording, all 12 instances open.
+        /// Time Attack has the Normal / Reversed toggle; Zen Drift hides it and is always forward.
+        /// </summary>
+        public void OpenTrackStand(RaceMode mode)
+        {
+            if (mode == RaceMode.Sandbox || !EnsureBound()) return;
+            standMode = mode;
+            bool ta = mode == RaceMode.TimeAttack;
+            trackTitle.text = ta ? "Time Attack" : "Zen Drift";
+            trackSub.text = ta ? "Choose a track" : "Choose a track — just drift";
+            trackToggle.style.display = ta ? DisplayStyle.Flex : DisplayStyle.None;
+            if (!ta) standReversed = false;
+            SetDirection(standReversed);
+            BuildCards();
+            Hide(launchOverlay);
+            Show(trackOverlay);
+        }
+
+        void SetDirection(bool reversed)
+        {
+            standReversed = reversed;
+            btnNormal.EnableInClassList("is-active", !reversed);
+            btnReversed.EnableInClassList("is-active", reversed);
+        }
+
+        void BuildCards()
+        {
+            trackCards.Clear();
+            var cat = loop.TrackCatalog;
+            if (cat == null) return;
+            for (int i = 0; i < cat.Tracks.Count; i++)
+            {
+                TrackAsset asset = cat.Tracks[i];
+                while (forwardTracks.Count <= i) forwardTracks.Add(cat.Tracks[forwardTracks.Count].ToTrackData());
+                var thumb = new TrackThumbElement();
+                thumb.AddToClassList("track-thumb");
+                thumb.Set(TrackThumb.ForInstance(forwardTracks[i], false), TrackThumb.CanvasWidth, TrackThumb.CanvasHeight);
+                var card = new VisualElement { name = "card-" + asset.Id };
+                card.AddToClassList("track-card");
+                card.Add(thumb);
+                card.Add(L(asset.DisplayName, "track-name"));
+                card.Add(L(asset.Description, "track-desc"));
+                string id = asset.Id;
+                card.RegisterCallback<ClickEvent>(_ => StartTrack(id));
+                trackCards.Add(card);
+            }
+        }
+
+        void StartTrack(string id)
+        {
+            Hide(trackOverlay);
+            RaceLaunch.Mode = standMode;
+            RaceLaunch.TrackId = id;
+            RaceLaunch.Reversed = standMode == RaceMode.TimeAttack && standReversed;
+            loop.Relaunch();
         }
 
         static void Show(VisualElement e) => e.style.display = DisplayStyle.Flex;
@@ -155,7 +251,7 @@ namespace DesktopDrift.Game
             hintTimer = 5f;
             pendingResult = null;
             if (!EnsureBound()) return;
-            Hide(pauseOverlay); Hide(confirmOverlay); Hide(resultsOverlay); Hide(launchOverlay);
+            Hide(pauseOverlay); Hide(confirmOverlay); Hide(resultsOverlay); Hide(launchOverlay); Hide(trackOverlay);
         }
 
         void OnRaceEvent(RaceEvent e)
@@ -170,13 +266,20 @@ namespace DesktopDrift.Game
             if (!EnsureBound()) return;
             // Portrait gets the 2D max-width: 640px layout (see Hud.uss).
             rootEl!.EnableInClassList("narrow", Screen.width < Screen.height);
+            if (pendingStand != null)
+            {
+                string stand = pendingStand;
+                pendingStand = null;
+                if (stand == "modes") ShowModeStand();
+                else OpenTrackStand(stand == "zen" ? RaceMode.Zen : RaceMode.TimeAttack);
+            }
             if (pendingResult != null) { FillResult(pendingResult); pendingResult = null; }
             if (input != null && input.Pause.WasPressedThisFrame()) TogglePause();
             if (input != null && input.Back.WasPressedThisFrame()) OpenConfirm();
 
             bool paused = loop.Paused;
             pauseBtn.text = paused ? "▶" : "⏸";
-            bool overlayOnTop = Shown(confirmOverlay) || Shown(resultsOverlay) || Shown(launchOverlay);
+            bool overlayOnTop = Shown(confirmOverlay) || Shown(resultsOverlay) || Shown(launchOverlay) || Shown(trackOverlay);
             pauseOverlay.style.display = paused && !overlayOnTop ? DisplayStyle.Flex : DisplayStyle.None;
 
             if (loop.Rules == null) return;

@@ -62,4 +62,15 @@
             <ui:Button name="launchZen" class="btn wide" text="Zen Drift" />
         </ui:VisualElement>
     </ui:VisualElement>
+
+    <ui:VisualElement name="trackOverlay" class="overlay stand">
+        <ui:Label name="trackTitle" class="ov-title" text="Time Attack" />
+        <ui:Label name="trackSub" class="ov-sub" text="Choose a track" />
+        <ui:VisualElement name="trackToggle">
+            <ui:Button name="btnNormal" class="btn mode-btn is-active" text="Normal" />
+            <ui:Button name="btnReversed" class="btn mode-btn" text="Reversed" />
+        </ui:VisualElement>
+        <ui:ScrollView name="trackCards" />
+        <ui:Button name="trackBack" class="btn wide" text="← Back to menu" />
+    </ui:VisualElement>
 </ui:UXML>
