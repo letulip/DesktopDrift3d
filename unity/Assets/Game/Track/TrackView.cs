@@ -12,9 +12,13 @@ namespace DesktopDrift.Game
         [SerializeField] Material? ribbonMaterial;
         [SerializeField] Material? coneMaterial;
         [SerializeField] Material? propMaterial;
+        [SerializeField] Material? overlayMaterial;   // vertex-colour transparent, queue 3001: draws over the skid marks (flag, ring)
         [SerializeField] TextAsset? renderJson;   // Content/_json/render.json: THEME_DEFAULT of the 2D render.js
 
         const float RibbonY = 0.0005f;
+        public const float FlagY = 0.0012f;         // 1.2 mm: above the skid marks (1 mm), as 2D draws the flag after them
+        public const float FlagCell = 10f;          // 2D: cell = 10 units, rows = 2
+        public const int FlagRows = 2;
         const float EdgeBandY = 0.0002f;        // flat edge band: 0.2 mm above the table top
         const float TableDepthUnits = 30f;      // side faces / floor depth, 2D units
         const float EdgeBandUnits = 12f;        // 2D: tableEdge lineWidth = 12, centred on the boundary
@@ -45,6 +49,7 @@ namespace DesktopDrift.Game
             EffectiveTheme = ThemeFor(track);
             BuildTable(track);
             BuildRibbon(track);
+            BuildFlag(track);
             BuildCones(track);
             BuildProps(track);
         }
@@ -176,6 +181,52 @@ namespace DesktopDrift.Game
             OrientUp(verts, tris);
             var mesh = FlatMesh("Ribbon", verts, tris);
             MeshObject("Ribbon", mesh, ribbonMaterial, Resolve(EffectiveTheme!.Track));
+        }
+
+        /// <summary>Vertex colour for an overlay: Unity does not convert vertex colours, so in a linear project the sRGB value is linearised.</summary>
+        public static Color OverlayColor(ThemeColor c)
+        {
+            var col = new Color((float)c.R, (float)c.G, (float)c.B, (float)c.A);
+            return QualitySettings.activeColorSpace == ColorSpace.Linear ? col.linear : col;
+        }
+
+        // The chequered flag of render.js: rows x cols cells of 10 units in the start frame (X = travel, Y = across), centred
+        // on Center[0]; cells are white 0.92 / black 0.82 over the ribbon, pre-composited here over the ribbon colour.
+        void BuildFlag(TrackData track)
+        {
+            int cols = (int)System.Math.Ceiling(track.TrackHalf * 2 / FlagCell);
+            ThemeColor ribbon = ThemeColor.Parse(EffectiveTheme!.Track);
+            Color white = OverlayColor(ThemeColor.Over(new ThemeColor(1, 1, 1, 0.92), ribbon));
+            Color black = OverlayColor(ThemeColor.Over(new ThemeColor(0, 0, 0, 0.82), ribbon));
+            var c0 = track.Center[0];
+            double ca = System.Math.Cos(track.StartAngle), sa = System.Math.Sin(track.StartAngle);
+            var verts = new List<Vector3>(4 * FlagRows * cols);
+            var colors = new List<Color>(4 * FlagRows * cols);
+            var tris = new List<int>(6 * FlagRows * cols);
+            for (int r = 0; r < FlagRows; r++)
+                for (int c = 0; c < cols; c++)
+                {
+                    double x0 = -FlagRows * FlagCell / 2 + r * FlagCell, y0 = -track.TrackHalf + c * FlagCell;
+                    int v = verts.Count;
+                    foreach (var (lx, ly) in new[] { (x0, y0), (x0, y0 + FlagCell), (x0 + FlagCell, y0 + FlagCell), (x0 + FlagCell, y0) })
+                    {
+                        verts.Add(WorldMapping.ToWorld(c0.X + lx * ca - ly * sa, c0.Y + lx * sa + ly * ca) + Vector3.up * FlagY);
+                        colors.Add((r + c) % 2 == 0 ? white : black);
+                    }
+                    tris.AddRange(new[] { v, v + 1, v + 2, v, v + 2, v + 3 });
+                }
+            var mesh = new Mesh { name = "Flag" };
+            mesh.SetVertices(verts);
+            mesh.SetColors(colors);
+            mesh.SetTriangles(tris, 0);
+            mesh.RecalculateBounds();
+            var go = new GameObject("Flag");
+            go.transform.SetParent(transform, false);
+            go.AddComponent<MeshFilter>().sharedMesh = mesh;
+            var mr = go.AddComponent<MeshRenderer>();
+            if (overlayMaterial != null) mr.sharedMaterial = overlayMaterial;
+            mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            mr.receiveShadows = false;
         }
 
         // Unity front faces are clockwise seen from the camera: flip every triangle (once) when the net normal points down.

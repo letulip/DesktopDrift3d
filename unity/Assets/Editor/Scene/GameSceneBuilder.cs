@@ -49,7 +49,7 @@ namespace DesktopDrift.Editor
             camGo.transform.LookAt(start + fwd * 0.15f);
 
             var track = new GameObject("Track").AddComponent<TrackView>();
-            SetRefs(track, ("tableMaterial", table), ("ribbonMaterial", ribbon), ("coneMaterial", cone), ("propMaterial", prop), ("renderJson", Json("render.json")));
+            SetRefs(track, ("tableMaterial", table), ("ribbonMaterial", ribbon), ("coneMaterial", cone), ("propMaterial", prop), ("overlayMaterial", OverlayMat()), ("renderJson", Json("render.json")));
 
             var carView = new GameObject("Car").AddComponent<CarView>();
             SetRefs(carView, ("material", car));
@@ -76,6 +76,9 @@ namespace DesktopDrift.Editor
 
             var skids = new GameObject("SkidMarks").AddComponent<SkidMarks>();
             SetRefs(skids, ("loop", race), ("trackView", track), ("material", SkidMat()));
+
+            var ring = new GameObject("CheckpointRing").AddComponent<CheckpointRing>();
+            SetRefs(ring, ("loop", race), ("material", OverlayMat()));
 
             var tires = new GameObject("Tires").AddComponent<Tires>();
             SetRefs(tires, ("loop", race), ("material", Mat("Tire", new Color32(0x2a, 0x2a, 0x2c, 255))));
@@ -166,6 +169,23 @@ namespace DesktopDrift.Editor
             }
             m.SetColor("_Color", Color.white);
             m.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+            EditorUtility.SetDirty(m);
+            return m;
+        }
+
+        // Same shader as the skid marks but queue 3001: the start flag and the next-checkpoint ring draw over the skids, as in 2D.
+        static Material OverlayMat()
+        {
+            string path = $"{MaterialsDir}/TrackOverlay.mat";
+            var m = AssetDatabase.LoadAssetAtPath<Material>(path);
+            if (m == null)
+            {
+                var shader = Shader.Find("DesktopDrift/SkidMark") ?? throw new Exception("Missing shader DesktopDrift/SkidMark");
+                m = new Material(shader);
+                AssetDatabase.CreateAsset(m, path);
+            }
+            m.SetColor("_Color", Color.white);
+            m.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent + 1;
             EditorUtility.SetDirty(m);
             return m;
         }

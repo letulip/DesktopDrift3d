@@ -25,6 +25,8 @@ namespace DesktopDrift.Game.Tests
             created.Clear();
         }
 
+        public static TrackData LoadTrack(string id) => Load(id);
+
         static TrackData Load(string id)
         {
             if (id == "oval") return OvalTrack.Build();
