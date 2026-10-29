@@ -47,6 +47,54 @@ namespace DesktopDrift.Game
             return sink.Ops;
         }
 
+        // Painter2D antialiases the seams inside one stroke, so on the thumbnail's dense polyline (a point every ~3 px) the
+        // table showed through as dark hairlines on the outer side of every bend (miter joins too). A round-join stroke is
+        // therefore drawn as a union of opaque fills that overlap instead of abutting, so only its outline is antialiased:
+        // one quad per segment, reaching past each point to the miter of a gentle turn (at most 2.4% of the half width
+        // outside the round join up to 25 degrees) plus SeamOverlap, and a disc where the turn is sharper or at a round cap.
+        internal const double GentleTurnDeg = 25;
+        internal const double SeamOverlap = 1;   // px each quad reaches past its point so that neighbours overlap
+
+        internal static void StrokeAsFills(IReadOnlyList<Vector2> path, bool closed, double half, bool roundCaps,
+            List<Vector2[]> quads, List<Vector2> discs)
+        {
+            var pts = new List<Vector2>();
+            foreach (Vector2 v in path)
+                if (pts.Count == 0 || (v - pts[pts.Count - 1]).sqrMagnitude > 1e-6f) pts.Add(v);
+            if (closed && pts.Count > 2 && (pts[0] - pts[pts.Count - 1]).sqrMagnitude <= 1e-6f) pts.RemoveAt(pts.Count - 1);
+            int m = pts.Count;
+            if (m < 2) return;
+            bool loop = closed && m > 2;
+            var ext = new double[m];
+            for (int j = 0; j < m; j++)
+            {
+                if (!loop && (j == 0 || j == m - 1))
+                {
+                    if (roundCaps) discs.Add(pts[j]);
+                    continue;
+                }
+                Vector2 a = pts[(j - 1 + m) % m], b = pts[j], c = pts[(j + 1) % m];
+                double ax = b.x - a.x, ay = b.y - a.y, bx = c.x - b.x, by = c.y - b.y;
+                double cos = (ax * bx + ay * by) / (Math.Sqrt(ax * ax + ay * ay) * Math.Sqrt(bx * bx + by * by));
+                double turn = Math.Acos(Math.Max(-1, Math.Min(1, cos)));
+                if (turn <= GentleTurnDeg * Math.PI / 180) ext[j] = half * Math.Tan(turn / 2) + SeamOverlap;
+                else { ext[j] = SeamOverlap; discs.Add(b); }
+            }
+            int segs = loop ? m : m - 1;
+            for (int i = 0; i < segs; i++)
+            {
+                int k = (i + 1) % m;
+                Vector2 a = pts[i], b = pts[k];
+                double dx = b.x - a.x, dy = b.y - a.y, len = Math.Sqrt(dx * dx + dy * dy);
+                dx /= len; dy /= len;
+                double nx = -dy * half, ny = dx * half;
+                double sx = a.x - dx * ext[i], sy = a.y - dy * ext[i], ex = b.x + dx * ext[k], ey = b.y + dy * ext[k];
+                quads.Add(new[] { P(sx + nx, sy + ny), P(ex + nx, ey + ny), P(ex - nx, ey - ny), P(sx - nx, sy - ny) });
+            }
+        }
+
+        static Vector2 P(double x, double y) { return new Vector2((float)x, (float)y); }
+
         internal interface ISink
         {
             void FillColor(string css);
@@ -112,6 +160,8 @@ namespace DesktopDrift.Game
         sealed class PainterSink : ISink
         {
             readonly Painter2D p;
+            readonly List<Vector2> path = new List<Vector2>();   // the current path while it is one polyline
+            bool polyline, closed;
             public PainterSink(Painter2D painter) { p = painter; }
             static Color C(string css) { ThemeColor t = ThemeColor.Parse(css); return new Color((float)t.R, (float)t.G, (float)t.B, (float)t.A); }
             static Vector2 V(double x, double y) { return new Vector2((float)x, (float)y); }
@@ -131,10 +181,11 @@ namespace DesktopDrift.Game
                 p.ClosePath();
                 p.Fill();
             }
-            public void BeginPath() { p.BeginPath(); }
+            public void BeginPath() { p.BeginPath(); path.Clear(); polyline = true; closed = false; }
             // Rounded rectangle with four quarter arcs (UI Toolkit angles: 0 = +x, clockwise in y-down space).
             public void RoundRect(double x, double y, double w, double h, double r)
             {
+                polyline = false;
                 r = Math.Max(0, Math.Min(r, Math.Min(w, h) / 2));
                 float fr = (float)r;
                 p.MoveTo(V(x + r, y));
@@ -148,11 +199,36 @@ namespace DesktopDrift.Game
                 p.Arc(V(x + r, y + r), fr, Angle.Degrees(180), Angle.Degrees(270));
                 p.ClosePath();
             }
-            public void MoveTo(double x, double y) { p.MoveTo(V(x, y)); }
-            public void LineTo(double x, double y) { p.LineTo(V(x, y)); }
-            public void ClosePath() { p.ClosePath(); }
+            public void MoveTo(double x, double y) { if (path.Count > 0) polyline = false; path.Add(V(x, y)); p.MoveTo(V(x, y)); }
+            public void LineTo(double x, double y) { path.Add(V(x, y)); p.LineTo(V(x, y)); }
+            public void ClosePath() { closed = true; p.ClosePath(); }
             public void Fill() { p.Fill(); }
-            public void Stroke() { p.Stroke(); }
+            public void Stroke()
+            {
+                if (!polyline || path.Count < 2 || p.lineJoin != UnityEngine.UIElements.LineJoin.Round) { p.Stroke(); return; }
+                var quads = new List<Vector2[]>();
+                var discs = new List<Vector2>();
+                float half = p.lineWidth / 2f;
+                StrokeAsFills(path, closed, half, p.lineCap == UnityEngine.UIElements.LineCap.Round, quads, discs);
+                Color keep = p.fillColor;
+                p.fillColor = p.strokeColor;
+                foreach (Vector2[] q in quads)
+                {
+                    p.BeginPath();
+                    p.MoveTo(q[0]); p.LineTo(q[1]); p.LineTo(q[2]); p.LineTo(q[3]);
+                    p.ClosePath();
+                    p.Fill();
+                }
+                foreach (Vector2 c in discs)
+                {
+                    p.BeginPath();
+                    p.Arc(c, half, Angle.Degrees(0), Angle.Degrees(360));
+                    p.ClosePath();
+                    p.Fill();
+                }
+                p.fillColor = keep;
+                BeginPath();
+            }
         }
     }
 }

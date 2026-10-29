@@ -39,7 +39,9 @@ frame() { cmd script eval -- --code "return UnityEngine.Time.frameCount;" 2>&1 |
 
 finish() {
   cmd editor.playmode stop >/dev/null 2>&1 || true
-  if [ -n "$pid" ]; then
+  # Close only the headless editor this script started, and only while it lives: `unity close unity` closes whatever
+  # editor holds the project, and once shut down the owner's GUI editor that way (29.10).
+  if [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; then
     unity close unity --timeout 60 >/dev/null 2>&1 || true
     if kill -0 "$pid" 2>/dev/null; then kill "$pid" 2>/dev/null || true; fi
   fi
@@ -48,14 +50,18 @@ finish() {
 }
 trap finish EXIT
 
+# An editor process on this project, GUI or headless (Hub passes -projectpath, scripts -projectPath). `unity status` alone
+# misses an editor that is reloading its domain right after `scripts/compile.sh`.
+editor_process() { pgrep -if "Unity\.app/Contents/MacOS/Unity.*-projectpath $PROJECT" >/dev/null 2>&1; }
+
 run() {
   mkdir -p "$OUT_DIR" "$ROOT/artifacts"
-  if ! unity status --project-path "$PROJECT" --format json 2>/dev/null | grep -q '"count": *[1-9]'; then
+  if ! editor_process && ! unity status --project-path "$PROJECT" --format json 2>/dev/null | grep -q '"count": *[1-9]'; then
     echo "no editor running: starting headless resident editor (about 1 min)"
     nohup "$UNITY_BIN" -batchmode -projectPath "$PROJECT" -logFile "$ROOT/artifacts/capture-editor.log" >/dev/null 2>&1 &
     pid=$!
-    unity status --until-ready --project-path "$PROJECT" --timeout 600 >/dev/null
   fi
+  unity status --until-ready --project-path "$PROJECT" --timeout 600 >/dev/null
 
   cmd scene open -- --path "$SCENE" >/dev/null
   cmd editor set_auto_tick >/dev/null

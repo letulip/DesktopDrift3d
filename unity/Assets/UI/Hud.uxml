@@ -70,7 +70,7 @@
             <ui:Button name="btnNormal" class="btn mode-btn is-active" text="Normal" />
             <ui:Button name="btnReversed" class="btn mode-btn" text="Reversed" />
         </ui:VisualElement>
-        <ui:ScrollView name="trackCards" />
+        <ui:ScrollView name="trackCards" vertical-scroller-visibility="Hidden" horizontal-scroller-visibility="Hidden" />
         <ui:Button name="trackBack" class="btn wide" text="← Back to menu" />
     </ui:VisualElement>
 </ui:UXML>

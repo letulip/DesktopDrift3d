@@ -105,12 +105,16 @@ namespace DesktopDrift.Game
         void EnsureRenderer()
         {
             if (mesh == null) mesh = new Mesh { name = "CheckpointRing" };
-            if (meshFilter == null && !TryGetComponent(out meshFilter)) meshFilter = gameObject.AddComponent<MeshFilter>();
-            if (meshRenderer == null && !TryGetComponent(out meshRenderer)) meshRenderer = gameObject.AddComponent<MeshRenderer>();
-            meshFilter.sharedMesh = mesh;
-            if (material != null) meshRenderer.sharedMaterial = material;
-            meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-            meshRenderer.receiveShadows = false;
+            MeshFilter filter = meshFilter != null ? meshFilter : GetOrAdd<MeshFilter>();
+            MeshRenderer rend = meshRenderer != null ? meshRenderer : GetOrAdd<MeshRenderer>();
+            meshFilter = filter;
+            meshRenderer = rend;
+            filter.sharedMesh = mesh;
+            if (material != null) rend.sharedMaterial = material;
+            rend.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            rend.receiveShadows = false;
         }
+
+        T GetOrAdd<T>() where T : Component => TryGetComponent(out T found) ? found : gameObject.AddComponent<T>();
     }
 }

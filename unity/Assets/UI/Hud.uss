@@ -119,30 +119,46 @@
 #rr-best { margin-top: 8px; }
 
 /* SPEC-03 step 8: temporary track-select stand (2D #track-select: header, Normal/Reversed toggle, cards, back link).
-   Sizes are the 2D CSS px x3; one column in both orientations (2D: single column on narrow, capped card width 280px). */
-.stand { justify-content: flex-start; padding: 60px 36px 36px 36px; }
+   Values are the 2D tokens (base.css, header.css, tracks.css, footer.css) with CSS px x3. Simplifications of a temporary
+   stand: one column in both orientations (2D: 2-3 columns capped at 280px on wide screens), flat --bg-mid instead of the
+   vignette, white title instead of the --accent-text gradient, thumbnail box in the 260x140 canvas aspect (2D stretches
+   the canvas to 2:1, 7.7% wider). */
+.stand { justify-content: flex-start; padding: 60px 36px 36px 36px; background-color: rgb(20, 17, 15); }
+.stand #trackTitle { font-size: 75px; }
+.stand #trackSub { font-size: 45px; -unity-font-style: bold; color: rgba(255, 255, 255, 0.45); margin-top: 18px; }
 #trackToggle { flex-direction: row; width: 100%; max-width: 1110px; margin-top: 18px; }
 .mode-btn {
     flex-grow: 1; flex-basis: 0;
     height: 108px; margin: 0 12px;
     border-width: 6px; border-radius: 30px;
+    border-color: rgba(255, 255, 255, 0.12);
+    background-color: rgba(255, 255, 255, 0.05);
     font-size: 42px; -unity-font-style: bold;
     color: rgba(255, 255, 255, 0.5);
 }
 .mode-btn.is-active {
-    border-color: rgb(255, 214, 90);
-    background-color: rgba(255, 214, 90, 0.15);
-    color: rgb(255, 214, 90);
+    border-color: rgba(255, 177, 77, 0.7);
+    background-color: rgba(255, 177, 77, 0.1);
+    color: rgb(255, 177, 77);
 }
 #trackCards { flex-grow: 1; flex-shrink: 1; width: 100%; margin: 30px 0 12px 0; }
 #trackCards .unity-scroll-view__content-container { align-items: center; }
 .track-card {
     width: 100%; max-width: 840px;
-    margin-bottom: 30px; padding: 24px;
-    background-color: rgba(18, 20, 26, 0.92);
-    border-width: 6px; border-color: rgba(255, 255, 255, 0.15);
-    border-radius: 36px;
+    margin-bottom: 48px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-width: 6px; border-color: rgba(255, 255, 255, 0.12);
+    border-radius: 48px;
+    overflow: hidden;
 }
-.track-thumb { width: 100%; height: 400px; background-color: rgba(0, 0, 0, 0.3); border-radius: 24px; }
-.track-name { font-size: 48px; -unity-font-style: bold; margin-top: 18px; }
-.track-desc { font-size: 33px; color: rgb(184, 188, 196); margin-top: 6px; }
+.track-thumb { width: 100%; height: 452px; background-color: rgb(11, 9, 7); }
+.track-name { font-size: 45px; -unity-font-style: bold; margin: 36px 48px 0 48px; }
+.track-desc { font-size: 36px; color: rgba(255, 255, 255, 0.45); margin: 15px 48px 42px 48px; white-space: normal; }
+.stand #trackBack {
+    min-width: 0; height: 108px; padding: 0 84px; margin-top: 12px;
+    border-width: 4.5px; border-radius: 30px;
+    border-color: rgba(255, 255, 255, 0.14);
+    background-color: rgba(255, 255, 255, 0.07);
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 39px;
+}

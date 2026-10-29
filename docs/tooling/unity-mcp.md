@@ -89,3 +89,16 @@ Would write to: /Users/letulip/Library/Application Support/Claude/claude_desktop
   до 6×5 с. `capture game_view --source screen` в GUI работает (1920×1080). В GUI без фокуса окна play mode почти не тикает
   (`frameCount` 2→2 между двумя чтениями, `editor set_auto_tick` не спасает) – снимки корректны, покадровые проверки делать
   на headless-резиденте. `unity close unity` закрывает GUI graceful.
+- UI в кадре (29.10): UI Toolkit не попадает в камеру, нужен GUI-редактор и `CAPTURE_SOURCE=screen`. Dev-хуки `DD_*`
+  читаются из окружения процесса редактора, поэтому GUI запускать бинарником с ними (`unity open` окружение не
+  гарантирует):
+  ```
+  DD_STAND=ta nohup "/Applications/Unity/Hub/Editor/6000.3.27f1/Unity.app/Contents/MacOS/Unity" -projectPath "$PWD/unity" -logFile "$PWD/artifacts/gui-editor.log" >/dev/null 2>&1 & disown
+  unity status --until-ready --project-path "$PWD/unity" --timeout 600
+  unity command --project-path "$PWD/unity" script eval -- --code 'UnityEditor.PlayModeWindow.SetCustomRenderingResolution(1080, 2400, "PocoX6"); return 0;'
+  CAPTURE_SOURCE=screen CAPTURE_W=1080 CAPTURE_H=2400 scripts/capture.sh
+  ```
+  Без смены разрешения Game View `--width/--height` просто растягивают его кадр.
+- 29.10: `capture.sh` сразу после `compile.sh` закрыл GUI-редактор: домен перезагружался, `unity status` его не видел,
+  скрипт поднял второй редактор и в конце закрыл «свой» через `unity close unity`. Исправлено: редактор узнаётся по
+  процессу, закрывается только запущенный скриптом и только живой.
