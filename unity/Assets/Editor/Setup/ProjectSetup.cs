@@ -47,7 +47,8 @@ namespace DesktopDrift.Editor
             Set("allowedAutorotateToLandscapeRight", PlayerSettings.allowedAutorotateToLandscapeRight, true,
                 v => PlayerSettings.allowedAutorotateToLandscapeRight = v);
 
-            Set("colorSpace", PlayerSettings.colorSpace, ColorSpace.Linear, v => PlayerSettings.colorSpace = v);
+            // D-26: Gamma, so flat colours, vertex colours and alpha blending equal the 2D canvas (which works in sRGB).
+            Set("colorSpace", PlayerSettings.colorSpace, ColorSpace.Gamma, v => PlayerSettings.colorSpace = v);
 
             var so = new SerializedObject(Unsupported.GetSerializedAssetInterfaceSingleton("PlayerSettings"));
             var prop = so.FindProperty("activeInputHandler");

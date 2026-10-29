@@ -75,8 +75,8 @@ namespace DesktopDrift.Game
             if (loop.Track != null)
             {
                 ThemeColor c = ThemeColor.Parse(trackView.ThemeFor(loop.Track).Skid);
-                // Vertex colours are not colour-space converted: in a Linear project the sRGB theme value must be
-                // linearised here, like TrackView.OverlayColor does for the flag and ring (alpha stays per level).
+                // Vertex colours are not colour-space converted; TrackView.OverlayColor returns the raw sRGB value in the
+                // Gamma project (D-26) and would linearise it in a Linear one (alpha stays per level).
                 Color lin = TrackView.OverlayColor(new ThemeColor(c.R, c.G, c.B, 1));
                 skidRgb = new Color32((byte)Mathf.RoundToInt(lin.r * 255f), (byte)Mathf.RoundToInt(lin.g * 255f),
                     (byte)Mathf.RoundToInt(lin.b * 255f), 255);
