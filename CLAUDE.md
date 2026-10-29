@@ -48,7 +48,7 @@ scripts/trace.sh         # трасса паритета из JS → tools/parit
 scripts/compile.sh       # живой редактор → unity recompile, иначе unity run + лог (COMPILE_EXIT)
 scripts/unity-tests.sh   # Unity EditMode-тесты через unity test, NUnit+JUnit в artifacts/ (UNITY_TESTS_EXIT); UNITY_TESTS_MODE=PlayMode – сценные тесты
 scripts/build.sh android # APK через unity build --profile Android + artifacts/build/report.md (BUILD_EXIT); mac – настольная сборка
-scripts/capture.sh       # кадр из play mode через Pipeline → artifacts/capture/*.png (CAPTURE_EXIT); DD_STEER=trace CAPTURE_DELAY=12 – кадр заезда
+scripts/capture.sh       # кадр из play mode через Pipeline → artifacts/capture/*.png (CAPTURE_EXIT); DD_STEER=trace CAPTURE_DELAY=12 – кадр заезда; DD_MODE=ta|zen|sandbox DD_TRACK=<id> DD_REVERSED=1 DD_STEER=auto – любая трасса на ходу, напр. `DD_TRACK=dining-oak DD_STEER=auto CAPTURE_DELAY=12 scripts/capture.sh`
 node tools/mcp-smoke.mjs # одна операция через официальный MCP редактора (MCP_EXIT)
 ```
 

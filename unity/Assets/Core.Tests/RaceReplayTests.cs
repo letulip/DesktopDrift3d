@@ -23,7 +23,15 @@ namespace DesktopDrift.Core.Tests
         private static double N(object? v) => (double)v!;
         private static string Str(object? v) => v is double d ? d.ToString("R", CultureInfo.InvariantCulture) : v is bool b ? (b ? "true" : "false") : v == null ? "null" : v.ToString()!;
 
-        private static Dictionary<string, object?> Doc(string relative)
+        // The SPA's track for a trace: source.module ("js/track-oval.js" or "js/track-<id>.js"), reversed when opts.reversed.
+        internal static TrackData BuildTrack(string module, bool reversed)
+        {
+            TrackData track = module == "js/track-oval.js" ? OvalTrack.Build()
+                : TrackBuilderParityTests.Build(module.Substring("js/track-".Length, module.Length - "js/track-".Length - ".js".Length));
+            return reversed ? TrackUtil.ReverseTrack(track) : track;
+        }
+
+        internal static Dictionary<string, object?> Doc(string relative)
         {
             return O(Json.Parse(File.ReadAllText(TestPaths.Locate(relative))));
         }
@@ -73,10 +81,7 @@ namespace DesktopDrift.Core.Tests
             var o = O(root["opts"]);
             // The SPA: the module's track (oval = js/track-oval.js, the rest via makeTrack), reversed with
             // reverseTrack(mod) when opts.reversed – exactly what the harness hands startGame.
-            string module = (string)src["module"]!;
-            TrackData track = module == "js/track-oval.js" ? OvalTrack.Build()
-                : TrackBuilderParityTests.Build(module.Substring("js/track-".Length, module.Length - "js/track-".Length - ".js".Length));
-            if ((bool)o["reversed"]!) track = TrackUtil.ReverseTrack(track);
+            TrackData track = BuildTrack((string)src["module"]!, (bool)o["reversed"]!);
             var car = Car();
             var clock = O(root["clock"]);
             double frameMs = N(clock["frameMs"]), dateBase = N(clock["dateBase"]);

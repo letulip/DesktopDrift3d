@@ -67,6 +67,16 @@ namespace DesktopDrift.Game
             Time.fixedDeltaTime = (float)FixedDt;
             Time.maximumDeltaTime = 0.05f;
             Application.targetFrameRate = 60;
+#if UNITY_EDITOR
+            // Dev hooks for scripts/capture.sh (the editor inherits the env), read BEFORE the track is resolved.
+            string? ddMode = Environment.GetEnvironmentVariable("DD_MODE");
+            if (ddMode == "ta") RaceLaunch.Mode = RaceMode.TimeAttack;
+            else if (ddMode == "zen") RaceLaunch.Mode = RaceMode.Zen;
+            else if (ddMode == "sandbox") RaceLaunch.Mode = RaceMode.Sandbox;
+            string? ddTrack = Environment.GetEnvironmentVariable("DD_TRACK");
+            if (!string.IsNullOrEmpty(ddTrack)) RaceLaunch.TrackId = ddTrack;
+            if (Environment.GetEnvironmentVariable("DD_REVERSED") == "1") RaceLaunch.Reversed = true;
+#endif
             if (carsJson != null && !_initialized)
             {
                 Init(RaceLaunch.ResolveTrack(trackCatalog),
@@ -76,8 +86,10 @@ namespace DesktopDrift.Game
                     SaveSchema.Load(null).State);
             }
 #if UNITY_EDITOR
-            // Dev hook for scripts/capture.sh: scripted steering from the oval trace (the editor inherits the env).
-            if (Environment.GetEnvironmentVariable("DD_STEER") == "trace") SteerSource = new TraceSteerSource(this);
+            // Scripted steering: trace = the oval trace's steer column, auto = the harness autopilot.
+            string? ddSteer = Environment.GetEnvironmentVariable("DD_STEER");
+            if (ddSteer == "trace") SteerSource = new TraceSteerSource(this);
+            else if (ddSteer == "auto") SteerSource = new AutopilotSteerSource(this);
 #endif
         }
 
