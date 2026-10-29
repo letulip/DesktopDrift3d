@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25ec4858437a84e0db64bafc3bafbf4c, type: 3}
+  m_Name: cafe-marble
+  m_EditorClassIdentifier: DesktopDrift.Game::DesktopDrift.Game.TrackAsset
+  Id: cafe-marble
+  DisplayName: Macchiato Madness
+  Description: An elegant bistro table. Slide around giant coffee cups and delicious
+    doughnuts. Don't spill the espresso!
+  Data: {fileID: 4900000, guid: 8e3f1067f41b94a63b2869458a6bd0eb, type: 3}

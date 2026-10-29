@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25ec4858437a84e0db64bafc3bafbf4c, type: 3}
+  m_Name: green-study
+  m_EditorClassIdentifier: DesktopDrift.Game::DesktopDrift.Game.TrackAsset
+  Id: green-study
+  DisplayName: Midnight Deadline
+  Description: Drift across a classic green baize desk. Dodge sharp compasses and
+    leave tire marks on important documents!
+  Data: {fileID: 4900000, guid: c8191b698cf2642569d9df15f7762072, type: 3}
