@@ -75,8 +75,11 @@ namespace DesktopDrift.Game
             if (loop.Track != null)
             {
                 ThemeColor c = ThemeColor.Parse(trackView.ThemeFor(loop.Track).Skid);
-                skidRgb = new Color32((byte)Mathf.RoundToInt((float)c.R * 255f), (byte)Mathf.RoundToInt((float)c.G * 255f),
-                    (byte)Mathf.RoundToInt((float)c.B * 255f), 255);
+                // Vertex colours are not colour-space converted: in a Linear project the sRGB theme value must be
+                // linearised here, like TrackView.OverlayColor does for the flag and ring (alpha stays per level).
+                Color lin = TrackView.OverlayColor(new ThemeColor(c.R, c.G, c.B, 1));
+                skidRgb = new Color32((byte)Mathf.RoundToInt(lin.r * 255f), (byte)Mathf.RoundToInt(lin.g * 255f),
+                    (byte)Mathf.RoundToInt(lin.b * 255f), 255);
                 // Table rectangle, set once per race (2x the table so either origin convention is covered).
                 var size = new Vector3((float)loop.Track.Table.W, 0f, (float)loop.Track.Table.H) * (2f * WorldMapping.UnitsToMeters);
                 var bounds = new Bounds(new Vector3(0f, MarkY, 0f), size + new Vector3(0f, 0.01f, 0f));
